@@ -8,29 +8,31 @@ function Menu () {
     return(
             <>
                 
-
+            <div class="sticky-lg-top">
                 <nav id="navbar-example2" class="">
   
-  <div className=" my-view">
-    
-      <a class="" href="#scrollspyHeading1">PROMOTIONS</a>
-    
-    
-      <a class="" href="#scrollspyHeading2">MEALS</a>
-    
-    
-      <a class="" href="#scrollspyHeading3">BURGERS</a>
-    
-    
-      <a class="" href="#scrollspyHeading4">DESSERTS</a>
-    
-    
-      <a class="" href="#scrollspyHeading5">DEALS</a>
-    
-    
-  </div>
-</nav>
-<div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px 40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2  my-container-margin" tabindex="50px">
+                    <div className=" my-view">
+                        
+                        <a class="" href="#scrollspyHeading1">PROMOTIONS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading2">MEALS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading3">BURGERS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading4">DESSERTS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading5">DEALS</a>
+                        
+                        
+                    </div>
+                </nav>
+            </div>
+
+<div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -25%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2  my-container-margin" tabindex="50px">
   <h4 id="scrollspyHeading1">
         
             <HomeHeadingNL heading="PROMOTIONS"/>
@@ -76,7 +78,7 @@ function Menu () {
 </div>
                 
 
-                <HomeHeadingNL heading="PROMOTIONS"/>
+                {/* <HomeHeadingNL heading="PROMOTIONS"/>
                 <div className="PageContainer"> 
                     <Card/>
                 </div>
@@ -114,7 +116,7 @@ function Menu () {
                 <HomeHeadingNL heading="SNACKS"/>
                 <div className="PageContainer"> 
                     <Card/>
-                </div>
+                </div> */}
             </>
     );
 }

@@ -56,6 +56,7 @@ export function HomeNav () {
 
     return (
         <>
+        <div class="sticky-lg-top">
             <nav class="navbar navbar-expand-lg bg-body-tertiary my-nav">
                 <div class="container-fluid ">
                 <a class="navbar-brand" href="/"><img className='logo' src={zestylogo} alt="" /></a>
@@ -81,8 +82,8 @@ export function HomeNav () {
                 </div>
                 </div>
             </nav>
-
-            
+        </div>
+           
             
         </>
     );
