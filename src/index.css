@@ -572,6 +572,7 @@ a{
     /* justify-content: center; */
     h1{
       font-size: 15px;
+      font-weight: 700;
     }
     hr{
         width: 0%;
@@ -633,15 +634,18 @@ a{
   padding-top: 20px;
   padding-bottom: 10px;
   margin-top: 20px;
-  font-size: 7px;
+  font-size: 11px;
 
 .footerTop{
   justify-content: space-around;
   .linkBox{
     justify-content: center;
+    ul{
+      padding-left:10px;
+    }
     .footerLogo{
-      width: 30px;
-      height: 30px;
+      width: 50px;
+      height: 50px;
       }
     li{
       margin-bottom: 7.5px;
@@ -651,8 +655,8 @@ a{
 .socialsLink{
   justify-content: center;
   .sImage{
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
   }
 }
 }
