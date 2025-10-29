@@ -56,7 +56,7 @@ export function HomeNav () {
 
     return (
         <>
-        <div class="sticky-lg-top">
+        <div class="fixed-top">
             <nav class="navbar navbar-expand-lg bg-body-tertiary my-nav">
                 <div class="container-fluid ">
                 <a class="navbar-brand" href="/"><img className='logo' src={zestylogo} alt="" /></a>
@@ -81,8 +81,35 @@ export function HomeNav () {
                     </span>
                 </div>
                 </div>
+
+              
             </nav>
+
+              <div class="mb-5">
+                <nav id="navbar-example2" class="">
+  
+                    <div className=" my-view">
+                        
+                        <a class="" href="#scrollspyHeading1">PROMOTIONS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading2">MEALS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading3">BURGERS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading4">DESSERTS</a>
+                        
+                        
+                        <a class="" href="#scrollspyHeading5">DEALS</a>
+                        
+                        
+                    </div>
+                </nav>
+            </div>
         </div>
+        
            
             
         </>
@@ -157,7 +184,11 @@ export function Footer () {
                                 
                             </ul>
                         </div>
-                        <div className="linkBox" style={{textAlign:"center"}}>
+                        
+                        
+                    </div>
+                    <div className="footerBottom">
+                        <div className="follow-us" style={{textAlign:"center"}}>
                             <p>Follow us:</p>
                             <div className="socialsLink">
                                 <a href=""><img className='sImage' src={xlogo} alt="xlogo" /></a>
@@ -166,9 +197,6 @@ export function Footer () {
                                 <a href=""><img className='sImage' src={xlogo} alt="xlogo" /></a>
                             </div>
                         </div>
-                        
-                    </div>
-                    <div className="footerBottom">
                         <p>Copyright &copy; Zesty Cave Restaurant 2025</p>
                         
                     </div>
