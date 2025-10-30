@@ -85,7 +85,7 @@ export function HomeNav () {
               
             </nav>
 
-              <div class="mb-5">
+            <div class="mb-5">
                 <nav id="navbar-example2" class="">
   
                     <div className=" my-view">
@@ -102,7 +102,7 @@ export function HomeNav () {
                         <a class="" href="#scrollspyHeading4">DESSERTS</a>
                         
                         
-                        <a class="" href="#scrollspyHeading5">DEALS</a>
+                        {/* <a class="" href="#scrollspyHeading5">DEALS</a> */}
                         
                         
                     </div>
