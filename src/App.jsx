@@ -9,24 +9,35 @@ import Menu from './pages/Menu'
 import Login from './pages/Login'
 import StoreLocation from './pages/StoreLocation'
 import Contact from './pages/Contact'
+import MenuNav from './components/MenuNav'
+import { useLocation } from 'react-router-dom'
 
-function App() {
-  
 
-  return (
+function Layout(){
+  const location = useLocation();
+
+  return(
     <>
-      <HomeNav/>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Home/>}/>
-            <Route path='/menu' element={<Menu/>}/>
-            <Route path='/login' element={<Login/>}/>
-            <Route path='/storelocation' element={<StoreLocation/>}/>
-            <Route path='/contact' element={<Contact/>}/>
-          </Routes>
-        </BrowserRouter>
+      {location.pathname === "/menu" ? <MenuNav/> : <HomeNav/>}
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/menu' element={<Menu/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/storelocation' element={<StoreLocation/>}/>
+        <Route path='/contact' element={<Contact/>}/>
+      </Routes>
       <Footer/>
     </>
+  )
+}
+
+
+function App(){
+
+  return(
+    <BrowserRouter>
+      <Layout/>
+    </BrowserRouter>
   )
 }
 

@@ -2,57 +2,13 @@ import logo from '../images/kfclogo.png'
 import account from '../images/account.png'
 import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
+import { useState } from 'react'
 
 
-
-//NAVBAR//
-// export function HomeNav () {
-
-//     return (
-//         <>
-//             <div className='fullNav'>
-//                 <div className="NavFooterContainer">
-//                     <div className="nav-top">
-//                         <ul>
-//                             <a href="/"><img className='logo' src={zestylogo} alt="logo image"  /></a>
-//                             <li>
-//                                 <a href="/menu" className='OM'>OUR MENU</a>
-//                                 <a href="/storelocation" className='SL'>STORE LOCATION</a>
-//                                 <a href="/contact" className='CW'>COUPON WALLET</a>
-//                             </li>
-//                         </ul>
-
-//                         <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
-
-//                     </div>
-//                     <div className="nav-bottom">
-//                         <div className='leftSide'>
-//                             <h1><span style={{color:"red"}}>TASTE THE</span> <span style={{color:"gold"}}>FIRE, FEEL</span> <span style={{color:"green"}}>THE RYTHM!!!</span></h1>
-//                             <p>Delivery & Pick up now available!</p>
-//                         </div>
-
-//                         <div className="rightSide">
-//                             <h1>CALL 0507478237 TO ORDER NOW!!!</h1>
-//                             <div className='stripeBox'>
-//                                 <div className='stripe' style={{background:"red"}}/>
-//                                 <div className='stripe'style={{background:"yellow"}}/>
-//                                 <div className='stripe' style={{background:"green"}}/>
-//                             </div>
-                            
-//                         </div>
-
-//                     </div>
-
-//                 </div>
-            
-//             </div>
-            
-//         </>
-//     );
-// }
 
 
 export function HomeNav () {
+    const [Nav,SetNav] = useState("hello");
 
     return (
         <>
@@ -85,29 +41,9 @@ export function HomeNav () {
               
             </nav>
 
-            <div class="mb-5">
-                <nav id="navbar-example2" class="">
-  
-                    <div className=" my-view">
-                        
-                        <a class="" href="#scrollspyHeading1">PROMOTIONS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading2">MEALS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading3">BURGERS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading4">DESSERTS</a>
-                        
-                        
-                        {/* <a class="" href="#scrollspyHeading5">DEALS</a> */}
-                        
-                        
-                    </div>
-                </nav>
-            </div>
+            
+
+
         </div>
         
            
