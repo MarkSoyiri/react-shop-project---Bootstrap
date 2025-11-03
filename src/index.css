@@ -488,7 +488,7 @@ a{
         padding-left: 20px;
         width: 400px;
         outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgb(89, 89, 89);
+        border: 2px solid rgb(172, 172, 172);
         border-radius: 5px;
         margin-top:5px;
         margin-bottom:10px;
@@ -503,7 +503,7 @@ a{
         scrollbar-width: none;
         border-radius: 5px;
         outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgb(89, 89, 89);
+        border: 2px solid rgb(172, 172, 172);
         margin-top:5px;
         margin-bottom:10px;
         padding: 10px;
@@ -777,13 +777,14 @@ a{
 
 /* CONTACT US PAGE */
 .contactContent{
-  height: 100vh;
+  margin-top: 100px;
+  margin-bottom: 100px;
   align-items: center;
   
   .contactForm{
     margin-left: 50px;
     margin-right: 50px;
-    width: 670px;
+    width: auto;
     padding: 10px;
    
     h1{
@@ -791,9 +792,7 @@ a{
     }
     p{
       font-size: 12px;
-    }
-    fieldset{
-
+      margin: 0;
     }
     label{
       font-size: 12px;
