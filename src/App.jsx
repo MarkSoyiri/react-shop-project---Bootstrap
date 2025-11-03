@@ -19,6 +19,30 @@ function Layout(){
   return(
     <>
       {location.pathname === "/menu" ? <MenuNav/> : <HomeNav/>}
+
+      <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">ORDER SUMMARY</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place an order</a>?</p>
+          <div className='ordered-item-box'>
+
+          </div>
+          <div className='checkout-btn'>
+            <input type='text'/>
+            <p>Apply</p>
+
+          </div>
+          <div className='checkout-btn'>
+            <a href="#"><p>Checkout</p></a>
+            <p>GHC 0.00</p>
+
+          </div>
+        </div>
+      </div>
+
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>

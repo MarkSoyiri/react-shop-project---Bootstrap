@@ -47,15 +47,16 @@ transition: 0.3s ease-in-out;
     }
 }
 .bannerContainer{
-  margin-top: 110px;
+  margin-top: 100px;
   height:390.08px ;
   overflow: hidden;
   position: relative;
+  z-index: 10;
 }
 .banner{
   width: 100%;
   position: relative;
-  top: -167px;
+  top: -157px;
     
     
 }   
@@ -531,6 +532,31 @@ a{
 }
 /* END */
 
+/* ORDER SECTION */
+.ordered-item-box{
+  border: 1px solid rgb(188, 188, 188);
+  border-radius: 10px;
+  height: auto;
+  min-height: 450px;
+}
+.checkout-btn{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgb(188, 188, 188);
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 20px;
+  p{
+    color: rgb(188, 188, 188);
+    margin: 0;
+  }
+  a{
+    color: rgb(188, 188, 188);
+    text-decoration: none;
+  }
+}
 
 
 
