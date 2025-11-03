@@ -788,7 +788,8 @@ a{
     padding: 10px;
    
     h1{
-      font-size: 16px;
+      font-size: 15px;
+      margin: 0;
     }
     p{
       font-size: 12px;
