@@ -4,11 +4,11 @@ export function HomeHeadingWL (props) {
     return (
         <>
             <div className="heading">
-                <div className="PageContainer">
+                <div className="container-lg">
                     <div className="horizontalHeading">
-                        {/* <hr /> */}
+                        
                         <h1 className={props.className}>{props.heading}</h1>
-                        {/* <hr /> */}
+                        
                     </div>
                 </div>
 

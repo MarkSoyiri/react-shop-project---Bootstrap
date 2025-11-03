@@ -45,16 +45,6 @@ function Menu() {
 
                 </h4>
 
-                {/* <h4 id="scrollspyHeading5" class="scroll-view-repost">
-                   
-
-                    <HomeHeadingNL heading="DEALS" />
-                    <div className="PageContainer">
-                        <Card />
-                    </div>
-
-                </h4> */}
-
 
             </div>
 

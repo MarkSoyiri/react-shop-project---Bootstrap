@@ -72,7 +72,7 @@ export function Card () {
                     <div className='' key={food.id}>
 
                         <div className="card">
-                            <img src={food.pic} alt="" />
+                            <img  src={food.pic} alt="" />
                             <h3>{food.name}</h3>
                             <p>{food.price}</p>
                             <button>Order</button>
