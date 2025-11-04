@@ -238,7 +238,7 @@ body{
     display: flex;
     justify-content: space-between;
     /* overflow: -moz-hidden-unscrollable; */
-    column-gap: 10px;
+    column-gap: 20px;
     overflow-x: scroll;
     scrollbar-width: none;
     padding: 5px;
