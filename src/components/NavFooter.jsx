@@ -95,9 +95,9 @@ export function Footer () {
             <div className="footer">
                 <div className="NavFooterContainer">
                     <div className="footerTop">
-                        <div className="linkBox">
+                        {/* <div className="linkBox">
                             <a href="/"><img className='footerLogo' src={zestylogo} alt="logo" /></a>
-                        </div>
+                        </div> */}
                         <div className="linkBox">
                             <ul>Zesty
                                 <li><a href="/menu">Our Menu</a></li>
