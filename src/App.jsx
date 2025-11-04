@@ -26,12 +26,12 @@ function Layout(){
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place an order</a>?</p>
+          <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place order</a>?</p>
           <div className='ordered-item-box'>
 
           </div>
-          <div className='checkout-btn'>
-            <input type='text'/>
+          <div className='coupon-btn'>
+            <input type='text' placeholder='Type coupon code here'/>
             <p>Apply</p>
 
           </div>

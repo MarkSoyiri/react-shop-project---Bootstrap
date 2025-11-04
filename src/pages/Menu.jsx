@@ -15,7 +15,7 @@ function Menu() {
                 <h4 id="scrollspyHeading1" class="scroll-view-repost" >
 
                     <HomeHeadingNL heading="PROMOTIONS" />
-                    <div className="PageContainer">
+                    <div className="container-lg menu-container">
                         <Card />
                     </div>
 
@@ -23,7 +23,7 @@ function Menu() {
                 <h4 id="scrollspyHeading2" class="scroll-view-repost">
 
                     <HomeHeadingNL heading="MEALS" />
-                    <div className="PageContainer">
+                    <div className="container-lg menu-container">
                         <Card />
 
                     </div>
@@ -31,7 +31,7 @@ function Menu() {
                 <h4 id="scrollspyHeading3" class="scroll-view-repost">
 
                     <HomeHeadingNL heading="BURGERS" />
-                    <div className="PageContainer">
+                    <div className="container-lg menu-container">
                         <Card />
                     </div>
 
@@ -39,7 +39,7 @@ function Menu() {
                 <h4 id="scrollspyHeading4" class="scroll-view-repost">
 
                     <HomeHeadingNL heading="DESSERTS" />
-                    <div className="PageContainer">
+                    <div className="container-lg menu-container">
                         <Card />
                     </div>
 

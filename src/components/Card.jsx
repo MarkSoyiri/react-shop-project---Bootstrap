@@ -67,7 +67,7 @@ export function Card () {
 
     return(
         <>
-            <div className="foodBox">
+            
                 {Foods.map((food)=>(
                     <div className='' key={food.id}>
 
@@ -80,7 +80,7 @@ export function Card () {
 
                     </div>
                 ))}
-            </div>
+            
             
         </>
     );

@@ -17,7 +17,9 @@ function Home () {
 
                 <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
                 <div class="container-lg">
+                    <div className="foodBox">
                     <Card/>
+                    </div>
                 </div>
                 
                 <HomeHeadingWL heading="EXPLORE OUR MENU"/>
