@@ -114,7 +114,7 @@ transition: 0.3s ease-in-out;
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: 2px solid rgb(106, 105, 105);
+  border: 1px solid rgba(106, 105, 105, 0.489);
   padding: 5px;
   margin: 2px;
   }
@@ -182,7 +182,8 @@ body{
 
 /* CARD STYLING */
 .card{
-    box-shadow: 1px 1px 4px 1.5px rgba(129, 129, 129, 0.367);
+    box-shadow: 1px 1px 4px 1.5px rgba(152, 152, 152, 0.338);
+    border: none;
     background-color: white;
     border-radius: 5px;
     height: 320px;
@@ -692,10 +693,11 @@ a{
 
   .miniCard{
     height: 180px;
-    width: 210px;
+    width: 185px;
     h3{
         font-size: 13px;
     }
+    
 }
 
 /* FOOTER */
@@ -724,15 +726,15 @@ a{
 .socialsLink{
   justify-content: center;
   .sImage{
-  width: 7px;
-  height: 7px;
+  width: 25px;
+  height: 25px;
   }
 }
 /* BANNER */
 }
 .bannerContainer{
   margin-top: 60px;
-  height:200.08px ;
+  height:140.0px ;
   overflow: hidden;
   position: relative;
 }
@@ -772,64 +774,25 @@ a{
   
   margin-top: 10px;
   .formArrange{
-    
     row-gap: 18px;
-    align-items: center;
-    box-shadow: 1px 2px 6px 1px rgba(129, 129, 129, 0.367);
-    width: auto;
     min-width: 200px;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: white;
     h1{
-      text-align: center;
-        font-size: 16px;
+      font-size: 16px;
       }
     fieldset{
-      display: flex;
-      flex-direction: column;
-      border: none;
-      label{
-        font-weight: 500;
-      }
+      
       input{
-        padding:10px;
-        padding-left: 20px;
         width: auto;
         min-width: 200px;
-        outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgb(89, 89, 89);
-        border-radius: 5px;
         margin-top:5px;
         margin-bottom:5px;
       }
       p{
-        font-weight: 500;
         font-size: 13px;
         margin-bottom: 15px;
-        text-align: center;
-        span{
-          color: red;
-        }
       }
       button{
-        width: 200px;
-        justify-self: center;
-        align-self: center;
-        padding: 10px;
-        border-radius: 25px;
-        border: 1px solid grey;
-        font-weight: 500;
-        font-size: 15px;
-        margin-bottom: 10px;
-        background-color: red;
-        color: white;
-      }
-      button:hover{
-        background-color: rgb(200, 1, 1);
-      }
-      button:active{
-        background-color: rgb(255, 16, 16);
+        width: 170px;
       }
     }
   }
@@ -879,4 +842,4 @@ a{
   }
 }
 /* END */
-}
+
