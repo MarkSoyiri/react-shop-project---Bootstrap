@@ -279,8 +279,9 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 200px;
-  padding-bottom: 100px;
+  /* padding-top: 200px; */
+  /* padding-bottom: 100px; */
+  height: 100vh;
   .formArrange{
     display: flex;
     flex-direction: column;
@@ -447,7 +448,9 @@ a{
     flex-direction: column;
     row-gap: 20px;
     h1{
-      font-size: 27px
+      font-size: 27px;
+      border-bottom: 3px solid rgba(39, 38, 38, 0.627);
+      padding-bottom: 10px;
     }
     h2{
       font-size: 23px;
@@ -734,7 +737,7 @@ a{
 }
 .bannerContainer{
   margin-top: 60px;
-  height:140.0px ;
+  height:160.0px ;
   overflow: hidden;
   position: relative;
 }
@@ -757,14 +760,15 @@ a{
     justify-content: center;
     row-gap: 15px;
     h1{
-      font-size: 22px
+      font-size: 20px;
+      
     }
     h2{
-      font-size: 18px;
+      font-size: 16px;
       color:rgb(69, 69, 69)
     }
     p{
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 }
@@ -842,4 +846,3 @@ a{
   }
 }
 /* END */
-

@@ -8,7 +8,7 @@ function About (){
             <div className="about">
                 <div className="container-lg">
                     <div className="aboutContent">
-                        <h1>Welcome to ZESTY CAVE </h1>
+                        <h1>WELCOME TO ZESTY CAVE </h1>
                         <h2>Ghana’s ultimate destination for bold flavors, quick bites, and a touch of local flair!</h2>
 
                         <p>
