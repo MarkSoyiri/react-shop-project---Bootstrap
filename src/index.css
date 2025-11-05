@@ -449,8 +449,8 @@ a{
     row-gap: 20px;
     h1{
       font-size: 27px;
-      border-bottom: 3px solid rgba(39, 38, 38, 0.627);
-      padding-bottom: 10px;
+      border-bottom: 2px solid rgb(10, 10, 10);
+      padding-bottom: 5px;
     }
     h2{
       font-size: 23px;
