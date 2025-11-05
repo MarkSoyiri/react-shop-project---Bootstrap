@@ -8,7 +8,7 @@
   height: 100%;
 }
 body{
-  
+  position: relative;
 }
 
 
@@ -279,7 +279,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding-top: 200px; */
+  padding-top: 120px;
   /* padding-bottom: 100px; */
   height: 100vh;
   .formArrange{
@@ -308,7 +308,7 @@ body{
       input{
         padding:10px;
         padding-left: 20px;
-        width: 300px;
+        width: auto;
         outline: 3px rgb(76, 75, 75);
         border: 2px solid rgb(89, 89, 89);
         border-radius: 5px;
@@ -449,8 +449,9 @@ a{
     row-gap: 20px;
     h1{
       font-size: 27px;
-      border-bottom: 2px solid rgb(10, 10, 10);
+      border-bottom: 3px solid rgb(10, 10, 10);
       padding-bottom: 5px;
+      width: fit-content;
     }
     h2{
       font-size: 23px;
@@ -499,8 +500,8 @@ a{
         padding:10px;
         padding-left: 20px;
         width: 400px;
-        outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgb(172, 172, 172);
+        outline: none;
+        border: 2px solid rgba(199, 199, 199, 0.548);
         border-radius: 5px;
         margin-top:5px;
         margin-bottom:10px;
@@ -515,7 +516,7 @@ a{
         scrollbar-width: none;
         border-radius: 5px;
         outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgb(172, 172, 172);
+        border: 2px solid rgba(199, 199, 199, 0.548);
         margin-top:5px;
         margin-bottom:10px;
         padding: 10px;
@@ -846,3 +847,47 @@ a{
   }
 }
 /* END */
+
+/* ORDER SECTION */
+.ordered-item-box{
+  
+}
+.checkout-btn{
+
+  padding: 10px;
+  font-size: 17px;
+  p{
+    color: rgb(188, 188, 188);
+    margin: 0;
+    font-size: 12px;
+  }
+  a{
+    color: rgb(188, 188, 188);
+    text-decoration: none;
+  }
+}
+.coupon-btn{
+ 
+  margin-top: 5px;
+  padding: 5px;
+  /* font-size: 17px; */
+  input{
+    width: 60%;
+  }
+  input::placeholder{
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+  }
+  p{
+    color: rgb(188, 188, 188);
+    margin: 0;
+    font-size: 12px;
+  }
+  a{
+    color: rgb(188, 188, 188);
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+}
+}
