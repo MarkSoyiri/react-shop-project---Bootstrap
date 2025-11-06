@@ -776,7 +776,7 @@ a{
 /* END */
 /* LOGIN PAGE */
 .LoginBox{
-  
+  padding-top: 60px;
   margin-top: 10px;
   .formArrange{
     row-gap: 18px;
