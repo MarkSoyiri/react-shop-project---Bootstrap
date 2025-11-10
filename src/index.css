@@ -863,7 +863,7 @@ a{
   p{
     color: rgb(188, 188, 188);
     margin: 0;
-    font-size: 19px;
+    font-size: 18px;
   }
   a{
     color: rgb(188, 188, 188);
@@ -880,7 +880,7 @@ a{
   }
   input::placeholder{
     color: rgb(200, 200, 200);
-    font-size: 12px;
+    font-size: 14px;
   }
   p{
     color: rgb(188, 188, 188);
