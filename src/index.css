@@ -352,17 +352,15 @@ body{
 }
 
 /* STORE LOCATION */
-.mapNdirection{
-  padding-top: 50px;
-  padding-bottom: 50px;
-  display: flex;
-  border: 1px solid red;
+
   .direction{
     display: flex;
     flex-direction: column;
     row-gap: 10px;
     overflow-y: hidden;
     width: fit-content;
+    align-items: center;
+    justify-content: center;
     padding: 5px;
     .findBranch{
       font-size: 20px;
@@ -381,7 +379,7 @@ body{
       font-weight: 600;
     }
   }
-}
+
 .directionRow{
       display: flex;
       justify-content: space-evenly;
