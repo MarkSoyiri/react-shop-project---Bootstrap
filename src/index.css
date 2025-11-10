@@ -907,26 +907,26 @@ a{
     height: 20px;
   }
   h1{
-    font-size: 17px;
+    font-size: 19px;
   }
   h3{
-    font-size: 13px;  
+    font-size: 15px;  
   }
 }
 h2{
-  font-size: 13px;
+  font-size: 15px;
 }
 p{
-  font-size: 12px;
+  font-size: 14px;
 }
 .BMbutton{
-  padding: 5px;
-  font-size: 14px;
+  padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
+  color: black;
 }
 a{
-  font-size: 12px;
+  font-size: 1px;
 }
 }
 }
