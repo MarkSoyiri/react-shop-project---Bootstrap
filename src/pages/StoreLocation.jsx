@@ -14,27 +14,26 @@ function StoreLocation (){
 
     return(
         <>
-            <div className="mapNdirection topMargin-150">
-                    <div className="MapContainer">
+            
+                    <div className="container-lg height-centered">
                     
                         <div className="direction">
-                            <h1 className='findBranch'>FIND YOUR NEAREST BRANCH. </h1>
-                            <input type="address" className='addressInput' placeholder='type your address'/>
+                            <h1 className='findBranch'>OUR STORE LOCATION </h1>
                             <DirectionCard />
                         </div>
-                        <APIProvider>
+                        {/* <APIProvider>
                         <div className="map">
 
                         </div>
-                        </APIProvider>
+                        </APIProvider> */}
                     </div>
-            </div>
+            
 
-            <div className="PageContainer">
+            {/* <div className="PageContainer">
                 <div className="directionRow">
                     <DirectionCard />
                 </div>
-            </div>
+            </div> */}
         </>
     );
 }

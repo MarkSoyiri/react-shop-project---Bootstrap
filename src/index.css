@@ -34,7 +34,7 @@ transition: 0.3s ease-in-out;
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    box-shadow: 1px 1px 2px 3px rgba(64, 63, 63, 0.17);
+    box-shadow: 1px 1px 2px 2px rgba(27, 27, 27, 0.075);
     background-color: white;
     padding: 15px;
     font-size: 20px;
@@ -403,6 +403,10 @@ body{
   display: flex;
   column-gap: 10px;
   align-items: center;
+
+  h1,h3,h2,p{
+    margin: 0;
+  }
   img{
     width: 25px;
     height: 25px;
@@ -410,6 +414,7 @@ body{
   h1{
     font-size: 20px;
     font-weight: 600;
+    
   }
   h3{
     font-size: 16px;
@@ -501,7 +506,7 @@ a{
         padding-left: 10px;
         width: 400px;
         outline: none;
-        border: 2px solid rgba(199, 199, 199, 0.548);
+        border: 2px solid rgb(0, 0, 0);
         border-radius: 5px;
         margin-top:5px;
         margin-bottom:10px;
@@ -516,7 +521,7 @@ a{
         scrollbar-width: none;
         border-radius: 5px;
         outline: 3px rgb(76, 75, 75);
-        border: 2px solid rgba(199, 199, 199, 0.548);
+        border: 2px solid rgb(0, 0, 0);
         margin-top:5px;
         margin-bottom:10px;
         padding: 10px;
@@ -601,6 +606,14 @@ a{
   }
 
 }
+.height-centered{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 
 
 
@@ -674,16 +687,8 @@ a{
 }
 /* MENU NAV */
   .my-view{
-    display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-    box-shadow: 1px 1px 2px 3px rgba(64, 63, 63, 0.17);
-    background-color: white;
-    padding: 15px;
+    padding: 10px;
     font-size: 13px;
-    font-weight: 600;
-    
-    z-index: 11;
     a{
       font-size: 13px;
         text-decoration: none;
@@ -890,5 +895,40 @@ a{
     font-size: 12px;
   }
 
+}
+
+.directionCard{
+  
+  width: 300px;
+  padding: 10px;
+.locationRow{
+  column-gap: 5px;
+  
+  img{
+    width: 20px;
+    height: 20px;
+  }
+  h1{
+    font-size: 17px;
+  }
+  h3{
+    font-size: 13px;  
+  }
+}
+h2{
+  font-size: 13px;
+}
+p{
+  font-size: 12px;
+}
+.BMbutton{
+  padding: 5px;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+a{
+  font-size: 12px;
+}
 }
 }
