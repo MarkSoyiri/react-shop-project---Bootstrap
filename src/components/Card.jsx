@@ -23,19 +23,19 @@ export function Card () {
         },
         {
             pic:wings,
-            name:"HONEY DUNKED WINGS",
+            name:"HONEY WINGS",
             price:"GH₵87.00",
             id:2
         },
         {
             pic:meal,
-            name:"HONEY DUNKED TWISTERS MEAL",
+            name:"HONEY DUNKED TWISTERS ",
             price:"GH₵102.00",
             id:3
         },
         {
             pic:twister,
-            name:"HONEY DUNKED TWISTER",
+            name:"HONEY  TWISTER",
             price:"GH₵61.00",
             id:4
         },
@@ -47,19 +47,19 @@ export function Card () {
         },
         {
             pic:wings,
-            name:"HONEY DUNKED WINGS",
+            name:"HONEY  WINGS",
             price:"GH₵87.00",
             id:2
         },
         {
             pic:meal,
-            name:"HONEY DUNKED TWISTERS MEAL",
+            name:"HONEY DUNKED TWISTERS ",
             price:"GH₵102.00",
             id:3
         },
         {
             pic:twister,
-            name:"HONEY DUNKED TWISTER",
+            name:"HONEY  TWISTER",
             price:"GH₵61.00",
             id:4
         }

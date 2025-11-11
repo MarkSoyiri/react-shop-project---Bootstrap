@@ -159,7 +159,6 @@ body{
   flex-wrap: wrap;
   justify-content: space-evenly;
   row-gap: 30px;
-  column-gap: 5px;
 }
 .horizontalHeading{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -677,16 +676,16 @@ a{
 
 /* CARD */
   .card{
-    height: 190px;
-    width: 160px;
+    height: 200px;
+    width: 180px;
     
     h3{
         font-size: 10px;
-        /* overflow-inline: auto; */
+        overflow-inline: auto;
     }
     P{
         margin-top: 10px;
-        margin-bottom: 13px;
+        /* margin-bottom: 13px; */
         font-size: 11px;
     }
     button{
@@ -695,6 +694,7 @@ a{
         border-radius: 30px;
         width: 45px;
         margin: 0px;
+        position: sticky;
     }
     
 }
@@ -946,3 +946,13 @@ a{
 }
 }
 } 
+
+
+
+@media screen and (max-width:430px){
+  .card{
+    height:190px;
+    width: 154px;
+  }
+    
+}
