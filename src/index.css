@@ -317,7 +317,7 @@ body{
       }
       p{
         font-weight: 500;
-        margin-bottom: 30px;
+        /* margin-bottom: 30px; */
         text-align: center;
         span{
           color: red;
@@ -610,7 +610,9 @@ a{
   justify-content: center;
   align-items: center;
 }
-
+.errorMsg{
+  margin: 0;
+}
 
 
 
@@ -930,4 +932,4 @@ a{
   font-size: 14px;
 }
 }
-}
+} 
