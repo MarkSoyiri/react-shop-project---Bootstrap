@@ -159,6 +159,7 @@ body{
   flex-wrap: wrap;
   justify-content: space-evenly;
   row-gap: 30px;
+  column-gap: 5px;
 }
 .horizontalHeading{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -677,11 +678,11 @@ a{
 /* CARD */
   .card{
     height: 190px;
-    width: 165px;
+    width: 160px;
     
     h3{
         font-size: 10px;
-        overflow-inline: auto;
+        /* overflow-inline: auto; */
     }
     P{
         margin-top: 10px;
