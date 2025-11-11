@@ -317,11 +317,15 @@ body{
       }
       p{
         font-weight: 500;
-        /* margin-bottom: 30px; */
+        margin-bottom: 30px;
         text-align: center;
         span{
           color: red;
         }
+      }
+      .errorMsg{
+        margin: 0;
+        color: red;
       }
       button{
         width: 200px;
@@ -551,7 +555,7 @@ a{
 .ordered-item-box{
   border: 1px solid rgba(202, 202, 202, 0.612);
   border-radius: 10px;
-  height: auto;
+  height: 100vh;
   min-height: 450px;
 }
 .checkout-btn{
@@ -610,9 +614,7 @@ a{
   justify-content: center;
   align-items: center;
 }
-.errorMsg{
-  margin: 0;
-}
+
 
 
 
@@ -799,7 +801,7 @@ a{
         margin-bottom:5px;
       }
       p{
-        font-size: 13px;
+        font-size: 12px;
         margin-bottom: 15px;
       }
       button{

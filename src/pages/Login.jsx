@@ -15,10 +15,12 @@ function Login () {
         if(Email == ""){
 
             SetEmailError("Invalid Email");
-            if(Password == ""){
+            
+        }
+
+        if(Password == ""){
 
             SetPasswordError("Invalid Password");
-        }
         }
 
         
