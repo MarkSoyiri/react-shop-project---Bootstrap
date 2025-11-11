@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,createContext } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -13,8 +13,11 @@ import MenuNav from './components/MenuNav'
 import { useLocation } from 'react-router-dom'
 
 
+
 function Layout(){
   const location = useLocation();
+  
+
 
   return(
     <>
@@ -57,13 +60,22 @@ function Layout(){
   )
 }
 
+export const ThemeContext = createContext();
 
 function App(){
 
+  const [Theme,SetTheme] = useState("Light");
+  function toggleTheme(){
+    const updated = Theme == "Light" ? SetTheme("Dark") : SetTheme("Light");
+  }
   return(
+    <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
+    <ThemeContext.Provider value={{Theme,toggleTheme}}>
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
+    </ThemeContext.Provider>
+    </div>
   )
 }
 

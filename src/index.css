@@ -29,6 +29,16 @@ transition: 0.3s ease-in-out;
   ul{
     font-size: 20px;
   }
+  .navbar-text{
+    display: flex;
+    column-gap: 10px;
+    .theme-btn{
+      padding: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 5px;
+    }
+  }
 }
 .my-view{
     display: flex;

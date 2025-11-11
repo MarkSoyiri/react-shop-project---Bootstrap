@@ -2,13 +2,15 @@ import logo from '../images/kfclogo.png'
 import account from '../images/account.png'
 import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
-import { useState } from 'react'
+import { useState,useContext } from 'react'
+import { ThemeContext } from '../App'
 
 
 
 
 export function HomeNav () {
-    const [Nav,SetNav] = useState("hello");
+    
+    const {Theme,toggleTheme} = useContext(ThemeContext)
 
     return (
         <>
@@ -36,7 +38,8 @@ export function HomeNav () {
                     </li>
                     </ul>
                     <span class="navbar-text">
-                    <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
+                        {/* <button onClick={toggleTheme} className='theme-btn'>{Theme}</button> */}
+                        <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
 
                     </span>
                 </div>
