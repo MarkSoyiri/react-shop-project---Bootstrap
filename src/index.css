@@ -277,7 +277,7 @@ body{
 }
 .MenuBox{
     display: flex;
-    justify-content: start;
+    justify-content: center;
     column-gap: 10px;
     flex-wrap: wrap;
     padding: 5px;
@@ -949,7 +949,7 @@ a{
 
 
 
-@media screen and (max-width:430px){
+@media screen and (max-width:409px){
   .card{
     height:190px;
     width: 154px;
