@@ -110,7 +110,7 @@ export function Footer () {
                         </div>
                         <div className="linkBox">
                             <ul>Contact Zesty 
-                                <li><a href="">Contact Us</a></li>
+                                <li><a href="/contact">Contact Us</a></li>
                                 
                                 
                             </ul>
@@ -123,7 +123,7 @@ export function Footer () {
                         </div>
                         <div className="linkBox">
                             <ul>Store Locations
-                                <li><a href="">Find a Zesty</a></li>
+                                <li><a href="/storelocation">Find a Zesty</a></li>
                                 
                             </ul>
                         </div>
