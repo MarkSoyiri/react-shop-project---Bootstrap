@@ -12,7 +12,26 @@ import Contact from './pages/Contact'
 import MenuNav from './components/MenuNav'
 import { useLocation } from 'react-router-dom'
 
+export function LoadingScreen(){
 
+  const loadingWrapper = document.getElementById('loadSpinner')
+  window.addEventListener('load',()=>{
+    setTimeout(() => {
+      
+      loadingWrapper.style.opacity = "0";
+    }, 1000);
+  })
+  return(
+    <>
+      <div className='loadingWrapper' id='loadSpinner'>
+       <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>    
+    </div>
+    </>
+    
+  )
+}
 
 function Layout(){
   const location = useLocation();
@@ -48,6 +67,8 @@ function Layout(){
       </div>
       {/* END */}
 
+     
+      {/* <LoadingScreen/> */}
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>

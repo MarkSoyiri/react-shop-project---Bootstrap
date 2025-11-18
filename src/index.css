@@ -285,19 +285,97 @@ body{
 /* END */
 
 /* LOGIN PAGE */
-.LoginBox{
+.registry{
+  /* border: 1px solid red; */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 120px;
+  /* padding-top: 120px; */
+  margin-top: 150px;
+  .loginBox{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 1px 2px 6px 1px rgba(129, 129, 129, 0.367);
+    border-radius: 10px;
+    padding: 10px;
+    height: auto;
+    width: 400px;
+    h1{
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    fieldset{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 5px;
+      label{
+        font-weight: 500;
+      }
+      input{
+        padding-left: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid rgb(48, 48, 48);
+        width: 350px;
+      }
+      .errorMsg{
+        margin: 0px;
+        color: red;
+        text-align: center;
+      }
+      .TnC{
+        margin-top: 10px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .log-switch{
+        text-align: center;
+        span{
+          color: rgba(0, 94, 255, 0.984);
+          cursor: pointer;
+        }
+      }
+      .send-btn{
+        width: 200px;
+        justify-self: center;
+        align-self: center;
+        padding: 10px;
+        border-radius: 25px;
+        border: 1px solid grey;
+        font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 5px;
+        background-color: red;
+        color: white;
+      }
+      .send-btn:hover{
+        background-color: rgb(200, 1, 1);
+      }
+      .send-btn:active{
+        background-color: rgb(255, 16, 16);
+      }
+    }
+  }
+}
+
+.RegisterBox{
+  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   /* padding-bottom: 100px; */
-  height: 100vh;
+  height: auto;
   .formArrange{
     display: flex;
     flex-direction: column;
     justify-content: center;
     row-gap: 10px;
     align-items: center;
+    
     box-shadow: 1px 2px 6px 1px rgba(129, 129, 129, 0.367);
     width: auto;
     min-width: 400px;
@@ -333,10 +411,7 @@ body{
           color: red;
         }
       }
-      .errorMsg{
-        margin: 0;
-        color: red;
-      }
+      
       button{
         width: 200px;
         justify-self: center;
@@ -360,6 +435,8 @@ body{
   }
 }
 /* END */
+
+
 
 .scroll-view-repost{
   padding-top: 200px;
@@ -624,9 +701,20 @@ a{
   justify-content: center;
   align-items: center;
 }
-
-
-
+.loadingWrapper{
+  position: fixed;
+  top: 0;
+  background-color: rgba(77, 76, 76, 0.178);
+  z-index: 99;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.op{
+  opacity:0 ;
+}
 
 
 
@@ -792,31 +880,46 @@ a{
   }
 }
 /* END */
+
 /* LOGIN PAGE */
-.LoginBox{
-  padding-top: 0px;
-  margin-top: 10px;
+.registry{
   
-  .formArrange{
-    row-gap: 18px;
-    min-width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+  padding-bottom: 120px;
+  margin-top: 170px;
+  height: 100%;
+  .loginBox{
+    padding: 5px;
+    width: 300px;
     h1{
-      font-size: 16px;
-      }
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
     fieldset{
+      row-gap: 3px;
       
       input{
-        width: auto;
-        min-width: 200px;
-        margin-top:5px;
-        margin-bottom:5px;
+        padding-left: 15px;
+        padding: 5px;
+        width: 270px;
       }
-      p{
+      
+      .TnC{
+        margin-top: 0px;
+        font-size: 10px;
+      }
+      .log-switch{
+        font-size: 13px;
+      }
+      .send-btn{
+        width: 100px;
+        padding: 7px;
         font-size: 12px;
-        margin-bottom: 15px;
-      }
-      button{
-        width: 170px;
+        margin-bottom: 0px;
+        
       }
     }
   }
