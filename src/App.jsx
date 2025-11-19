@@ -9,6 +9,7 @@ import Menu from './pages/Menu'
 import Login from './pages/Login'
 import StoreLocation from './pages/StoreLocation'
 import Contact from './pages/Contact'
+import UserProfile from './pages/Account'
 import MenuNav from './components/MenuNav'
 import { useLocation } from 'react-router-dom'
 
@@ -75,6 +76,7 @@ function Layout(){
         <Route path='/login' element={<Login/>}/>
         <Route path='/storelocation' element={<StoreLocation/>}/>
         <Route path='/contact' element={<Contact/>}/>
+        <Route path='/userprofile' element={<UserProfile/>}/>
       </Routes>
       <Footer/>
     </>
