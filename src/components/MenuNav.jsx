@@ -30,6 +30,9 @@ function MenuNav () {
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/userprofile">User Profile</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
                     </li>
                     </ul>
