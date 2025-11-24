@@ -65,7 +65,7 @@ function Login () {
          }
        } catch (error) {
 
-        console.error(error.message.data)
+        console.error(error.response.data)
         
        }
 
