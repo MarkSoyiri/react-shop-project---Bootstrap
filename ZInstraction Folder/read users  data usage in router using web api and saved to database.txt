@@ -1,0 +1,367 @@
+To **read users' data usage from a router using a web API and save it to a database**, you'll generally need to:
+
+1. **Access the router's web API** (if available).
+2. **Parse the response to extract data usage info**.
+3. **Store that data in a database** (e.g., MySQL, PostgreSQL, SQLite).
+
+---
+
+### 🔧 General Setup
+
+#### 🔹 Assumptions:
+
+* The router supports a web API (e.g., REST, SOAP).
+* You have credentials (username/password).
+* You're storing data into a SQL database.
+
+---
+
+### ✅ Example Workflow in Python
+
+#### 1. **Read usage from router API**
+
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+
+# Replace with your router’s actual API endpoint and credentials
+router_ip = "192.168.1.1"
+api_endpoint = f"http://{router_ip}/api/usage"
+username = "admin"
+password = "password"
+
+response = requests.get(api_endpoint, auth=HTTPBasicAuth(username, password))
+
+if response.status_code == 200:
+    data_usage = response.json()  # or response.text if it's XML
+    print("Data Usage:", data_usage)
+else:
+    print("Failed to connect:", response.status_code)
+```
+
+#### 2. **Save to Database**
+
+```python
+import sqlite3
+from datetime import datetime
+
+# Connect to SQLite database (or create it)
+conn = sqlite3.connect("router_usage.db")
+cursor = conn.cursor()
+
+# Create table (run once)
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS usage_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user TEXT,
+        data_used_mb REAL,
+        timestamp DATETIME
+    )
+''')
+
+# Assume your API response looks like this:
+# [{"user": "Device1", "data_used_mb": 150.5}, {"user": "Device2", "data_used_mb": 230.7}]
+
+for entry in data_usage:
+    cursor.execute('''
+        INSERT INTO usage_log (user, data_used_mb, timestamp)
+        VALUES (?, ?, ?)
+    ''', (entry["user"], entry["data_used_mb"], datetime.now()))
+
+conn.commit()
+conn.close()
+```
+
+---
+
+### 🧪 Tips
+
+* Use `cron` (Linux) or Task Scheduler (Windows) to automate the script.
+* If the router uses XML, use `xml.etree.ElementTree` instead of `.json()`.
+* Routers like **Mikrotik, OpenWRT, or TP-Link** may have different API structures.
+
+---
+
+### ❓Need Help With a Specific Router?
+
+Let me know:
+
+* Router model (e.g., Mikrotik hAP AC, TP-Link Archer A7)
+* API format (REST, SOAP, etc.)
+* Sample response format (JSON or XML)
+
+And I can tailor the code exactly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thanks! You're using routers from **TP-Link**, **D-Link**, and **Huawei**, all of which support web interfaces (and sometimes APIs), and you'd like to:
+
+✅ Access their **web APIs** to read **user/device data usage**
+✅ Use **username/password authentication**
+✅ Save the data to a **SQLite** database
+
+---
+
+### 🧠 Important Considerations
+
+Each router brand typically has **its own API format and authentication method**, so you **can’t use the same script for all three** without customization.
+
+I'll start with an example for **TP-Link routers**, then show how you can adapt it for **D-Link** and **Huawei** (with some caveats).
+
+---
+
+## ✅ Example: TP-Link Router (using Tether-like REST API)
+
+> Note: TP-Link doesn’t provide a full public API for most routers, but some models (especially Archer series) expose JSON data via the local web interface after login.
+
+### ⚙️ Step-by-Step Script
+
+```python
+import requests
+import sqlite3
+from datetime import datetime
+
+# --- CONFIGURATION ---
+router_ip = "http://192.168.0.1"  # Replace with your actual router IP
+username = "admin"
+password = "admin_password"
+
+# --- Authenticate and get session token (depends on router firmware) ---
+# For many TP-Link routers, you can simulate a login to get a cookie/session
+login_url = f"{router_ip}/login"  # This varies; placeholder
+
+session = requests.Session()
+login_payload = {
+    "username": username,
+    "password": password
+}
+response = session.post(login_url, json=login_payload)
+
+if response.status_code != 200:
+    print("Login failed:", response.status_code)
+    exit()
+
+# --- Fetch user/device usage data ---
+usage_url = f"{router_ip}/api/usage"  # This URL will vary by model
+data_response = session.get(usage_url)
+
+if data_response.status_code != 200:
+    print("Failed to fetch data usage")
+    exit()
+
+usage_data = data_response.json()  # Assumes JSON response
+
+# --- Example data expected ---
+# [
+#   {"device": "Phone1", "ip": "192.168.0.101", "mac": "AA:BB:CC:DD", "data_used_mb": 120.5},
+#   {"device": "Laptop", "ip": "192.168.0.105", "mac": "FF:EE:DD:CC", "data_used_mb": 500.2}
+# ]
+
+# --- Save to SQLite ---
+conn = sqlite3.connect("router_usage.db")
+cursor = conn.cursor()
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS usage_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        device TEXT,
+        ip TEXT,
+        mac TEXT,
+        data_used_mb REAL,
+        timestamp DATETIME
+    )
+''')
+
+for entry in usage_data:
+    cursor.execute('''
+        INSERT INTO usage_log (device, ip, mac, data_used_mb, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (
+        entry.get("device"),
+        entry.get("ip"),
+        entry.get("mac"),
+        entry.get("data_used_mb"),
+        datetime.now()
+    ))
+
+conn.commit()
+conn.close()
+
+print("✅ Data saved to router_usage.db")
+```
+
+---
+
+## 🔄 D-Link & Huawei Routers
+
+These require different login endpoints and possibly **token-based auth** or session cookies.
+
+To support them:
+
+* Run a packet sniffer like **Wireshark** or inspect your browser using **Developer Tools** (F12 → Network tab) while logging in to the web interface.
+* Capture:
+
+  * Login URL
+  * Auth method (Basic Auth, token, etc.)
+  * URL where device usage data is fetched (JSON/XML?)
+
+---
+
+## 🧪 What You Can Do Next:
+
+1. **Pick one router first** (TP-Link, D-Link, or Huawei).
+2. **Log in via browser**, inspect the login and data fetch requests using Developer Tools.
+3. **Send me:**
+
+   * Login URL
+   * Data usage API URL
+   * Example response (JSON preferred)
+
+Then I’ll give you a **tailored working script** for that specific router.
+
+Would you like help with capturing the API calls using Chrome/Edge browser tools?
+
+
+
+
+
+
+
+
+To **block users' data usage on a router** using a **Web API** and **save the data to a database**, you'll need to:
+
+1. **Access router controls via API** (depends on router support).
+2. **Detect or log user data usage** (usually per IP or MAC).
+3. **Block specific users based on policy**.
+4. **Store blocked users and data usage in a database**.
+
+---
+
+### ✅ Components Needed
+
+1. **Router with API support** (or use SNMP/SSH for data access).
+2. **Backend Web API** (e.g. in Python/Node.js).
+3. **Database** (MySQL, PostgreSQL, MongoDB).
+4. **Network control mechanism** (via router or firewall rules).
+
+---
+
+### 🧩 Example Stack
+
+* **Router**: MikroTik, OpenWRT, or Ubiquiti (they have APIs).
+* **API**: Python Flask REST API.
+* **DB**: PostgreSQL or SQLite.
+* **Blocking Method**: Router API to disable MAC/IP access.
+
+---
+
+### 🔧 Basic Workflow
+
+#### 1. Monitor Users & Usage
+
+You can poll the router via its API or SNMP for connected devices and usage statistics.
+
+#### 2. Web API Example (Flask)
+
+```python
+from flask import Flask, request, jsonify
+import sqlite3
+
+app = Flask(__name__)
+
+# Connect to DB
+def get_db():
+    conn = sqlite3.connect('users.db')
+    return conn
+
+# Block User API
+@app.route('/block_user', methods=['POST'])
+def block_user():
+    data = request.json
+    mac = data.get('mac_address')
+    reason = data.get('reason', 'Usage limit exceeded')
+
+    # Call router API to block user
+    block_user_on_router(mac)
+
+    # Save to DB
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO blocked_users (mac_address, reason) VALUES (?, ?)", (mac, reason))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "blocked", "mac": mac})
+
+def block_user_on_router(mac_address):
+    # Use router API (example: MikroTik API or SSH command)
+    # Example with RouterOS API (pseudocode):
+    # router.block_mac(mac_address)
+    pass
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+#### 3. SQLite Table Example
+
+```sql
+CREATE TABLE blocked_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mac_address TEXT NOT NULL,
+    reason TEXT,
+    blocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+### 🔐 Blocking Methods
+
+* **OpenWRT**: Use `iptables` rules via SSH/API.
+* **MikroTik**: Use RouterOS API to disable IP/MAC.
+* **Ubiquiti**: Use UniFi Controller API to "block client".
+
+---
+
+### 🧠 Smart Policy Logic (optional)
+
+Add a script that:
+
+* Monitors data usage per user (every 5 mins).
+* Flags users who exceed thresholds.
+* Calls `/block_user` API automatically.
+
+---
+
+Would you like:
+
+* Example for a specific **router brand**?
+* A **complete Python+Router API** working sample?
+* Frontend dashboard too?
+
+Let me know how deep you'd like to go.

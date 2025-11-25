@@ -1,39 +1,54 @@
+import React from 'react'
+import Button from '../component/Button'
+import LoadingIndicator from '../component/LoadingIndicator'
+import { useState } from 'react'
+import Coverpage from '../component/Coverpage'
 
-import banner from '../images/kfcbanner.jpeg'
-import { HomeHeadingNL,HomeHeadingWL } from '../components/HomeHeading';
-import { Card,MiniCard} from '../components/Card';
-import About from '../components/About';
-import zestybanner from '../images/zestybanner.png'
+ 
+function Home({name,age,birth,database}) {
+
+   const [loading,SetLoading] = useState(1);
+ 
 
 
-function Home () {
 
-    return(
-            <>
-            <div className="bannerContainer">
-                <img className='banner' src={zestybanner} alt="banner" />
-            </div>
-                
 
-                <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
-                <div class="container-lg">
-                    <div className="foodBox">
-                    <Card/>
-                    </div>
-                </div>
-                
-                <HomeHeadingWL heading="EXPLORE OUR MENU"/>
-                <div class="container-lg"> 
-                    <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a>
-                </div>
 
-                <div class="container-lg">
-                    <About/>
-                </div>
-                    
-                
-            </>
-    );
+
+ 
+
+    return (
+
+        <>
+        <Coverpage/>
+       {/* <form  action="" method="post" > */}
+        {/* <input type="text"  name="done"/> */}
+
+        
+        {  loading &&   <LoadingIndicator></LoadingIndicator>}
+        <Button  />
+        <Button  name={"Salamatu"}/>
+       <div className="div" style={{fontSize:"120px"}}>
+        {loading}
+       </div>
+        <Button  name={"Mariam"}/>
+       {/* </form> */}
+        {/* <MyDatabase database={message}/> */}
+
+
+
+ <img src="/vite.svg" alt="dome" srcset="" />
+
+        <h1>{name}</h1>
+        <h1>{age}</h1>
+        <h1>{birth}</h1>
+        <div className="">
+           
+        </div>
+        
+        </>
+    )
+    
 }
 
 export default Home
