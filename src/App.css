@@ -1,0 +1,12 @@
+
+
+.acc-img{
+width: 30px;
+height: 30px;
+}
+.signIn{
+display: flex;
+align-items: center;
+column-gap: 5px;
+}
+

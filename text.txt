@@ -1,2 +1,0 @@
-npm create vite@latest my-vue-app -- --template react
-npx create-next-app@latest
