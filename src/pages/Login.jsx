@@ -1,6 +1,7 @@
 import zestylogo from '../images/zestylogo.png'
 import { useState } from 'react';
 import fetch from '../fetchAPI';
+import axiosFetch from "../api/AxiosFetch"
 
 function Login () {
 
@@ -37,7 +38,6 @@ function Login () {
          if(Email == ""){
  
              SetEmailError("Invalid Email");
-             
          }
  
          if(Password == ""){
@@ -49,18 +49,16 @@ function Login () {
              SetUsernameError("Username cannot be empty")
          }
  
-         const regResponse = await fetch.post('/register',{
-             username:Username,
-             email:Email,
-             password:Password
+         const response = await axiosFetch.post("/users/register",{
+            username:Username,
+            email:Email,
+            password:Password
          })
- 
- 
-         if (regResponse.status === 201) {
- 
-             console.log(regResponse.data);
-             
-         } 
+
+         if (response.status === 201) {
+            console.log(response.data);
+            
+         }
        } catch (error) {
 
         console.error(error.response.data)
