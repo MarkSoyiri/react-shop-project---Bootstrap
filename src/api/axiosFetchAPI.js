@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosFetch = axios.create({
-  baseURL: process.env.EXPRESS_BACKEND_ONLINE_URL,
+  baseURL: "http://localhost:5000/",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -19,6 +19,5 @@ axios.interceptors.request.use(function (config) {
 //   { synchronous: true, runWhen: () => /* This function returns true */}
 );
 
-axios.defaults.withCredentials = true;
 
 export default axiosFetch;
