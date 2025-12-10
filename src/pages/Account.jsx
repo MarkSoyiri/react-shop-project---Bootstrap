@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 
 function UserProfile(){
 
     const [ActiveMenu,SetActiveMenu] = useState("AS")
-    
+    const {logout} = useContext(AuthContext);
 
     function showAccountSettings() {
     SetActiveMenu("AS");
@@ -48,10 +49,7 @@ function UserProfile(){
                             <button className="btn save-btn">Save</button>
                             <button className="btn edit-btn">Delete</button>
                         </span>
-                        <span className="btn-span">
-                            <button className="btn edit-btn">SignOut</button>
-                            
-                        </span>
+                        
                     </div>
                     <div className="menu-info-n-btn" style={{display:ActiveMenu === "PO" ? "flex" : "none"}}>
                         <span className="menu-info-span">

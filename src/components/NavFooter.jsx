@@ -4,6 +4,7 @@ import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
 import { useState,useContext } from 'react'
 import { ThemeContext } from '../App'
+import { IsLoginSuccess, IsLogout } from './IsAuth'
 
 
 
@@ -33,17 +34,15 @@ export function HomeNav () {
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/userprofile">UserProfile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
-                    </li>
+                    <IsLoginSuccess>
+                        {/* CONTENT ONLY SHOWS WHEN USER IS LOGGEN IN */}
+                    </IsLoginSuccess>
                     </ul>
                     <span class="navbar-text">
                         {/* <button onClick={toggleTheme} className='theme-btn'>{Theme}</button> */}
-                        <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
-
+                        <IsLogout>
+                            {/* LOGOUT CONTENT */}
+                        </IsLogout>
                     </span>
                 </div>
                 </div>

@@ -12,6 +12,8 @@ import Contact from './pages/Contact'
 import UserProfile from './pages/Account'
 import MenuNav from './components/MenuNav'
 import { useLocation } from 'react-router-dom'
+import { DontShowLoginRegister } from './components/IsAuth'
+import { AuthContext } from './context/AuthContext'
 
 export function LoadingScreen(){
 
@@ -73,7 +75,9 @@ function Layout(){
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>
-        <Route path='/login' element={<Login/>}/>
+        <Route element={<DontShowLoginRegister/>}>
+          <Route path='/login' element={<Login/>}/>
+        </Route>
         <Route path='/storelocation' element={<StoreLocation/>}/>
         <Route path='/contact' element={<Contact/>}/>
         <Route path='/userprofile' element={<UserProfile/>}/>

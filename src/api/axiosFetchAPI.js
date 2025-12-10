@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const fetch = axios.create({
-  baseURL: 'https://express-js-on-vercel-liart-chi.vercel.app/',
+const axiosFetch = axios.create({
+  baseURL: "http://localhost:5000/",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -20,4 +20,4 @@ axios.interceptors.request.use(function (config) {
 );
 
 
-export default fetch
+export default axiosFetch;

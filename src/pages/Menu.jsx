@@ -3,6 +3,7 @@ import banner from '../images/kfcbanner.jpeg'
 import { HomeHeadingNL } from '../components/HomeHeading';
 import { Card, MiniCard } from '../components/Card';
 
+
 function Menu() {
 
     return (

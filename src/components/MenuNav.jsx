@@ -2,7 +2,7 @@ import logo from '../images/kfclogo.png'
 import account from '../images/account.png'
 import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
-
+import { IsLoginSuccess } from '../components/IsAuth';
 
 
 
@@ -29,12 +29,9 @@ function MenuNav () {
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/userprofile">User Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
-                    </li>
+                    <IsLoginSuccess>
+                   
+                    </IsLoginSuccess>
                     </ul>
                     <span class="navbar-text">
                     <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
