@@ -981,7 +981,7 @@ a{
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 50px;
+  padding-top: 20px;
   padding-bottom: 90px;
   /* margin-top: 170px; */
   height: 100%;
@@ -993,7 +993,7 @@ a{
       margin-bottom: 10px;
     }
     fieldset{
-      row-gap: 10px;
+      row-gap: 7px;
       justify-content: start;
       align-items: start;
       label{
