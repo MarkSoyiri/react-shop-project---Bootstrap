@@ -49,7 +49,7 @@ function Login () {
               
             }
         } catch (error) {
-            console.error(error.data)
+            console.error(error)
         }r
 
     }
