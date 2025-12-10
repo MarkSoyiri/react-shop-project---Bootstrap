@@ -982,35 +982,38 @@ a{
   align-items: center;
   padding-top: 120px;
   padding-bottom: 120px;
-  margin-top: 170px;
+  /* margin-top: 170px; */
   height: 100%;
   .loginBox{
     padding: 5px;
     width: 300px;
     h1{
-      font-size: 20px;
+      font-size: 17px;
       margin-bottom: 10px;
     }
     fieldset{
       row-gap: 3px;
-      
+      label{
+        font-size: 13px;
+      }
       input{
         padding-left: 15px;
         padding: 5px;
         width: 270px;
+        font-size: 13px;
       }
       
       .TnC{
         margin-top: 0px;
-        font-size: 10px;
+        font-size: 9px;
       }
       .log-switch{
         font-size: 13px;
       }
       .send-btn{
-        width: 100px;
-        padding: 7px;
-        font-size: 12px;
+        width: 90px;
+        padding: 5px;
+        font-size: 10px;
         margin-bottom: 0px;
         
       }
@@ -1082,7 +1085,6 @@ a{
   }
 }
 .coupon-btn{
- 
   margin-top: 5px;
   padding: 5px;
   padding-right: 10px;
@@ -1139,6 +1141,80 @@ p{
 }
 a{
   font-size: 14px;
+}
+}
+
+
+.account-box{
+
+  /* background-color: red; */
+  height: 100vh;
+  margin-top: 150px;
+  display: flex;
+  column-gap: 50px;
+  padding: 10px;
+}
+.acc-menu-box{
+  width: 400px;
+  row-gap: 10px;
+  h1{
+    font-size: 17px;
+    font-weight: 700;
+    margin-top: 5px;
+  }
+  .acc-menus{
+    display: flex;
+    flex-direction: column; 
+    .menu{
+      font-size: 13px;;
+      padding: 5px;
+    }
+
+  }
+}
+.acc-menu-info-box{
+  width: 100%;
+  background-color: white;
+  .menu-info-n-btn{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    width: 200px;
+
+  .menu-info-span{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(186, 186, 186, 0.327);
+    padding: 10px;
+    border-radius: 5px;
+    width: 200px;
+    h1{
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
+    h2{
+      font-weight: 600;
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+    p{
+      font-size: 13px;
+      margin: 0;
+    }
+  }
+  .btn-span{
+    width: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    column-gap: 10px;
+    .btn{
+      font-size: 10px;
+      padding: 0px;
+      min-width: 50px;
+    }
+    
+  }
 }
 }
 } 

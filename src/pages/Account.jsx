@@ -57,7 +57,7 @@ function UserProfile(){
                         </span>
                         <span className="menu-info-span">
                             <h2 >No orders here</h2>
-                            <p style={{fontSize:"20px",color:"grey"}}>Looks like you dont have any orders yet...</p>
+                            <p style={{}}>Looks like you dont have any orders yet...</p>
                             
                         </span>
                         <span className="btn-span" style={{border:"none"}}>

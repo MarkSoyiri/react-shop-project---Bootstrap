@@ -2,7 +2,7 @@ import logo from '../images/kfclogo.png'
 import account from '../images/account.png'
 import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
-import { IsLoginSuccess } from '../components/IsAuth';
+import { IsLoginSuccess,IsLogout } from '../components/IsAuth';
 
 
 
@@ -34,7 +34,9 @@ function MenuNav () {
                     </IsLoginSuccess>
                     </ul>
                     <span class="navbar-text">
-                    <a style={{color:"black",textDecoration:"none"}} href="/login"><span className='signIn'><img className='acc-img' src={account} alt="account image" />Sign In</span></a>
+                    <IsLogout>
+                        {/* LOGOUT CONTENT */}
+                    </IsLogout>
 
                     </span>
                 </div>

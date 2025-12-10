@@ -75,14 +75,15 @@ function Layout(){
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>
-        <Route element={<DontShowLoginRegister/>}>
-          <Route path='/login' element={<Login/>}/>
-        </Route>
         <Route path='/storelocation' element={<StoreLocation/>}/>
         <Route path='/contact' element={<Contact/>}/>
         <Route path='/userprofile' element={<UserProfile/>}/>
+        <Route element={<DontShowLoginRegister/>}>
+          <Route path='/login' element={<Login/>}/>
+        </Route>
       </Routes>
       <Footer/>
+      
     </>
   )
 }
@@ -101,6 +102,7 @@ function App(){
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
+    
     </ThemeContext.Provider>
     </div>
   )
