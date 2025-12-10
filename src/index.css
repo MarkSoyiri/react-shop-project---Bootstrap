@@ -980,7 +980,7 @@ a{
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 120px;
+  padding-top: 100px;
   padding-bottom: 120px;
   /* margin-top: 170px; */
   height: 100%;
@@ -988,7 +988,7 @@ a{
     padding: 5px;
     width: 300px;
     h1{
-      font-size: 17px;
+      font-size: 15px;
       margin-bottom: 10px;
     }
     fieldset{
