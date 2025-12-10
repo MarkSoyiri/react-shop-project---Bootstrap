@@ -993,7 +993,7 @@ a{
       margin-bottom: 10px;
     }
     fieldset{
-      row-gap: 3px;
+      row-gap: 10px;
       justify-content: start;
       align-items: start;
       label{
