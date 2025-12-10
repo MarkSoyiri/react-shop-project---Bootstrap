@@ -309,7 +309,7 @@ body{
     fieldset{
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: start;
       row-gap: 5px;
       label{
         font-weight: 500;
@@ -328,12 +328,13 @@ body{
       }
       .TnC{
         margin-top: 10px;
-        text-align: center;
+        align-self: center;
         font-size: 15px;
         font-weight: 500;
       }
       .log-switch{
         text-align: center;
+        align-self: center;
         span{
           color: rgba(0, 94, 255, 0.984);
           cursor: pointer;
@@ -993,6 +994,8 @@ a{
     }
     fieldset{
       row-gap: 3px;
+      justify-content: start;
+      align-items: start;
       label{
         font-size: 13px;
       }
@@ -1006,9 +1009,11 @@ a{
       .TnC{
         margin-top: 0px;
         font-size: 9px;
+        align-self: center;
       }
       .log-switch{
         font-size: 13px;
+        align-self: center;
       }
       .send-btn{
         width: 90px;
