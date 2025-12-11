@@ -9,11 +9,34 @@ import valuedeals from '../images/valuedeals.jpeg'
 import desserts from '../images/desserts.jpeg'
 import burgers from '../images/burgers.jpeg'
 import browsecat from '../images/browsecat.png'
+import { useEffect,useState } from 'react'
+import axiosFetch from '../api/axiosFetchAPI'
 
 
 
 export function Card () {
 
+    const [products,setProducts] = useState([]);
+
+
+
+
+
+  useEffect(()=>{
+     const response = axiosFetch.get('products')
+     console.log(products.data)
+        setProducts(response.data)
+    },[])
+
+       
+        
+    
+        
+    
+
+
+
+  
     const Foods = [
         {
             pic:loadedfries,
@@ -68,13 +91,13 @@ export function Card () {
     return(
         <>
             
-                {Foods.map((food)=>(
-                    <div className='' key={food.id}>
+                {products.map((p)=>(
+                    <div className='' key={p.id}>
 
                         <div className="card">
-                            <img  src={food.pic} alt="" />
-                            <h3>{food.name}</h3>
-                            <p>{food.price}</p>
+                            <img  src={p.image} alt="" />
+                            <h3>{p.name}</h3>
+                            <p>{p.price}</p>
                             <button>Order</button>
                         </div>
 
@@ -89,56 +112,56 @@ export function Card () {
 
 
 
-export function MiniCard () {
+// export function MiniCard () {
 
 
-    const Menus = [
-        {
-            pic:promo,
-            name:"PROMOTIONS",
-            id:1
-        },
-        {
-            pic:menumeal,
-            name:"MEALS",
-            id:2
-        },
-        {
-            pic:burgers,
-            name:"BURGERS",
-            id:3
-        },
-        {
-            pic:desserts,
-            name:"DESSERTS",
-            id:4
-        },
-        {
-            pic:valuedeals,
-            name:"VALUE DEALS",
-            id:5
-        },
-        {
-            pic:browsecat,
-            name:"BROWSE CATEGORIES",
-            id:6
-        }
-    ]
+//     const Menus = [
+//         {
+//             pic:promo,
+//             name:"PROMOTIONS",
+//             id:1
+//         },
+//         {
+//             pic:menumeal,
+//             name:"MEALS",
+//             id:2
+//         },
+//         {
+//             pic:burgers,
+//             name:"BURGERS",
+//             id:3
+//         },
+//         {
+//             pic:desserts,
+//             name:"DESSERTS",
+//             id:4
+//         },
+//         {
+//             pic:valuedeals,
+//             name:"VALUE DEALS",
+//             id:5
+//         },
+//         {
+//             pic:browsecat,
+//             name:"BROWSE CATEGORIES",
+//             id:6
+//         }
+//     ]
 
-    return (
-        <>
-            <div className="MenuBox">
-                {Menus.map((menu)=>(
-                    <div className='' key={menu.id}>
+//     return (
+//         <>
+//             <div className="MenuBox">
+//                 {Menus.map((menu)=>(
+//                     <div className='' key={menu.id}>
 
-                        <div className="miniCard">
-                            <img src={menu.pic} alt="" />
-                            <h3>{menu.name}</h3>
-                        </div>
+//                         <div className="miniCard">
+//                             <img src={menu.pic} alt="" />
+//                             <h3>{menu.name}</h3>
+//                         </div>
 
-                    </div>
-                ))}
-            </div>
-        </>
-    );
-}
+//                     </div>
+//                 ))}
+//             </div>
+//         </>
+//     );
+// }

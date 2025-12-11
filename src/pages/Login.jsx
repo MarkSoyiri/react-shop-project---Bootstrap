@@ -35,7 +35,7 @@ function Login () {
                 SetPasswordError("Invalid Password");
             }
     
-            const response = await axiosFetch.post('/login', {
+            const response = await axiosFetch.post('/user/login', {
                 email:Email,
                 password:Password
             })
@@ -72,7 +72,7 @@ function Login () {
              SetUsernameError("Username cannot be empty")
          }
  
-         const response = await axiosFetch.post("/register",{
+         const response = await axiosFetch.post("/user/register",{
             username:Username,
             email:Email,
             password:Password

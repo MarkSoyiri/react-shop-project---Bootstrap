@@ -1,7 +1,7 @@
 
 import banner from '../images/kfcbanner.jpeg'
 import { HomeHeadingNL,HomeHeadingWL } from '../components/HomeHeading';
-import { Card,MiniCard} from '../components/Card';
+import { Card} from '../components/Card';
 import About from '../components/About';
 import zestybanner from '../images/zestybanner.png'
 
@@ -24,7 +24,7 @@ function Home () {
                 
                 <HomeHeadingWL heading="EXPLORE OUR MENU"/>
                 <div class="container-lg"> 
-                    <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a>
+                    {/* <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a> */}
                 </div>
 
                 <div class="container-lg">
