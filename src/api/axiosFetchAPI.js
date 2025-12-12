@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosFetch = axios.create({
-  baseURL: "https://express-js-on-vercel-liart-chi.vercel.app/",
+  baseURL: import.meta.env.VITE_BACKEND_LOCAL_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -9,7 +9,7 @@ const axiosFetch = axios.create({
   
 });
 
-axios.interceptors.request.use(function (config) {  
+axiosFetch.interceptors.request.use(function (config) {  
     // Do something before request is sent
     return config;
   }, function (error) {
