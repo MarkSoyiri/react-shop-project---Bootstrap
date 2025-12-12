@@ -34,7 +34,7 @@ function Login () {
                 return;
             }
     
-            const response = await axiosFetch.post('https://express-js-on-vercel-liart-chi.vercel.app/user/login', {
+            const response = await axiosFetch.post('/user/login', {
                 email:Email,
                 password:Password
             })
