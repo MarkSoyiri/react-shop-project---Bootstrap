@@ -35,7 +35,7 @@ function Login () {
                 SetPasswordError("Invalid Password");
             }
     
-            const response = await axiosFetch.post('/user/login', {
+            const response = await axiosFetch.post('user/login', {
                 email:Email,
                 password:Password
             })
