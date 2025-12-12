@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosFetch = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_LOCAL_URL,
+  baseURL: import.meta.env.VITE_EXPRESS_BACKEND_ONLINE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
