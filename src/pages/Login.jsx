@@ -25,17 +25,16 @@ function Login () {
         event.preventDefault();
         try {
             if(Email == ""){
-    
                 SetEmailError("Invalid Email");
-                
+                return; 
             }
     
             if(Password == ""){
-    
                 SetPasswordError("Invalid Password");
+                return;
             }
     
-            const response = await axiosFetch.post('user/login', {
+            const response = await axiosFetch.post('/user/login', {
                 email:Email,
                 password:Password
             })
@@ -50,7 +49,7 @@ function Login () {
             }
         } catch (error) {
             console.error(error.message)
-        }r
+        }
 
     }
 
@@ -59,17 +58,18 @@ function Login () {
         event.preventDefault();
        try {
          if(Email == ""){
- 
              SetEmailError("Invalid Email");
+             return;
          }
  
          if(Password == ""){
- 
              SetPasswordError("Invalid Password");
+             return;
          }
  
          if (Username == "") {
-             SetUsernameError("Username cannot be empty")
+             SetUsernameError("Username cannot be empty");
+             return;
          }
  
          const response = await axiosFetch.post("/user/register",{
