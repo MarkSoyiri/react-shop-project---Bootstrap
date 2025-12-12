@@ -2,7 +2,7 @@ import zestylogo from '../images/zestylogo.png'
 import { useState,useContext } from 'react';
 import axiosFetch from '../api/axiosFetchAPI';
 import { AuthContext } from '../context/AuthContext';
-import { Navigate,useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 function Login () {
@@ -24,12 +24,12 @@ function Login () {
         
         event.preventDefault();
         try {
-            if(Email == ""){
+            if(Email === ""){
                 SetEmailError("Invalid Email");
                 return; 
             }
     
-            if(Password == ""){
+            if(Password === ""){
                 SetPasswordError("Invalid Password");
                 return;
             }
@@ -48,8 +48,13 @@ function Login () {
               
             }
         } catch (error) {
-            console.error(error.message)
-        }
+    if (error.response) {
+        console.error(error.response.data.message);
+    } else {
+        console.error(error.message);
+    }
+}
+
 
     }
 
@@ -57,17 +62,17 @@ function Login () {
 
         event.preventDefault();
        try {
-         if(Email == ""){
+         if(Email === ""){
              SetEmailError("Invalid Email");
              return;
          }
  
-         if(Password == ""){
+         if(Password === ""){
              SetPasswordError("Invalid Password");
              return;
          }
  
-         if (Username == "") {
+         if (Username === "") {
              SetUsernameError("Username cannot be empty");
              return;
          }
@@ -82,10 +87,13 @@ function Login () {
             console.log(response.statusText);
         }
        } catch (error) {
+    if (error.response) {
+        console.error(error.response.data.message);
+    } else {
+        console.error(error.message);
+    }
+}
 
-        console.error(error.response.data.message)
-        
-       }
 
     }
     
