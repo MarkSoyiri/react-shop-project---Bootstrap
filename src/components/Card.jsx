@@ -16,17 +16,17 @@ import axiosFetch from '../api/axiosFetchAPI'
 
 export function Card () {
 
-    const [products,setProducts] = useState([]);
+//     const [products,setProducts] = useState([]);
 
 
 
 
 
-  useEffect(()=>{
-     const response = axiosFetch.get('products')
-     console.log(products.data)
-        setProducts(response.data)
-    },[])
+//   useEffect(()=>{
+//      const response = axiosFetch.get('products')
+//      console.log(products.data)
+//         setProducts(response.data)
+//     },[])
 
        
         
@@ -91,13 +91,13 @@ export function Card () {
     return(
         <>
             
-                {products.map((p)=>(
-                    <div className='' key={p.id}>
+                {Foods.map((food)=>(
+                    <div className='' key={food.id}>
 
                         <div className="card">
-                            <img  src={p.image} alt="" />
-                            <h3>{p.name}</h3>
-                            <p>{p.price}</p>
+                            <img  src={food.image} alt="" />
+                            <h3>{food.name}</h3>
+                            <p>{food.price}</p>
                             <button>Order</button>
                         </div>
 
