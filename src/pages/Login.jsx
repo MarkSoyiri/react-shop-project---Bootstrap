@@ -77,7 +77,7 @@ function Login () {
              return;
          }
  
-         const response = await axiosFetch.post("/user/register",{
+         const response = await axiosFetch.post("https://express-js-on-vercel-liart-chi.vercel.app/user/register",{
             username:Username,
             email:Email,
             password:Password
