@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosFetch = axios.create({
-  baseURL: import.meta.env.VITE_EXPRESS_BACKEND_ONLINE_URL,
+  baseURL: process.env.VITE_EXPRESS_BACKEND_ONLINE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -9,7 +9,7 @@ const axiosFetch = axios.create({
   
 });
 
-axiosFetch.interceptors.request.use(function (config) {  
+axios.interceptors.request.use(function (config) {  
     // Do something before request is sent
     return config;
   }, function (error) {
