@@ -9,7 +9,7 @@ const axiosFetch = axios.create({
   
 });
 
-axios.interceptors.request.use(function (config) {  
+axiosFetch.interceptors.request.use(function (config) {  
     // Do something before request is sent
     return config;
   }, function (error) {
