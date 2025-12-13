@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosFetch = axios.create({
   baseURL: "https://express-js-on-vercel-liart-chi.vercel.app/",
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     'Content-Type': 'application/json'
   },
