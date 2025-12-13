@@ -126,7 +126,7 @@ function Login () {
                         <input type="password" name='password' id='password' onChange={(e)=>{SetPassword(e.target.value)}} value={Password}/>
                         <p className='errorMsg'>{Password == "" ? PasswordError : null }</p>
                         <p className='TnC'>By signing in, you agree to our <a href="">Privacy Policy</a><br></br> and <a href="">Terms and Conditions</a></p>
-                        <button type='submit' className='send-btn'>Submit</button>
+                        <button type='submit' className='send-btn'>Sign In</button>
                         <p className='log-switch'>Don't have an account?<span onClick={regClick}>Register</span></p>
                     </fieldset>
                 </form>
