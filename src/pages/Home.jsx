@@ -1,7 +1,7 @@
 
 import banner from '../images/kfcbanner.jpeg'
 import { HomeHeadingNL,HomeHeadingWL } from '../components/HomeHeading';
-import { Card} from '../components/Card';
+import { Card, MiniCard} from '../components/Card';
 import About from '../components/About';
 import zestybanner from '../images/zestybanner.png'
 import { useEffect,useState } from 'react';
