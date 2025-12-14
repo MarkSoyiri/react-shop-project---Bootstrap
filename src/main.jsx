@@ -18,10 +18,10 @@ import { LoadingProvider } from "./context/LoadingContext";
 
 createRoot(document.getElementById('root')).render(
   <LoadingProvider>
-  
+  <AuthProvider>
   <StrictMode>
     <App />
   </StrictMode>
-  
+  </AuthProvider>
   </LoadingProvider>,
 )
