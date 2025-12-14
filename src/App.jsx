@@ -58,7 +58,7 @@ function Layout(){
       {/* END */}
 
      
-      {/* <LoadingScreen/> */}
+  
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>
@@ -85,7 +85,7 @@ function App(){
     const updated = Theme == "Light" ? SetTheme("Dark") : SetTheme("Light");
   }
 
-  const { isLoading } = useContext(LoadingContext);
+  // const { isLoading } = useContext(LoadingContext);
 
   useAxiosLoader();
 
