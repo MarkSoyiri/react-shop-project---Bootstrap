@@ -34,7 +34,7 @@ function Menu() {
 
                     <HomeHeadingNL heading="PROMOTIONS" />
                     <div className="container-lg menu-container">
-                        <Card />
+                        <Card products={products}/>
                     </div>
 
                 </h4>
