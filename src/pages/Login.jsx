@@ -23,6 +23,8 @@ function Login () {
 
         
         event.preventDefault();
+
+        console.log("hello")
         try {
             if(Email === ""){
                 SetEmailError("Invalid Email");
