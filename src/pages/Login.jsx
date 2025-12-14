@@ -45,10 +45,10 @@ function Login () {
             if (response.status === 200) {
                 // alert("Login Successful!");
                 console.log("hi");
-                localStorage.setItem("token",response.data.token);
-                login(response.data.user,response.data.token)
-                console.log(response.data.user,response.data.token);
-                navigate('/')
+                // localStorage.setItem("token",response.data.token);
+                // login(response.data.user,response.data.token)
+                // console.log(response.data.user,response.data.token);
+                // navigate('/')
               
             }
         } catch (error) {
