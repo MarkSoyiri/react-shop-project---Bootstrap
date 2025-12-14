@@ -196,7 +196,7 @@ body{
     border: none;
     background-color: white;
     border-radius: 5px;
-    height: 320px;
+    height: 340px;
     width: 280px;
     display: flex;
     flex-direction: column;
@@ -882,7 +882,7 @@ a{
         font-size: 12px;
         border-radius: 30px;
         width: 55px;
-        margin: 0px;
+        margin: 5px;
         position: sticky;
     }
     
