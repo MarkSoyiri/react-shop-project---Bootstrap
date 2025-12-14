@@ -4,9 +4,28 @@ import { HomeHeadingNL,HomeHeadingWL } from '../components/HomeHeading';
 import { Card} from '../components/Card';
 import About from '../components/About';
 import zestybanner from '../images/zestybanner.png'
+import { useEffect,useState } from 'react';
+import axiosFetch from '../api/axiosFetchAPI';
 
 
 function Home () {
+
+
+    const [products,setProducts]=useState([])
+
+
+    useEffect(()=>{
+
+        axiosFetch.get('/menu').then((res)=>{
+            setProducts(res.data);
+        }).catch((err)=>{
+            err.message
+        })
+
+
+    },[])
+
+    
 
     return(
             <>
@@ -18,7 +37,7 @@ function Home () {
                 <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
                 <div class="container-lg">
                     <div className="foodBox">
-                    <Card/>
+                    <Card products={products}/>
                     </div>
                 </div>
                 

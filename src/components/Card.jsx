@@ -14,19 +14,7 @@ import axiosFetch from '../api/axiosFetchAPI'
 
 
 
-export function Card () {
-
-//     const [products,setProducts] = useState([]);
-
-
-
-
-
-//   useEffect(()=>{
-//      const response = axiosFetch.get('products')
-//      console.log(products.data)
-//         setProducts(response.data)
-//     },[])
+export function Card ({ products }) {
 
        
         
@@ -91,7 +79,7 @@ export function Card () {
     return(
         <>
             
-                {Foods.map((food)=>(
+                {products.map((food)=>(
                     <div className='' key={food.id}>
 
                         <div className="card">
