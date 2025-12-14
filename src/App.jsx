@@ -14,7 +14,8 @@ import MenuNav from './components/MenuNav'
 import Cart from './pages/Cart'
 import { useLocation } from 'react-router-dom'
 import { DontShowLoginRegister } from './components/IsAuth'
-import { AuthContext } from './context/AuthContext'
+// import { AuthContext } from './context/AuthContext'
+import { AuthProvider } from './context/AuthContext.jsx'
 import useAxiosLoader from './api/useAxiosLoader'
 
 
@@ -90,9 +91,11 @@ function App(){
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
       {isLoading && <GlobalLoader />}
+    <AuthProvider>
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
+    </AuthProvider>
     
     </ThemeContext.Provider>
     </div>

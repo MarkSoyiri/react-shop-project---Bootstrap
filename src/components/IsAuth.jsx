@@ -48,9 +48,12 @@ export const IsLoginSuccess = () => {
         if (IsUserAuthenticated()) {
 
 
-            return <>
+            return <>   
                 <li class="nav-item">
                     <a class="nav-link" href="/userprofile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">Cart</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
