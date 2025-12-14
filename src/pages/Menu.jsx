@@ -2,9 +2,26 @@
 import banner from '../images/kfcbanner.jpeg'
 import { HomeHeadingNL } from '../components/HomeHeading';
 import { Card } from '../components/Card';
+import { useEffect,useState } from 'react';
+import axiosFetch from '../api/axiosFetchAPI';
 
 
 function Menu() {
+
+     const [products,setProducts]=useState([])
+
+
+    useEffect(()=>{
+
+        axiosFetch.get('/menu').then((res)=>{
+            setProducts(res.data);
+            console.log(products);
+        }).catch((err)=>{
+            console.error(err.message);
+        })
+
+
+    },[])
 
     return (
         <>
@@ -25,7 +42,7 @@ function Menu() {
 
                     <HomeHeadingNL heading="MEALS" />
                     <div className="container-lg menu-container">
-                        <Card />
+                        <Card products={products}/>
 
                     </div>
                 </h4>
@@ -33,7 +50,7 @@ function Menu() {
 
                     <HomeHeadingNL heading="BURGERS" />
                     <div className="container-lg menu-container">
-                        <Card />
+                        <Card products={products}/>
                     </div>
 
                 </h4>
@@ -41,7 +58,7 @@ function Menu() {
 
                     <HomeHeadingNL heading="DESSERTS" />
                     <div className="container-lg menu-container">
-                        <Card />
+                        <Card products={products}/>
                     </div>
 
                 </h4>
