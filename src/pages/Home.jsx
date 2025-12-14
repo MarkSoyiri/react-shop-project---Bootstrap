@@ -44,7 +44,7 @@ function Home () {
                 
                 <HomeHeadingWL heading="EXPLORE OUR MENU"/>
                 <div class="container-lg"> 
-                    {/* <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a> */}
+                    <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a>
                 </div>
 
                 <div class="container-lg">
