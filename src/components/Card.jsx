@@ -100,56 +100,56 @@ export function Card ({ products }) {
 
 
 
-// export function MiniCard () {
+export function MiniCard () {
 
 
-//     const Menus = [
-//         {
-//             pic:promo,
-//             name:"PROMOTIONS",
-//             id:1
-//         },
-//         {
-//             pic:menumeal,
-//             name:"MEALS",
-//             id:2
-//         },
-//         {
-//             pic:burgers,
-//             name:"BURGERS",
-//             id:3
-//         },
-//         {
-//             pic:desserts,
-//             name:"DESSERTS",
-//             id:4
-//         },
-//         {
-//             pic:valuedeals,
-//             name:"VALUE DEALS",
-//             id:5
-//         },
-//         {
-//             pic:browsecat,
-//             name:"BROWSE CATEGORIES",
-//             id:6
-//         }
-//     ]
+    const Menus = [
+        {
+            pic:promo,
+            name:"PROMOTIONS",
+            id:1
+        },
+        {
+            pic:menumeal,
+            name:"MEALS",
+            id:2
+        },
+        {
+            pic:burgers,
+            name:"BURGERS",
+            id:3
+        },
+        {
+            pic:desserts,
+            name:"DESSERTS",
+            id:4
+        },
+        {
+            pic:valuedeals,
+            name:"VALUE DEALS",
+            id:5
+        },
+        {
+            pic:browsecat,
+            name:"BROWSE CATEGORIES",
+            id:6
+        }
+    ]
 
-//     return (
-//         <>
-//             <div className="MenuBox">
-//                 {Menus.map((menu)=>(
-//                     <div className='' key={menu.id}>
+    return (
+        <>
+            <div className="MenuBox">
+                {Menus.map((menu)=>(
+                    <div className='' key={menu.id}>
 
-//                         <div className="miniCard">
-//                             <img src={menu.pic} alt="" />
-//                             <h3>{menu.name}</h3>
-//                         </div>
+                        <div className="miniCard">
+                            <img src={menu.pic} alt="" />
+                            <h3>{menu.name}</h3>
+                        </div>
 
-//                     </div>
-//                 ))}
-//             </div>
-//         </>
-//     );
-// }
+                    </div>
+                ))}
+            </div>
+        </>
+    );
+}
