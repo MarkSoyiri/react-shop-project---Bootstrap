@@ -15,10 +15,7 @@ import Cart from './pages/Cart'
 import { useLocation } from 'react-router-dom'
 import { DontShowLoginRegister } from './components/IsAuth'
 // import { AuthContext } from './context/AuthContext'
-import { AuthProvider } from './context/AuthContext.jsx'
 import useAxiosLoader from './api/useAxiosLoader'
-import { LoadingContext } from './context/LoadingContext.jsx'
-import GlobalLoader from './components/GlobalLoader.jsx'
 
 
 
@@ -58,7 +55,7 @@ function Layout(){
       {/* END */}
 
      
-  
+      {/* <LoadingScreen/> */}
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/menu' element={<Menu/>}/>
@@ -85,18 +82,19 @@ function App(){
     const updated = Theme == "Light" ? SetTheme("Dark") : SetTheme("Light");
   }
 
-  // const { isLoading } = useContext(LoadingContext);
+  const { isLoading } = useContext(LoadingContext);
 
   useAxiosLoader();
 
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
-      {/* {isLoading && <GlobalLoader />} */}
-    
+      {isLoading && <GlobalLoader />}
+    <AuthProvider>
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
+    </AuthProvider>
     
     </ThemeContext.Provider>
     </div>
