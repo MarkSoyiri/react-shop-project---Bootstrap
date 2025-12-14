@@ -85,7 +85,7 @@ export function Card ({ products }) {
                         <div className="card">
                             <img  src={food.image} alt="" />
                             <h3>{food.name}</h3>
-                            <h2>{food.description}</h2>
+                            {/* <h2>{food.description}</h2> */}
                             <p>{food.price}</p>
                             <button>Order</button>
                         </div>
