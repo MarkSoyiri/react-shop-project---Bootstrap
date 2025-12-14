@@ -34,7 +34,7 @@ function Login () {
                 return;
             }
     
-            const response = await axiosFetch.post('http://express-js-on-vercel-liart-chi.vercel.app/user/login', {
+            const response = await axiosFetch.post('https://express-js-on-vercel-liart-chi.vercel.app/user/login', {
                 email:Email,
                 password:Password
             })
@@ -77,7 +77,7 @@ function Login () {
              return;
          }
  
-         const response = await axiosFetch.post("http://express-js-on-vercel-liart-chi.vercel.app/user/register",{
+         const response = await axiosFetch.post("https://express-js-on-vercel-liart-chi.vercel.app/user/register",{
             username:Username,
             email:Email,
             password:Password
