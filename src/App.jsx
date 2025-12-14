@@ -87,7 +87,7 @@ function App(){
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
-       <GlobalLoader />
+      {isLoading && <GlobalLoader />}
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
