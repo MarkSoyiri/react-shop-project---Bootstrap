@@ -80,11 +80,12 @@ export function Card ({ products }) {
         <>
             
                 {products.map((food)=>(
-                    <div className='' key={food.id}>
+                    <div className='' key={food._id}>
 
                         <div className="card">
                             <img  src={food.image} alt="" />
                             <h3>{food.name}</h3>
+                            <p>{food.description}</p>
                             <p>{food.price}</p>
                             <button>Order</button>
                         </div>
