@@ -16,7 +16,7 @@ function Home () {
 
     useEffect(()=>{
 
-        axiosFetch.get('/menu/').then((res)=>{
+        axiosFetch.get('/menu').then((res)=>{
             setProducts(res.data);
             console.log(products);
         }).catch((err)=>{
