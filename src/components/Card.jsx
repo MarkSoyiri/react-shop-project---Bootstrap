@@ -9,17 +9,35 @@ import valuedeals from '../images/valuedeals.jpeg'
 import desserts from '../images/desserts.jpeg'
 import burgers from '../images/burgers.jpeg'
 import browsecat from '../images/browsecat.png'
-import { useEffect,useState } from 'react'
+import { useEffect,useState,useContext } from 'react'
 import axiosFetch from '../api/axiosFetchAPI'
+import { AuthContext } from "../context/AuthContext";
 
 
 
 export function Card ({ products }) {
 
-       
+      const handleAddToCart = async () => {
+        try {
+            await axiosFetch.post('/cart/add', 
+                { menuItemId: item._id, quantity: 1 }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            alert("Added to cart!");
+        } catch (err) {
+            console.log(err);
+        }           
+    };
+    
+    
+    
+    
+
         
     
-        
+
     
 
 
@@ -87,7 +105,7 @@ export function Card ({ products }) {
                             <h3>{food.name}</h3>
                             {/* <h2>{food.description}</h2> */}
                             <p>{food.price}</p>
-                            <button>Order</button>
+                            <button onClick={handleAddToCart}>Order</button>
                         </div>
 
                     </div>

@@ -11,6 +11,7 @@ import StoreLocation from './pages/StoreLocation'
 import Contact from './pages/Contact'
 import UserProfile from './pages/Account'
 import MenuNav from './components/MenuNav'
+import Cart from './pages/Cart'
 import { useLocation } from 'react-router-dom'
 import { DontShowLoginRegister } from './components/IsAuth'
 import { AuthContext } from './context/AuthContext'
@@ -61,6 +62,7 @@ function Layout(){
         <Route path='/storelocation' element={<StoreLocation/>}/>
         <Route path='/contact' element={<Contact/>}/>
         <Route path='/userprofile' element={<UserProfile/>}/>
+        <Route path='/cart' element={<Cart/>}/>
         <Route element={<DontShowLoginRegister/>}>
           <Route path='/login' element={<Login/>}/>
         </Route>

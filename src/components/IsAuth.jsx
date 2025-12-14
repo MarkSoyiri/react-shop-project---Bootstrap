@@ -50,7 +50,7 @@ export const IsLoginSuccess = () => {
 
             return <>
                 <li class="nav-item">
-                    <a class="nav-link" href="/userprofile">User Profile</a>
+                    <a class="nav-link" href="/userprofile">Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
