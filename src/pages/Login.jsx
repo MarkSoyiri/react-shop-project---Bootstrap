@@ -24,7 +24,7 @@ function Login () {
         
         event.preventDefault();
 
-        console.log("hello")
+      
         try {
             if(Email === ""){
                 SetEmailError("Invalid Email");
@@ -41,9 +41,10 @@ function Login () {
                 password:Password
             })
     
+              console.log("hello")
             if (response.status === 200) {
                 // alert("Login Successful!");
-              
+                console.log("hello");
                 localStorage.setItem("token",response.data.token);
                 login(response.data.user,response.data.token)
                 console.log(response.data.user,response.data.token);
