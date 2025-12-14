@@ -1,4 +1,4 @@
-import { useState,createContext } from 'react'
+import { useState,createContext,useContext } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -17,24 +17,7 @@ import { AuthContext } from './context/AuthContext'
 
 export function LoadingScreen(){
 
-  const loadingWrapper = document.getElementById('loadSpinner')
-  window.addEventListener('load',()=>{
-    setTimeout(() => {
-      
-      loadingWrapper.style.opacity = "0";
-    }, 1000);
-  })
-  return(
-    <>
-      <div className='loadingWrapper' id='loadSpinner'>
-       <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>    
-    </div>
-    </>
-    
-  )
-}
+
 
 function Layout(){
   const location = useLocation();
@@ -96,9 +79,14 @@ function App(){
   function toggleTheme(){
     const updated = Theme == "Light" ? SetTheme("Dark") : SetTheme("Light");
   }
+
+  const { isLoading } = useContext(LoadingContext);
+
+
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
+      {isLoading && <GlobalLoader />}
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
