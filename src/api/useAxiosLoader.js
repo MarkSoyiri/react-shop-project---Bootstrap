@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import axiosFetch from "./axiosFetchaxiosFetch";
+import axiosFetch from "./axiosFetch";
 import { LoadingContext } from "../context/LoadingContext";
 
 export default function useAxiosLoader() {
