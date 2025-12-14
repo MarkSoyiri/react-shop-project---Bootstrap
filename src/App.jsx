@@ -14,8 +14,8 @@ import MenuNav from './components/MenuNav'
 import { useLocation } from 'react-router-dom'
 import { DontShowLoginRegister } from './components/IsAuth'
 import { AuthContext } from './context/AuthContext'
+import useAxiosLoader from './api/useAxiosLoader'
 
-export function LoadingScreen(){
 
 
 
@@ -82,6 +82,7 @@ function App(){
 
   const { isLoading } = useContext(LoadingContext);
 
+  useAxiosLoader();
 
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
