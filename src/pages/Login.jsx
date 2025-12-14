@@ -44,7 +44,7 @@ function Login () {
               console.log("hello")
             if (response.status === 200) {
                 // alert("Login Successful!");
-                console.log("hello");
+                console.log("hi");
                 localStorage.setItem("token",response.data.token);
                 login(response.data.user,response.data.token)
                 console.log(response.data.user,response.data.token);
