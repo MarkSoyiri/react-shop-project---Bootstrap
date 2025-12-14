@@ -18,6 +18,7 @@ function Home () {
 
         axiosFetch.get('/menu').then((res)=>{
             setProducts([res.data]);
+            console.log(products);
         }).catch((err)=>{
             console.error(err.message);
         })
