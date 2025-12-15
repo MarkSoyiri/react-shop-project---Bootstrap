@@ -1,5 +1,7 @@
 import { useState,useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import axiosFetch from "../api/axiosFetchAPI";
+import { useState } from "react";
 
 
 function UserProfile(){
@@ -18,6 +20,17 @@ function UserProfile(){
     function showPaymentMethod() {
         SetActiveMenu("PM");
     }
+
+    
+        const [name,setName] = useState("");
+        const [email,setEmail] = useState("");
+        
+        const profile = axiosFetch.get('/profile').then((res)=>{
+            setName(res.data.username);
+            setEmail(res.data.email);
+            
+        }).catch((err)=> console.error(err.message))
+    
 
 
     return(
@@ -40,9 +53,9 @@ function UserProfile(){
                         </span>
                         <span className="menu-info-span">
                             <h2>PERSONAL INFO</h2>
-                            <p>Name: Mark</p>
-                            <p>Email: Marksoyiri45@gmail.com</p>
-                            <p>Phone: +233 50 747 8327</p>
+                            <p>Name: {name}</p>
+                            <p>Email: {email}</p>
+                            {/* <p>Phone: +233 50 747 8327</p> */}
                         </span>
                         <span className="btn-span">
                             <button className="btn edit-btn">Edit</button>
