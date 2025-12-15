@@ -878,6 +878,10 @@ a{
         margin: 0px;
         position: sticky;
     }
+    button:hover{
+        background-color:none;
+        cursor: pointer;
+    }
     
 }
 /* MENU NAV */
