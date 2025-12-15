@@ -92,11 +92,11 @@ function App(){
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
       {isLoading && <GlobalLoader />}
-    <AuthProvider>
+    {/* <AuthProvider> */}
     <BrowserRouter>
       <Layout/>
     </BrowserRouter>
-    </AuthProvider>
+    {/* </AuthProvider> */}
     
     </ThemeContext.Provider>
     </div>
