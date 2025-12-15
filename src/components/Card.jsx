@@ -44,56 +44,7 @@ export function Card ({ products }) {
 
 
   
-    // const Foods = [
-    //     {
-    //         pic:loadedfries,
-    //         name:"LOADED FRIES",
-    //         price:"GH₵78.00",
-    //         id:1
-    //     },
-    //     {
-    //         pic:wings,
-    //         name:"HONEY WINGS",
-    //         price:"GH₵87.00",
-    //         id:2
-    //     },
-    //     {
-    //         pic:meal,
-    //         name:"HONEY DUNKED TWISTERS ",
-    //         price:"GH₵102.00",
-    //         id:3
-    //     },
-    //     {
-    //         pic:twister,
-    //         name:"HONEY  TWISTER",
-    //         price:"GH₵61.00",
-    //         id:4
-    //     },
-    //     {
-    //         pic:loadedfries,
-    //         name:"LOADED FRIES",
-    //         price:"GH₵78.00",
-    //         id:1
-    //     },
-    //     {
-    //         pic:wings,
-    //         name:"HONEY  WINGS",
-    //         price:"GH₵87.00",
-    //         id:2
-    //     },
-    //     {
-    //         pic:meal,
-    //         name:"HONEY DUNKED TWISTERS ",
-    //         price:"GH₵102.00",
-    //         id:3
-    //     },
-    //     {
-    //         pic:twister,
-    //         name:"HONEY  TWISTER",
-    //         price:"GH₵61.00",
-    //         id:4
-    //     }
-    // ]
+
 
     return(
         <>

@@ -11,6 +11,7 @@ function Cart() {
         axiosFetch.get('/cart/add')
             .then((res) => {
                 setCartItems(res.data.items);
+                console.log(res.data.items)
                 const total = res.data.items.reduce((acc, item) => acc + item.menuItem.price * item.quantity, 0);
                 setTotalPrice(total);
                 setIsLoading(false);
