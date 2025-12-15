@@ -8,7 +8,7 @@ function Cart() {
   const [totalPrice, setTotalPrice] = useState(0); 
   const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        axiosFetch.get('/cart')
+        axiosFetch.post('/cart/add')
             .then((res) => {
                 setCartItems(res.data.items);
                 const total = res.data.items.reduce((acc, item) => acc + item.menuItem.price * item.quantity, 0);
