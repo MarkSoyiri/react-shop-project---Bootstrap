@@ -26,6 +26,7 @@ export function Card ({ products }) {
                 }
             });
             alert("Added to cart!");
+            console.log("Hello")
         } catch (err) {
             console.log(err);
         }           
