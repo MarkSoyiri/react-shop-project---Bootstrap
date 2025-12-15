@@ -73,7 +73,7 @@ export function StoreLocationNav () {
                             <a href="/"><img className='logo' src={logo} alt="logo image"  /></a>
                             <li>
                                 <a href="/menu">OUR MENU</a>
-                                <a href="">STORE LOCATION</a>
+                                <a href="">LOCATION</a>
                                 <a href="">COUPON WALLET</a>
                             </li>
                         </ul>

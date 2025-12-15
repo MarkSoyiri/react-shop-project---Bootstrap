@@ -24,7 +24,7 @@ function MenuNav () {
                         <a class="nav-link active" aria-current="page" href="/menu">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/storelocation">Store Location</a>
+                        <a class="nav-link" href="/storelocation">Location</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>

@@ -89,6 +89,14 @@ function Login () {
 
          if (response.status === 201) {
             console.log(response.statusText);
+            alert("Registration Successful! Please Login.");
+            SetUsername("");
+            SetEmail("");
+            SetPassword("");
+            SetUsernameError("");
+            SetEmailError("");
+            SetPasswordError("");
+            SetShowLogin(true);
         }
        } catch (error) {
     if (error.response) {
