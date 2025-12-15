@@ -35,7 +35,7 @@ export function HomeNav () {
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
                     <IsLoginSuccess>
-                        
+                        {/* CONTENT ONLY SHOWS WHEN USER IS LOGGEN IN */}
                     </IsLoginSuccess>
                     </ul>
                     <span class="navbar-text">
