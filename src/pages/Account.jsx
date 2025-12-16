@@ -1,7 +1,7 @@
 import { useState,useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axiosFetch from "../api/axiosFetchAPI";
-import { useState } from "react";
+
 
 
 function UserProfile(){
