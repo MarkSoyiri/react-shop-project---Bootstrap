@@ -25,11 +25,13 @@ function UserProfile(){
         const [name,setName] = useState("");
         const [email,setEmail] = useState("");
         
-        const profile = axiosFetch.get('/profile').then((res)=>{
-            setName(profile.data.username);
+        try {
+            const profile = axiosFetch.get('/profile');
             setEmail(profile.data.email);
-            
-        }).catch((err)=> console.error(err.message))
+            setName(profile.data.name);
+        } catch (error) {
+            console.error(error.message)
+        }
     
 
 
