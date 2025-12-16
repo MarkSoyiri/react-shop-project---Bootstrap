@@ -7,7 +7,7 @@ import { useState } from "react";
 function UserProfile(){
 
     const [ActiveMenu,SetActiveMenu] = useState("AS")
-    const {logout} = useContext(AuthContext);
+    // const {logout} = useContext(AuthContext);
 
     function showAccountSettings() {
     SetActiveMenu("AS");
@@ -26,8 +26,8 @@ function UserProfile(){
         const [email,setEmail] = useState("");
         
         const profile = axiosFetch.get('/profile').then((res)=>{
-            setName(res.data.username);
-            setEmail(res.data.email);
+            setName(profile.data.username);
+            setEmail(profile.data.email);
             
         }).catch((err)=> console.error(err.message))
     
