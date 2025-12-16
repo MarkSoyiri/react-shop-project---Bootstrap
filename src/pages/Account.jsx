@@ -29,6 +29,7 @@ function UserProfile(){
             const response = axiosFetch.get('/profile');
             setEmail(response.data.email);
             setName(response.data.name);
+            console.log(response.data.user)
         } catch (error) {
             console.error(error.message)
         }
