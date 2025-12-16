@@ -26,10 +26,10 @@ function UserProfile(){
         const [email,setEmail] = useState("");
 
         // FETCH USER PROFILE DATA
-         axiosFetch.get('/profile').then((res)=>{
-            setName(res.data.user.username);
-            setEmail(res.data.user.email);      
-        }).catch((err)=> console.error(err.message))
+        //  axiosFetch.get('/profile').then((res)=>{
+        //     setName(res.data.user.username);
+        //     setEmail(res.data.user.email);      
+        // }).catch((err)=> console.error(err.message))
 
     
 
