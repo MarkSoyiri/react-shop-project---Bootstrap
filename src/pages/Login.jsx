@@ -9,9 +9,9 @@ function Login () {
 
     const navigate = useNavigate()
 
-    const [Email,SetEmail] = useState("mark@gmail.com");
-    const [Password,SetPassword] = useState("mark101");
-    const [Username,SetUsername] = useState("Mark");
+    const [Email,SetEmail] = useState("");
+    const [Password,SetPassword] = useState("");
+    const [Username,SetUsername] = useState("");
     const [EmailError,SetEmailError] = useState("");
     const [PasswordError,SetPasswordError] = useState("");
     const [UsernameError,SetUsernameError] = useState("");
