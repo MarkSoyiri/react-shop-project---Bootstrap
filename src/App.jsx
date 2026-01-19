@@ -18,12 +18,24 @@ import { DontShowLoginRegister } from './components/IsAuth'
 import useAxiosLoader from './api/useAxiosLoader'
 import { LoadingContext } from './context/LoadingContext'
 import GlobalLoader from './components/GlobalLoader'
+import { PageLoaderContext } from "../context/PageLoaderContext";
 
 
 
 
 function Layout(){
   const location = useLocation();
+  const { pageLoading, setPageLoading } = useContext(PageLoaderContext);
+
+  useEffect(() => {
+    setPageLoading(true);
+
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 400); // smooth transition
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
   
 
 
@@ -91,6 +103,7 @@ function App(){
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
+      {pageLoading && <GlobalLoader />}
       {isLoading && <GlobalLoader />}
     {/* <AuthProvider> */}
     <BrowserRouter>
