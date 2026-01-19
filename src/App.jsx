@@ -18,7 +18,7 @@ import { DontShowLoginRegister } from './components/IsAuth'
 import useAxiosLoader from './api/useAxiosLoader'
 import { LoadingContext } from './context/LoadingContext'
 import GlobalLoader from './components/GlobalLoader'
-import { PageLoaderContext } from "../context/PageLoaderContext";
+import { PageLoaderContext } from "./context/PageLoaderContext";
 
 
 
