@@ -1,29 +1,40 @@
-import { useState,createContext,useContext } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { BrowserRouter as BrowserRouter,Routes,Route } from 'react-router-dom'
-import Home from './pages/Home'
-import { HomeNav,StoreLocationNav,Footer } from './components/NavFooter'
-import Menu from './pages/Menu'
-import Login from './pages/Login'
-import StoreLocation from './pages/StoreLocation'
-import Contact from './pages/Contact'
-import UserProfile from './pages/Account'
-import MenuNav from './components/MenuNav'
-import Cart from './pages/Cart'
-import { useLocation } from 'react-router-dom'
-import { DontShowLoginRegister } from './components/IsAuth'
-// import { AuthContext } from './context/AuthContext'
-import useAxiosLoader from './api/useAxiosLoader'
-import { LoadingContext } from './context/LoadingContext'
-import GlobalLoader from './components/GlobalLoader'
+import { 
+  useState, 
+  createContext, 
+  useContext, 
+  useEffect 
+} from "react";
+
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+
+import "./App.css";
+
+import Home from "./pages/Home";
+import Menu from "./pages/Menu";
+import Login from "./pages/Login";
+import StoreLocation from "./pages/StoreLocation";
+import Contact from "./pages/Contact";
+import UserProfile from "./pages/Account";
+import Cart from "./pages/Cart";
+
+import { HomeNav, Footer } from "./components/NavFooter";
+import MenuNav from "./components/MenuNav";
+import { DontShowLoginRegister } from "./components/IsAuth";
+
+import useAxiosLoader from "./api/useAxiosLoader";
+import { LoadingContext } from "./context/LoadingContext";
 import { PageLoaderContext } from "./context/PageLoaderContext";
+import GlobalLoader from "./components/GlobalLoader";
 
+/* =======================
+   THEME CONTEXT
+======================= */
+export const ThemeContext = createContext();
 
-
-
-function Layout(){
+/* =======================
+   LAYOUT
+======================= */
+function Layout() {
   const location = useLocation();
   const { pageLoading, setPageLoading } = useContext(PageLoaderContext);
 
@@ -32,88 +43,117 @@ function Layout(){
 
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 400); // smooth transition
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [location.pathname]);
-  
+  }, [location.pathname, setPageLoading]);
 
-
-  return(
+  return (
     <>
-      {location.pathname === "/menu" ? <MenuNav/> : <HomeNav/>}
+      {/* NAV */}
+      {location.pathname === "/menu" ? <MenuNav /> : <HomeNav />}
 
-      {/* ORDER SECTION */}
-      <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">ORDER SUMMARY</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      {/* ORDER OFFCANVAS */}
+      <div
+        className="offcanvas offcanvas-end"
+        data-bs-scroll="true"
+        tabIndex="-1"
+        id="offcanvasWithBothOptions"
+        aria-labelledby="offcanvasWithBothOptionsLabel"
+      >
+        <div className="offcanvas-header">
+          <h5
+            className="offcanvas-title"
+            id="offcanvasWithBothOptionsLabel"
+          >
+            ORDER SUMMARY
+          </h5>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
         </div>
-        <div class="offcanvas-body">
-          <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place order</a>?</p>
-          <div className='ordered-item-box'>
 
-          </div>
-          <div className='coupon-btn'>
-            <input type='text' placeholder='Type coupon code here'/>
+        <div className="offcanvas-body">
+          <p>
+            Looks like you have not placed an order yet. Do you want to{" "}
+            <a href="/menu" style={{ color: "black", fontWeight: 500 }}>
+              place order
+            </a>
+            ?
+          </p>
+
+          <div className="ordered-item-box"></div>
+
+          <div className="coupon-btn">
+            <input type="text" placeholder="Type coupon code here" />
             <p>Apply</p>
-
           </div>
-          <div className='checkout-btn'>
-            <a href="#"><p>Checkout</p></a>
-            <p>GHC 0.00</p>
 
+          <div className="checkout-btn">
+            <a href="#">
+              <p>Checkout</p>
+            </a>
+            <p>GHC 0.00</p>
           </div>
         </div>
       </div>
-      {/* END */}
 
-     {pageLoading && <GlobalLoader />}
-      {/* <LoadingScreen/> */}
+      {/* PAGE LOADER */}
+      {pageLoading && <GlobalLoader />}
+
+      {/* ROUTES */}
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/menu' element={<Menu/>}/>
-        <Route path='/storelocation' element={<StoreLocation/>}/>
-        <Route path='/contact' element={<Contact/>}/>
-        <Route path='/userprofile' element={<UserProfile/>}/>
-        <Route path='/cart' element={<Cart/>}/>
-        <Route element={<DontShowLoginRegister/>}>
-          <Route path='/login' element={<Login/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/storelocation" element={<StoreLocation />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="/cart" element={<Cart />} />
+
+        <Route element={<DontShowLoginRegister />}>
+          <Route path="/login" element={<Login />} />
         </Route>
       </Routes>
-      <Footer/>
-      
+
+      <Footer />
     </>
-  )
+  );
 }
 
-export const ThemeContext = createContext();
+/* =======================
+   APP
+======================= */
+function App() {
+  const [theme, setTheme] = useState("Light");
 
-function App(){
-
-  const [Theme,SetTheme] = useState("Light");
-  function toggleTheme(){
-    const updated = Theme == "Light" ? SetTheme("Dark") : SetTheme("Light");
-  }
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "Light" ? "Dark" : "Light"));
+  };
 
   const { isLoading } = useContext(LoadingContext);
 
   useAxiosLoader();
 
-  return(
-    <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
-    <ThemeContext.Provider value={{Theme,toggleTheme}}>
-      
-      {isLoading && <GlobalLoader />}
-    {/* <AuthProvider> */}
-    <BrowserRouter>
-      <Layout/>
-    </BrowserRouter>
-    {/* </AuthProvider> */}
-    
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <div
+        style={{
+          backgroundColor: theme === "Light" ? "#fff" : "#000",
+          minHeight: "100vh",
+        }}
+      >
+        {/* API LOADER */}
+        {isLoading && <GlobalLoader />}
+
+        <BrowserRouter>
+          <Layout />
+        </BrowserRouter>
+      </div>
     </ThemeContext.Provider>
-    </div>
-  )
+  );
 }
 
-export default App
+export default App;
