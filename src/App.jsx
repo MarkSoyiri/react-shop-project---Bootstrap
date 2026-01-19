@@ -68,8 +68,7 @@ function Layout(){
       </div>
       {/* END */}
 
-      {isLoading && <GlobalLoader />}
-     
+     {pageLoading && <GlobalLoader />}
       {/* <LoadingScreen/> */}
       <Routes>
         <Route path='/' element={<Home/>}/>
@@ -104,8 +103,8 @@ function App(){
   return(
     <div style={{backgroundColor:Theme == "Light" ? "white" : "black"}}>
     <ThemeContext.Provider value={{Theme,toggleTheme}}>
-      {pageLoading && <GlobalLoader />}
       
+      {isLoading && <GlobalLoader />}
     {/* <AuthProvider> */}
     <BrowserRouter>
       <Layout/>
