@@ -3,11 +3,15 @@ import account from '../images/account.png'
 import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
 import { IsLoginSuccess,IsLogout } from '../components/IsAuth';
+import { useContext } from 'react';
+import { CartContext } from '../context/CartContext';
 
 
 
 
 function MenuNav () {
+    const { getCartCount } = useContext(CartContext);
+    const cartCount = getCartCount();
 
     return (
         <>
@@ -28,6 +32,14 @@ function MenuNav () {
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            Cart 
+                            {cartCount > 0 && (
+                                <span className="badge bg-danger ms-2">{cartCount}</span>
+                            )}
+                        </a>
                     </li>
                     <IsLoginSuccess>
                    

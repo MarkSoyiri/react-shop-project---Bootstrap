@@ -12,23 +12,21 @@ import browsecat from '../images/browsecat.png'
 import { useEffect,useState,useContext } from 'react'
 import axiosFetch from '../api/axiosFetchAPI'
 import { AuthContext } from "../context/AuthContext";
+import { CartContext } from "../context/CartContext";
 
 
 
 export function Card ({ products }) {
+      const { addToCart } = useContext(CartContext);
+      const { token } = useContext(AuthContext);
 
-      const handleAddToCart = async () => {
+      const handleAddToCart = (product) => {
         try {
-            await axiosFetch.post('/cart/add', 
-                { menuItemId: item._id, quantity: 1 }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            addToCart(product);
             alert("Added to cart!");
-            console.log("Hello")
         } catch (err) {
             console.log(err);
+            alert("Failed to add to cart");
         }           
     };
     
@@ -57,7 +55,7 @@ export function Card ({ products }) {
                             <h3>{food.name}</h3>
                             {/* <h2>{food.description}</h2> */}
                             <p>{food.price}</p>
-                            <button onClick={handleAddToCart}>Order</button>
+                            <button onClick={() => handleAddToCart(food)}>Order</button>
                         </div>
 
                     </div>

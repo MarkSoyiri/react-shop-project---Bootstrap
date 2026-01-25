@@ -27,6 +27,7 @@ import {
   PageLoaderContext,
   PageLoaderProvider
 } from "./context/PageLoaderContext";
+import { CartProvider } from "./context/CartContext";
 
 import GlobalLoader from "./components/GlobalLoader";
 
@@ -41,6 +42,7 @@ export const ThemeContext = createContext();
 function Layout() {
   const location = useLocation();
   const { pageLoading, setPageLoading } = useContext(PageLoaderContext);
+  const { cartItems, getTotalPrice, clearCart } = useContext(CartContext);
 
   useEffect(() => {
     setPageLoading(true);
@@ -64,19 +66,31 @@ function Layout() {
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place order</a>?</p>
-          <div className='ordered-item-box'>
-
-          </div>
+          {cartItems.length === 0 ? (
+            <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place order</a>?</p>
+          ) : (
+            <>
+              <div className='ordered-item-box'>
+                {cartItems.map((item) => (
+                  <div key={item._id} style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
+                    <h6>{item.name}</h6>
+                    <p>x{item.quantity} - GH₵ {(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+              <hr />
+              <div style={{ marginBottom: '20px' }}>
+                <h5>Total: GH₵ {getTotalPrice().toFixed(2)}</h5>
+              </div>
+            </>
+          )}
           <div className='coupon-btn'>
             <input type='text' placeholder='Type coupon code here'/>
             <p>Apply</p>
-
           </div>
           <div className='checkout-btn'>
-            <a href="#"><p>Checkout</p></a>
-            <p>GHC 0.00</p>
-
+            <a href="/cart"><p>Checkout</p></a>
+            <p>GHC {getTotalPrice().toFixed(2)}</p>
           </div>
         </div>
       </div>
@@ -117,18 +131,20 @@ function App() {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <PageLoaderProvider>
-        <div
-          style={{
-            backgroundColor: theme === "Light" ? "#fff" : "#000",
-            minHeight: "100vh",
-          }}
-        >
-          {isLoading && <GlobalLoader />}
+        <CartProvider>
+          <div
+            style={{
+              backgroundColor: theme === "Light" ? "#fff" : "#000",
+              minHeight: "100vh",
+            }}
+          >
+            {isLoading && <GlobalLoader />}
 
-          <BrowserRouter>
-            <Layout />
-          </BrowserRouter>
-        </div>
+            <BrowserRouter>
+              <Layout />
+            </BrowserRouter>
+          </div>
+        </CartProvider>
       </PageLoaderProvider>
     </ThemeContext.Provider>
   );
