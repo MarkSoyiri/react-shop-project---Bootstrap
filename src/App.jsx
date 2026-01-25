@@ -27,7 +27,7 @@ import {
   PageLoaderContext,
   PageLoaderProvider
 } from "./context/PageLoaderContext";
-import { CartProvider } from "./context/CartContext";
+import { CartProvider, CartContext } from "./context/CartContext";
 
 import GlobalLoader from "./components/GlobalLoader";
 
