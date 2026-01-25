@@ -56,7 +56,7 @@ function Cart() {
             <h5>GH₵ {getTotalPrice().toFixed(2)}</h5>
           </div>
           <div className="d-flex gap-2">
-            <button className="btn btn-primary flex-grow-1">Proceed to Checkout</button>
+            <button className="btn btn-primary flex-grow-1 mb-s">Proceed to Checkout</button>
             <button className="btn btn-outline-danger" onClick={clearCart}>Clear Cart</button>
           </div>
         </div>
