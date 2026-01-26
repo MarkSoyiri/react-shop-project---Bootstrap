@@ -90,8 +90,8 @@
 }
 
 .cart-actions .btn {
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 8px 12px;
+  font-size: 14px;
   font-weight: 600;
   width: 100%;
 }
@@ -179,9 +179,13 @@
     min-width: 80px;
   }
 
+  .cart-actions {
+    gap: 8px;
+  }
+
   .cart-actions .btn {
-    padding: 10px 15px;
-    font-size: 14px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   .btn-danger {
