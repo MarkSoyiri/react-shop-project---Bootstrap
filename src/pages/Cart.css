@@ -1,0 +1,191 @@
+/* Cart Page Responsive Styles */
+
+.cart-container {
+  padding: 20px 0;
+}
+
+.cart-item {
+  margin-bottom: 15px;
+  padding: 15px !important;
+}
+
+.cart-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cart-item-info {
+  width: 100%;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+
+.cart-item-description {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.cart-item-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.quantity-control button {
+  padding: 4px 8px;
+  min-width: 32px;
+  font-weight: bold;
+}
+
+.quantity-display {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cart-item-price {
+  font-weight: 600;
+  min-width: 100px;
+  text-align: right;
+}
+
+.cart-item-controls .btn-danger {
+  white-space: nowrap;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 2px solid #dee2e6;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.cart-total h5 {
+  margin: 0;
+}
+
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cart-actions .btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+}
+
+/* Tablet/Medium screens */
+@media (min-width: 576px) {
+  .cart-item-wrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-item-info {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .cart-item-controls {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 15px;
+  }
+
+  .cart-item-price {
+    min-width: 120px;
+  }
+
+  .cart-actions {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  .cart-actions .btn {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* Desktop screens */
+@media (min-width: 992px) {
+  .cart-item {
+    padding: 20px !important;
+  }
+
+  .cart-item-controls {
+    gap: 20px;
+  }
+
+  .cart-actions {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .cart-actions .btn {
+    width: auto;
+  }
+}
+
+/* Extra small screens (below 400px) */
+@media (max-width: 375px) {
+  .cart-container {
+    padding: 10px 0;
+  }
+
+  .cart-item {
+    padding: 10px !important;
+  }
+
+  .cart-item-name {
+    font-size: 0.95rem;
+  }
+
+  .cart-item-description {
+    font-size: 0.85rem;
+  }
+
+  .quantity-control button {
+    padding: 3px 6px;
+    font-size: 0.85rem;
+  }
+
+  .cart-item-price {
+    font-size: 0.95rem;
+    min-width: 80px;
+  }
+
+  .cart-actions .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .btn-danger {
+    padding: 4px 8px !important;
+    font-size: 0.85rem;
+  }
+}
