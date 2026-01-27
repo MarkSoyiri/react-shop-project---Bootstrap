@@ -193,7 +193,9 @@
 
   .cart-item-description {
     font-size: 0.85rem;
-  }cart-item-controls {
+  }
+
+  .cart-item-controls {
     gap: 8px;
   }
 
@@ -238,9 +240,7 @@
   }
 
   .btn-danger {
-    padding: 4px 6
-  .btn-danger {
-    padding: 4px 8px !important;
+    padding: 4px 6px !important;
     font-size: 0.85rem;
   }
 }
