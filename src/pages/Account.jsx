@@ -1,4 +1,4 @@
-import { useState,useContext, useEffect } from "react";
+import { useState,useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axiosFetch from "../api/axiosFetchAPI";
 
@@ -7,14 +7,29 @@ import axiosFetch from "../api/axiosFetchAPI";
 function UserProfile(){
 
     const [ActiveMenu,SetActiveMenu] = useState("AS")
-    const {user} = useContext(AuthContext);
-    const [isLoading, setIsLoading] = useState(!user);
+    // const {logout} = useContext(AuthContext);
 
-    useEffect(() => {
-        if (user) {
-            setIsLoading(false);
-        }
-    }, [user]);
+    function showAccountSettings() {
+    SetActiveMenu("AS");
+    }
+
+    function showPastOrders() {
+        SetActiveMenu("PO");
+    }
+
+    function showPaymentMethod() {
+        SetActiveMenu("PM");
+    }
+
+    
+        const [name,setName] = useState("");
+        const [email,setEmail] = useState("");
+
+        // FETCH USER PROFILE DATA
+         axiosFetch.get('/profile').then((res)=>{
+            setName(res.data.user.username);
+            setEmail(res.data.user.email);      
+        }).catch((err)=> console.error(err.message))
 
     function showAccountSettings() {
     SetActiveMenu("AS");
@@ -34,14 +49,9 @@ function UserProfile(){
     return(
         
         <>
-            {isLoading ? (
-                <div className="container-lg account-box" style={{display: "flex", justifyContent: "center", alignItems: "center", minHeight: "500px"}}>
-                    <p>Loading...</p>
-                </div>
-            ) : (
-                <div className="container-lg account-box">
-                    <div className="acc-menu-box">
-                        <h1>Hello, {user?.username || "Guest"}!</h1>
+            <div className="container-lg account-box">
+                <div className="acc-menu-box">
+                    <h1>Hello,Mark!</h1>
                         <div className="acc-menus">
                             <span className="menu" onClick={showAccountSettings} style={{border:ActiveMenu === "AS" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Account Settings</span>
                             <span className="menu" onClick={showPastOrders} style={{border:ActiveMenu === "PO" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Past Orders</span>

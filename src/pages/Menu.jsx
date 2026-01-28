@@ -9,18 +9,15 @@ import axiosFetch from '../api/axiosFetchAPI';
 function Menu() {
 
      const [products,setProducts]=useState([])
-     const [loading, setLoading] = useState(true)
 
 
     useEffect(()=>{
 
         axiosFetch.get('/menu').then((res)=>{
             setProducts(res.data);
-            setLoading(false);
-            console.log(res.data);
+            console.log(products);
         }).catch((err)=>{
             console.error(err.message);
-            setLoading(false);
         })
 
 
@@ -28,17 +25,11 @@ function Menu() {
 
     return (
         <>
+
+
+
             <div className="scroll-box" >
-                {loading ? (
-                    <div style={{padding: '20px', textAlign: 'center'}}>
-                        <p>Loading menu items...</p>
-                    </div>
-                ) : products.length === 0 ? (
-                    <div style={{padding: '20px', textAlign: 'center'}}>
-                        <p>No menu items available</p>
-                    </div>
-                ) : (
-                    <>
+
                 <h4 id="scrollspyHeading1" class="scroll-view-repost" >
 
                     <HomeHeadingNL heading="PROMOTIONS" />
@@ -71,8 +62,8 @@ function Menu() {
                     </div>
 
                 </h4>
-                    </>
-                )}
+
+
             </div>
 
         </>

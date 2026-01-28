@@ -41,13 +41,7 @@ function Home () {
                 <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
                 <div class="container-lg">
                     <div className="foodBox">
-                    {loading ? (
-                        <p>Loading products...</p>
-                    ) : products.length === 0 ? (
-                        <p>No products available</p>
-                    ) : (
-                        <Card products={products}/>
-                    )}
+                    <Card products={products}/>
                     </div>
                 </div>
                 
