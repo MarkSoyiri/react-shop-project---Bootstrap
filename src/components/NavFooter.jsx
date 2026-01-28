@@ -5,6 +5,7 @@ import zestylogo from '../images/zestylogo.png'
 import { useState,useContext } from 'react'
 import { ThemeContext } from '../App'
 import { IsLoginSuccess, IsLogout } from './IsAuth'
+import { CartContext } from '../context/CartContext';
 
 
 
@@ -12,6 +13,8 @@ import { IsLoginSuccess, IsLogout } from './IsAuth'
 export function HomeNav () {
     
     const {Theme,toggleTheme} = useContext(ThemeContext)
+    const { getCartCount } = useContext(CartContext);
+    const cartCount = getCartCount();
 
     return (
         <>
@@ -33,6 +36,14 @@ export function HomeNav () {
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            Cart
+                            {cartCount > 0 && (
+                                <span className="badge bg-danger ms-2">{cartCount}</span>
+                            )}
+                        </a>
                     </li>
                     <IsLoginSuccess>
                         {/* CONTENT ONLY SHOWS WHEN USER IS LOGGEN IN */}
