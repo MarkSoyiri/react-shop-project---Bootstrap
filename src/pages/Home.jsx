@@ -12,15 +12,18 @@ function Home () {
 
 
     const [products,setProducts]=useState([])
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(()=>{
 
         axiosFetch.get('/menu').then((res)=>{
             setProducts(res.data);
-            console.log(products);
+            setLoading(false);
+            console.log(res.data);
         }).catch((err)=>{
             console.error(err.message);
+            setLoading(false);
         })
 
 
@@ -38,7 +41,13 @@ function Home () {
                 <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
                 <div class="container-lg">
                     <div className="foodBox">
-                    <Card products={products}/>
+                    {loading ? (
+                        <p>Loading products...</p>
+                    ) : products.length === 0 ? (
+                        <p>No products available</p>
+                    ) : (
+                        <Card products={products}/>
+                    )}
                     </div>
                 </div>
                 
