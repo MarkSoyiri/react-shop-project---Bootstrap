@@ -153,11 +153,6 @@ body{
   height: 100%;
   
 }
-.scroll-box{
-  padding-top: 100px;
-  padding-bottom: 50px;
-  display: block;
-}
 .menu-container{
   display: flex;
   flex-wrap: wrap;
@@ -1081,7 +1076,7 @@ a{
 
 /* ORDER SECTION */
 .ordered-item-box{
-  display: block;
+  
 }
 .checkout-btn{
 
