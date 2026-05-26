@@ -100,9 +100,11 @@ function Login () {
         }
        } catch (error) {
     if (error.response) {
-        console.error(error.response.data.message);
+        console.error("Register Error:", error.response.status, error.response.data);
+        alert(`Registration failed: ${error.response.data.message || error.response.statusText}`);
     } else {
-        console.error(error.message);
+        console.error("Register Error:", error.message);
+        alert(`Registration failed: ${error.message}`);
     }
 }
 
