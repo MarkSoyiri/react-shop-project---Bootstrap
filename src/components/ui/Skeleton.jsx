@@ -104,7 +104,9 @@ const styles = {
   },
   pageGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: 24,
+    maxWidth: 1200,
+    margin: '0 auto',
   },
 };
