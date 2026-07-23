@@ -76,78 +76,76 @@ function Notifications() {
 
   if (!user) {
     return (
-      <div className="notifications-page" style={{ textAlign: 'center' }}>
-        <h2>Please sign in to view notifications</h2>
-        <button className="btn-premium" onClick={() => navigate('/login')} style={{ marginTop: 16 }}>Sign In</button>
+      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Please sign in to view notifications</h2>
+        <button onClick={() => navigate('/login')} style={{ marginTop: 16, padding: '12px 32px', borderRadius: 12, border: 'none', background: 'var(--color-brand)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Sign In</button>
       </div>
     );
   }
 
   return (
-    <div className="notifications-page">
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <div>
-            <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Notifications</h2>
-            <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>
-              {unreadCount} unread
-            </p>
-          </div>
-          {unreadCount > 0 && (
-            <button className="quick-action-btn" onClick={markAllAsRead}>
-              Mark all read
-            </button>
-          )}
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+        <div>
+          <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Notifications</h1>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>{unreadCount} unread</p>
         </div>
+        {unreadCount > 0 && (
+          <button onClick={markAllAsRead} style={{ padding: '10px 20px', borderRadius: 10, border: '1.5px solid var(--color-brand)', background: 'transparent', color: 'var(--color-brand)', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--color-brand)'; e.currentTarget.style.color = '#fff'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-brand)'; }}>
+            Mark All Read
+          </button>
+        )}
+      </div>
 
-        <div className="notification-list">
-          {notifications.map((notif, i) => (
-            <motion.div
-              key={notif._id}
-              className={`notification-item ${!notif.isRead ? 'unread' : ''}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.03 }}
-              onClick={() => !notif.isRead && markAsRead(notif._id)}
-            >
-              <div className="notif-icon" style={{ background: getNotifColor(notif.type) }}>
-                {getNotifIcon(notif.type)}
-              </div>
-              <div className="notif-content">
-                <h4>{notif.title}</h4>
-                <p>{notif.message}</p>
-                {notif.data?.orderId && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); navigate(`/order/${notif.data.orderId}`); }}
-                    style={{
-                      marginTop: 8, padding: '4px 12px', fontSize: 12, fontWeight: 600,
-                      border: '1px solid var(--color-brand)', borderRadius: 'var(--radius-sm)',
-                      background: 'transparent', color: 'var(--color-brand)', cursor: 'pointer',
-                    }}
-                  >
-                    View Order
-                  </button>
-                )}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                <span className="notif-time">{formatDateTime(notif.createdAt)}</span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); deleteNotification(notif._id); }}
-                  style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: 14 }}
-                >
-                  ✕
-                </button>
-              </div>
-            </motion.div>
-          ))}
-          {notifications.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--color-text-muted)' }}>
-              <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🔔</div>
-              <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>No notifications</h3>
-              <p>You're all caught up!</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {notifications.map((notif, i) => (
+          <motion.div
+            key={notif._id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.04 }}
+            onClick={() => !notif.isRead && markAsRead(notif._id)}
+            style={{
+              display: 'flex', alignItems: 'flex-start', gap: 14,
+              padding: '16px 20px', borderRadius: 12, cursor: 'pointer',
+              transition: 'background 0.2s', position: 'relative',
+              background: notif.isRead ? '#fff' : 'rgba(232,93,4,0.04)',
+              border: '1px solid var(--color-border)',
+              borderLeft: notif.isRead ? '3px solid transparent' : '3px solid var(--color-brand)',
+            }}
+            onMouseOver={e => e.currentTarget.style.background = notif.isRead ? 'var(--color-bg-alt)' : 'rgba(232,93,4,0.07)'}
+            onMouseOut={e => e.currentTarget.style.background = notif.isRead ? '#fff' : 'rgba(232,93,4,0.04)'}
+          >
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: getNotifColor(notif.type), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+              {getNotifIcon(notif.type)}
             </div>
-          )}
-        </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2, color: 'var(--color-text)' }}>{notif.title}</div>
+              <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>{notif.message}</div>
+              {notif.data?.orderId && (
+                <button onClick={e => { e.stopPropagation(); navigate(`/order/${notif.data.orderId}`); }} style={{ marginTop: 8, padding: '4px 12px', fontSize: 12, fontWeight: 600, border: '1px solid var(--color-brand)', borderRadius: 8, background: 'transparent', color: 'var(--color-brand)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--color-brand)'; e.currentTarget.style.color = '#fff'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-brand)'; }}>
+                  View Order
+                </button>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+              <span style={{ fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>{formatDateTime(notif.createdAt)}</span>
+              <button onClick={e => { e.stopPropagation(); deleteNotification(notif._id); }} style={{ background: 'none', border: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, padding: 2, lineHeight: 1, transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#dc2626'} onMouseOut={e => e.currentTarget.style.color = '#d1d5db'} title="Delete notification">
+                &#10005;
+              </button>
+            </div>
+          </motion.div>
+        ))}
+
+        {notifications.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+            <div style={{ fontSize: 56, marginBottom: 16, opacity: 0.25 }}>&#128276;</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No notifications yet</h3>
+            <p style={{ color: 'var(--color-text-secondary)' }}>You're all caught up!</p>
+          </div>
+        )}
       </div>
     </div>
   );

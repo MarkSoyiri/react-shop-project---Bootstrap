@@ -35,14 +35,14 @@ export const IsLoginSuccess = () => {
     try {
         if (IsUserAuthenticated()) {
             return <>   
-                <li class="nav-item">
-                    <a class="nav-link" href="/userprofile">Profile</a>
+                <li className="nav-item">
+                    <a className="nav-link" href="/userprofile">Profile</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart">Cart</a>
+                <li className="nav-item">
+                    <a className="nav-link" href="/cart">Cart</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
+                <li className="nav-item">
+                    <a className="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">My Order</a>
                 </li>
             </>;
         } else {

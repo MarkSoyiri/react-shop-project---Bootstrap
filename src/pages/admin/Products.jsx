@@ -98,33 +98,41 @@ function AdminProducts() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Products</h2>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>
-            {pagination.total} products total
-          </p>
+          <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Products</h2>
+          <p style={{ color: '#6b7280', fontSize: 14 }}>{pagination.total} products total</p>
         </div>
         <button
-          className="btn-premium"
           onClick={() => { resetForm(); setEditItem(null); setShowModal(true); }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '10px 20px', background: 'linear-gradient(135deg, #e85d04, #f48c06)',
+            color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600,
+            cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)',
+          }}
         >
-          + Add Product
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Product
         </button>
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPagination(p => ({ ...p, page: 1 })); }}
-          style={{
-            width: 320, padding: '10px 16px', border: '1.5px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)', fontSize: 14, outline: 'none',
-          }}
-        />
+        <div style={{ position: 'relative', maxWidth: 360 }}>
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth="2" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPagination(p => ({ ...p, page: 1 })); }}
+            style={{
+              width: '100%', padding: '10px 16px 10px 42px', border: '1.5px solid #e5e7eb',
+              borderRadius: 10, fontSize: 14, outline: 'none', background: '#fff',
+              transition: 'border-color 0.2s',
+            }}
+          />
+        </div>
       </div>
 
-      <div className="admin-table-wrapper">
+      <div className="admin-table-wrapper" style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
         <table className="admin-table">
           <thead>
             <tr>
@@ -132,7 +140,6 @@ function AdminProducts() {
               <th>Category</th>
               <th>Price</th>
               <th>Status</th>
-              <th>Popular</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -142,48 +149,62 @@ function AdminProducts() {
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{
-                      width: 44, height: 44, borderRadius: 8, overflow: 'hidden',
-                      background: 'var(--color-bg-alt)',
+                      width: 48, height: 48, borderRadius: 10, overflow: 'hidden',
+                      background: '#f3f4f6', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       {item.image ? (
                         <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🍔</div>
+                        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#d1d5db" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                       )}
                     </div>
                     <div>
                       <div style={{ fontWeight: 600, fontSize: 14 }}>{item.name}</div>
-                      <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
-                        {item.description?.slice(0, 40)}...
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>
+                        {item.description?.slice(0, 40) || 'No description'}{item.description?.length > 40 ? '...' : ''}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td style={{ textTransform: 'capitalize' }}>{item.category}</td>
-                <td style={{ fontWeight: 600 }}>{formatCurrency(item.price)}</td>
+                <td>
+                  <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f3f4f6', fontSize: 12, fontWeight: 600, textTransform: 'capitalize' }}>
+                    {item.category}
+                  </span>
+                </td>
+                <td style={{ fontWeight: 700, color: '#111827' }}>{formatCurrency(item.price)}</td>
                 <td>
                   <button
                     onClick={() => toggleAvailability(item)}
-                    className={`badge-status ${item.isAvailable ? 'badge-delivered' : 'badge-cancelled'}`}
-                    style={{ cursor: 'pointer', border: 'none' }}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '5px 12px', borderRadius: 20, border: 'none',
+                      fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                      background: item.isAvailable ? '#dcfce7' : '#fee2e2',
+                      color: item.isAvailable ? '#166534' : '#991b1b',
+                    }}
                   >
                     {item.isAvailable ? '✓ Active' : '✕ Inactive'}
                   </button>
                 </td>
-                <td>{item.isPopular ? '🔥' : '—'}</td>
                 <td>
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 6 }}>
                     <button
-                      className="quick-action-btn"
-                      style={{ padding: '6px 12px', fontSize: 12 }}
                       onClick={() => openEdit(item)}
+                      style={{
+                        padding: '6px 14px', fontSize: 12, fontWeight: 600,
+                        border: '1.5px solid #e5e7eb', borderRadius: 8,
+                        background: '#fff', color: '#111827', cursor: 'pointer',
+                      }}
                     >
                       Edit
                     </button>
                     <button
-                      className="quick-action-btn"
-                      style={{ padding: '6px 12px', fontSize: 12, borderColor: '#ef4444', color: '#ef4444' }}
                       onClick={() => handleDelete(item._id)}
+                      style={{
+                        padding: '6px 14px', fontSize: 12, fontWeight: 600,
+                        border: '1.5px solid #fecaca', borderRadius: 8,
+                        background: '#fff', color: '#ef4444', cursor: 'pointer',
+                      }}
                     >
                       Delete
                     </button>
@@ -193,7 +214,7 @@ function AdminProducts() {
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: 48, color: 'var(--color-text-muted)' }}>
+                <td colSpan={5} style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
                   No products found
                 </td>
               </tr>
@@ -226,38 +247,42 @@ function AdminProducts() {
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999, padding: 24,
+          zIndex: 9999, padding: 24, backdropFilter: 'blur(4px)',
         }} onClick={() => setShowModal(false)}>
           <div
             style={{
-              background: 'var(--color-bg-card)', borderRadius: 'var(--radius-md)',
+              background: '#fff', borderRadius: 16,
               padding: 32, width: '100%', maxWidth: 520, maxHeight: '90vh', overflow: 'auto',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
             }}
             onClick={e => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>
-              {editItem ? 'Edit Product' : 'Add Product'}
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>{editItem ? 'Edit Product' : 'Add Product'}</h3>
+              <button onClick={() => setShowModal(false)} style={{ background: '#f3f4f6', border: 'none', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>✕</button>
+            </div>
             <form className="admin-form" onSubmit={handleSave}>
               <div className="admin-form-group">
-                <label>Name</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Name</label>
                 <input
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
                   required
+                  style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }}
                 />
               </div>
               <div className="admin-form-group">
-                <label>Description</label>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Description</label>
                 <textarea
                   value={form.description}
                   onChange={e => setForm({ ...form, description: e.target.value })}
                   rows={3}
+                  style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa', resize: 'vertical', fontFamily: 'inherit' }}
                 />
               </div>
-              <div className="admin-form-row">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div className="admin-form-group">
-                  <label>Price (GH₵)</label>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Price (GH₵)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -265,11 +290,12 @@ function AdminProducts() {
                     value={form.price}
                     onChange={e => setForm({ ...form, price: e.target.value })}
                     required
+                    style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }}
                   />
                 </div>
                 <div className="admin-form-group">
-                  <label>Category</label>
-                  <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Category</label>
+                  <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }}>
                     <option value="meals">Meals</option>
                     <option value="burgers">Burgers</option>
                     <option value="combos">Combos</option>
@@ -281,25 +307,23 @@ function AdminProducts() {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 16 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={form.isAvailable} onChange={e => setForm({ ...form, isAvailable: e.target.checked })} />
-                  Available
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={form.isPopular} onChange={e => setForm({ ...form, isPopular: e.target.checked })} />
-                  Popular
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={form.isFeatured} onChange={e => setForm({ ...form, isFeatured: e.target.checked })} />
-                  Featured
-                </label>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                {[
+                  { key: 'isAvailable', label: 'Available' },
+                  { key: 'isPopular', label: 'Popular' },
+                  { key: 'isFeatured', label: 'Featured' },
+                ].map(opt => (
+                  <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', padding: '8px 14px', borderRadius: 8, background: form[opt.key] ? 'rgba(232,93,4,0.08)' : '#f3f4f6', color: form[opt.key] ? '#e85d04' : '#6b7280', fontWeight: 600, transition: 'all 0.2s' }}>
+                    <input type="checkbox" checked={form[opt.key]} onChange={e => setForm({ ...form, [opt.key]: e.target.checked })} style={{ accentColor: '#e85d04' }} />
+                    {opt.label}
+                  </label>
+                ))}
               </div>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button type="button" className="btn-premium-outline" onClick={() => setShowModal(false)}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ padding: '10px 20px', borderRadius: 10, border: '1.5px solid #e5e7eb', background: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', color: '#6b7280' }}>
                   Cancel
                 </button>
-                <button type="submit" className="btn-premium">
+                <button type="submit" style={{ padding: '10px 24px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #e85d04, #f48c06)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)' }}>
                   {editItem ? 'Update' : 'Create'}
                 </button>
               </div>

@@ -1,33 +1,40 @@
 function Loader({ text = "Loading..." }) {
   return (
     <div style={styles.container}>
-      <div style={styles.spinner} />
-      <p style={styles.text}>{text}</p>
+      <div style={styles.spinner}>
+        <div style={styles.spinnerInner} />
+      </div>
+      {text && <p style={styles.text}>{text}</p>}
     </div>
   );
 }
 
 const styles = {
   container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "60px 0",
-    gap: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '60px 0',
+    gap: 20,
   },
   spinner: {
-    width: 40,
-    height: 40,
-    border: "3px solid #e2e8f0",
-    borderTop: "3px solid #e85d04",
-    borderRadius: "50%",
-    animation: "spin 0.8s linear infinite",
+    width: 44,
+    height: 44,
+    borderRadius: '50%',
+    border: '3.5px solid var(--color-border)',
+    borderTopColor: 'var(--color-brand)',
+    animation: 'spin 0.8s linear infinite',
+  },
+  spinnerInner: {
+    width: '100%',
+    height: '100%',
   },
   text: {
-    color: "#64748b",
+    color: 'var(--color-text-secondary)',
     fontSize: 14,
     fontWeight: 500,
+    margin: 0,
   },
 };
 

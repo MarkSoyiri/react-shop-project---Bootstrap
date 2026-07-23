@@ -87,150 +87,337 @@ function UserProfile() {
     };
 
     const statusBadge = (status) => {
-        const colors = { delivered: 'success', cancelled: 'danger', placed: 'info', confirmed: 'info', preparing: 'warning', ready: 'primary', out_for_delivery: 'primary' };
-        return colors[status] || 'secondary';
+        const map = {
+            delivered: { bg: '#dcfce7', text: '#16a34a' },
+            cancelled: { bg: '#fee2e2', text: '#dc2626' },
+            placed: { bg: '#dbeafe', text: '#2563eb' },
+            confirmed: { bg: '#dbeafe', text: '#2563eb' },
+            preparing: { bg: '#fef3c7', text: '#d97706' },
+            ready: { bg: '#e0f2fe', text: '#0284c7' },
+            out_for_delivery: { bg: '#e0f2fe', text: '#0284c7' },
+        };
+        return map[status] || { bg: '#f3f4f6', text: '#6b7280' };
     };
 
+    const inputStyle = {
+        width: '100%',
+        padding: '10px 14px',
+        borderRadius: 12,
+        border: '1.5px solid var(--color-border)',
+        fontSize: 14,
+        outline: 'none',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+        background: '#fff',
+        color: 'var(--color-text)',
+    };
+
+    const labelStyle = {
+        fontSize: 13,
+        fontWeight: 600,
+        color: 'var(--color-text-secondary)',
+        marginBottom: 6,
+        display: 'block',
+    };
+
+    const tabs = [
+        { key: 'AS', label: 'Profile', icon: '👤' },
+        { key: 'ADDR', label: 'Addresses', icon: '📍' },
+        { key: 'PO', label: 'Order History', icon: '📦' },
+    ];
+
     return (
-        <div className="container-lg account-page">
-            <div className="row">
-                <div className="col-md-3 mb-4">
-                    <div className="account-sidebar">
-                        <div className="account-avatar">{name ? name[0].toUpperCase() : 'U'}</div>
-                        <h3>Hello, {name || "User"}!</h3>
-                        <p className="text-muted small">{profile?.email}</p>
-                        <div className="account-nav">
-                            {[
-                                { key: 'AS', label: 'Profile', icon: '👤' },
-                                { key: 'PO', label: 'Past Orders', icon: '📦' },
-                                { key: 'ADDR', label: 'Addresses', icon: '📍' },
-                            ].map(item => (
-                                <button key={item.key}
-                                    className={`account-nav-btn ${activeMenu === item.key ? 'active' : ''}`}
-                                    onClick={() => handleMenuClick(item.key)}>
-                                    <span>{item.icon}</span> {item.label}
-                                </button>
-                            ))}
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
+            <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>My Account</h1>
+
+            <div style={{ display: 'flex', gap: 32 }}>
+                {/* Sidebar */}
+                <div style={{
+                    width: '25%', minWidth: 220, flexShrink: 0,
+                    background: '#fff', borderRadius: 16, padding: 24,
+                    border: '1px solid var(--color-border)',
+                }}>
+                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                        <div style={{
+                            width: 80, height: 80, borderRadius: '50%',
+                            background: 'var(--color-brand)', color: '#fff',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 28, fontWeight: 700, margin: '0 auto 12px',
+                        }}>
+                            {name ? name[0].toUpperCase() : 'U'}
                         </div>
+                        <div style={{ fontWeight: 700, fontSize: 16 }}>{name || 'User'}</div>
+                        <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>{profile?.email}</div>
                     </div>
+
+                    <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.key}
+                                onClick={() => handleMenuClick(tab.key)}
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: 10,
+                                    padding: '10px 14px', borderRadius: 12, border: 'none',
+                                    cursor: 'pointer', fontSize: 14, fontWeight: 500,
+                                    transition: 'all 0.2s',
+                                    background: activeMenu === tab.key ? 'rgba(232,93,4,0.08)' : 'transparent',
+                                    color: activeMenu === tab.key ? 'var(--color-brand)' : 'var(--color-text)',
+                                }}
+                            >
+                                <span style={{ fontSize: 16 }}>{tab.icon}</span>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </nav>
                 </div>
-                <div className="col-md-9">
+
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                     {activeMenu === "AS" && (
-                        <div className="account-card">
-                            <h4>Profile Settings</h4>
-                            <div className="account-form">
-                                <div className="account-field">
-                                    <label>Username</label>
-                                    <input type="text" value={name} onChange={e => setName(e.target.value)} />
+                        <div style={{
+                            background: '#fff', borderRadius: 16, padding: 32,
+                            border: '1px solid var(--color-border)',
+                        }}>
+                            <h4 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>Profile Settings</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 480 }}>
+                                <div>
+                                    <label style={labelStyle}>Username</label>
+                                    <input
+                                        type="text" value={name}
+                                        onChange={e => setName(e.target.value)}
+                                        style={inputStyle}
+                                        onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                        onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                    />
                                 </div>
-                                <div className="account-field">
-                                    <label>Email</label>
-                                    <input type="email" value={profile?.email || ''} disabled />
+                                <div>
+                                    <label style={labelStyle}>Email</label>
+                                    <input
+                                        type="email" value={profile?.email || ''} disabled
+                                        style={{ ...inputStyle, background: 'var(--color-bg-alt)', color: 'var(--color-text-secondary)', cursor: 'not-allowed' }}
+                                    />
                                 </div>
-                                <div className="account-field">
-                                    <label>Phone</label>
-                                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" />
+                                <div>
+                                    <label style={labelStyle}>Phone</label>
+                                    <input
+                                        type="tel" value={phone}
+                                        onChange={e => setPhone(e.target.value)}
+                                        placeholder="Phone number"
+                                        style={inputStyle}
+                                        onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                        onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                    />
                                 </div>
-                                <button className="btn btn-primary" onClick={saveProfile} disabled={saving}>
+                                <button
+                                    onClick={saveProfile} disabled={saving}
+                                    style={{
+                                        padding: '12px 28px', borderRadius: 12, border: 'none',
+                                        background: 'var(--color-brand)', color: '#fff',
+                                        fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                                        transition: 'background 0.2s', alignSelf: 'flex-start',
+                                    }}
+                                    onMouseOver={e => e.currentTarget.style.background = 'var(--color-brand-dark)'}
+                                    onMouseOut={e => e.currentTarget.style.background = 'var(--color-brand)'}
+                                >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </div>
                         </div>
                     )}
 
-                    {activeMenu === "PO" && (
-                        <div className="account-card">
-                            <h4>Order History</h4>
-                            {ordersLoading ? (
-                                <p className="text-muted">Loading orders...</p>
-                            ) : orders.length === 0 ? (
-                                <div className="account-empty">
-                                    <p>No orders yet.</p>
-                                    <button className="btn btn-primary" onClick={() => navigate('/menu')}>Browse Menu</button>
-                                </div>
-                            ) : (
-                                <div className="orders-list">
-                                    {orders.map(order => (
-                                        <div key={order._id} className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
-                                            <div className="order-card-header">
-                                                <div>
-                                                    <strong>Order #{order._id.slice(-8)}</strong>
-                                                    <small className="text-muted d-block">
-                                                        {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </small>
-                                                </div>
-                                                <span className={`badge bg-${statusBadge(order.status)}`}>{order.status}</span>
-                                            </div>
-                                            <div className="order-card-items">
-                                                {order.items?.slice(0, 3).map((item, i) => (
-                                                    <span key={i}>{item.quantity}× {item.menuItem?.name || item.name || 'Item'}{i < Math.min(order.items.length, 3) - 1 ? ', ' : ''}</span>
-                                                ))}
-                                                {order.items?.length > 3 && <span className="text-muted"> +{order.items.length - 3} more</span>}
-                                            </div>
-                                            <div className="order-card-footer">
-                                                <strong>GH₵ {Number(order.total).toFixed(2)}</strong>
-                                                <span className="view-order-link">View Details →</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
                     {activeMenu === "ADDR" && (
-                        <div className="account-card">
-                            <h4>Saved Addresses</h4>
+                        <div style={{
+                            background: '#fff', borderRadius: 16, padding: 32,
+                            border: '1px solid var(--color-border)',
+                        }}>
+                            <h4 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>Saved Addresses</h4>
                             {addresses.length > 0 ? (
-                                <div className="addresses-list">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
                                     {addresses.map(addr => (
-                                        <div key={addr._id} className="address-card">
-                                            <div className="address-info">
-                                                <strong>{addr.label || 'Address'}</strong>
-                                                <p>{addr.street}{addr.area ? `, ${addr.area}` : ''}, {addr.city}</p>
-                                                {addr.phone && <small className="text-muted">📞 {addr.phone}</small>}
-                                                {addr.isDefault && <span className="badge bg-success ms-2">Default</span>}
+                                        <div key={addr._id} style={{
+                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                            padding: '16px 20px', borderRadius: 12,
+                                            border: '1px solid var(--color-border)', background: '#fff',
+                                        }}>
+                                            <div>
+                                                <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>
+                                                    {addr.label || 'Address'}
+                                                    {addr.isDefault && (
+                                                        <span style={{
+                                                            marginLeft: 8, fontSize: 11, padding: '2px 8px',
+                                                            borderRadius: 6, background: '#dcfce7', color: '#16a34a', fontWeight: 600,
+                                                        }}>Default</span>
+                                                    )}
+                                                </div>
+                                                <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
+                                                    {addr.street}{addr.area ? `, ${addr.area}` : ''}, {addr.city}
+                                                </div>
+                                                {addr.phone && (
+                                                    <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 4 }}>
+                                                        📞 {addr.phone}
+                                                    </div>
+                                                )}
                                             </div>
-                                            <button className="btn btn-sm btn-outline-danger" onClick={() => deleteAddress(addr._id)}>Delete</button>
+                                            <button
+                                                onClick={() => deleteAddress(addr._id)}
+                                                style={{
+                                                    padding: '6px 14px', borderRadius: 8, border: '1.5px solid #fca5a5',
+                                                    background: 'transparent', color: '#dc2626',
+                                                    fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                                                }}
+                                                onMouseOver={e => { e.currentTarget.style.background = '#fee2e2'; }}
+                                                onMouseOut={e => { e.currentTarget.style.background = 'transparent'; }}
+                                            >
+                                                Delete
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-muted mb-3">No saved addresses.</p>
+                                <p style={{ color: 'var(--color-text-secondary)', marginBottom: 24 }}>No saved addresses yet.</p>
                             )}
 
-                            <div className="address-form mt-4">
-                                <h5>Add New Address</h5>
-                                <div className="row g-3">
-                                    <div className="col-md-6">
-                                        <label className="form-label">Label</label>
-                                        <select className="form-select" value={newAddress.label} onChange={e => setNewAddress({...newAddress, label: e.target.value})}>
+                            <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
+                                <h5 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Add New Address</h5>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 560 }}>
+                                    <div>
+                                        <label style={labelStyle}>Label</label>
+                                        <select
+                                            value={newAddress.label}
+                                            onChange={e => setNewAddress({ ...newAddress, label: e.target.value })}
+                                            style={{ ...inputStyle, appearance: 'auto' }}
+                                        >
                                             <option>Home</option><option>Work</option><option>Other</option>
                                         </select>
                                     </div>
-                                    <div className="col-md-6">
-                                        <label className="form-label">Phone</label>
-                                        <input type="tel" className="form-control" value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} placeholder="Phone number" />
+                                    <div>
+                                        <label style={labelStyle}>Phone</label>
+                                        <input
+                                            type="tel" value={newAddress.phone}
+                                            onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })}
+                                            placeholder="Phone number" style={inputStyle}
+                                            onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                            onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                        />
                                     </div>
-                                    <div className="col-12">
-                                        <label className="form-label">Street Address *</label>
-                                        <input type="text" className="form-control" value={newAddress.street} onChange={e => setNewAddress({...newAddress, street: e.target.value})} placeholder="Street address" />
+                                    <div style={{ gridColumn: '1 / -1' }}>
+                                        <label style={labelStyle}>Street Address *</label>
+                                        <input
+                                            type="text" value={newAddress.street}
+                                            onChange={e => setNewAddress({ ...newAddress, street: e.target.value })}
+                                            placeholder="Street address" style={inputStyle}
+                                            onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                            onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                        />
                                     </div>
-                                    <div className="col-md-6">
-                                        <label className="form-label">Area/Landmark</label>
-                                        <input type="text" className="form-control" value={newAddress.area} onChange={e => setNewAddress({...newAddress, area: e.target.value})} placeholder="Area" />
+                                    <div>
+                                        <label style={labelStyle}>Area/Landmark</label>
+                                        <input
+                                            type="text" value={newAddress.area}
+                                            onChange={e => setNewAddress({ ...newAddress, area: e.target.value })}
+                                            placeholder="Area" style={inputStyle}
+                                            onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                            onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                        />
                                     </div>
-                                    <div className="col-md-6">
-                                        <label className="form-label">City</label>
-                                        <input type="text" className="form-control" value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} />
+                                    <div>
+                                        <label style={labelStyle}>City</label>
+                                        <input
+                                            type="text" value={newAddress.city}
+                                            onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
+                                            style={inputStyle}
+                                            onFocus={e => { e.target.style.borderColor = 'var(--color-brand)'; e.target.style.boxShadow = '0 0 0 3px rgba(232,93,4,0.12)'; }}
+                                            onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                                        />
                                     </div>
-                                    <div className="col-12">
-                                        <button className="btn btn-primary" onClick={addAddress} disabled={addingAddress}>
+                                    <div style={{ gridColumn: '1 / -1' }}>
+                                        <button
+                                            onClick={addAddress} disabled={addingAddress}
+                                            style={{
+                                                padding: '12px 28px', borderRadius: 12, border: 'none',
+                                                background: 'var(--color-brand)', color: '#fff',
+                                                fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                                                transition: 'background 0.2s',
+                                            }}
+                                            onMouseOver={e => e.currentTarget.style.background = 'var(--color-brand-dark)'}
+                                            onMouseOut={e => e.currentTarget.style.background = 'var(--color-brand)'}
+                                        >
                                             {addingAddress ? 'Adding...' : 'Add Address'}
                                         </button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    )}
+
+                    {activeMenu === "PO" && (
+                        <div style={{
+                            background: '#fff', borderRadius: 16, padding: 32,
+                            border: '1px solid var(--color-border)',
+                        }}>
+                            <h4 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>Order History</h4>
+                            {ordersLoading ? (
+                                <p style={{ color: 'var(--color-text-secondary)' }}>Loading orders...</p>
+                            ) : orders.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+                                    <p style={{ color: 'var(--color-text-secondary)', marginBottom: 16 }}>No orders yet.</p>
+                                    <button
+                                        onClick={() => navigate('/menu')}
+                                        style={{
+                                            padding: '12px 28px', borderRadius: 12, border: 'none',
+                                            background: 'var(--color-brand)', color: '#fff',
+                                            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                                        }}
+                                        onMouseOver={e => e.currentTarget.style.background = 'var(--color-brand-dark)'}
+                                        onMouseOut={e => e.currentTarget.style.background = 'var(--color-brand)'}
+                                    >
+                                        Browse Menu
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                    {orders.map(order => {
+                                        const badge = statusBadge(order.status);
+                                        return (
+                                            <div
+                                                key={order._id}
+                                                onClick={() => navigate(`/order/${order._id}`)}
+                                                style={{
+                                                    padding: '18px 22px', borderRadius: 12,
+                                                    border: '1px solid var(--color-border)', cursor: 'pointer',
+                                                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                                                }}
+                                                onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--color-brand)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(232,93,4,0.08)'; }}
+                                                onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                                            >
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                                                    <div>
+                                                        <strong style={{ fontSize: 15 }}>Order #{order._id.slice(-8)}</strong>
+                                                        <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 2 }}>
+                                                            {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </div>
+                                                    <span style={{
+                                                        padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                                                        background: badge.bg, color: badge.text, textTransform: 'capitalize',
+                                                    }}>
+                                                        {order.status?.replace(/_/g, ' ')}
+                                                    </span>
+                                                </div>
+                                                <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 8 }}>
+                                                    {order.items?.slice(0, 3).map((item, i) => (
+                                                        <span key={i}>{item.quantity}× {item.menuItem?.name || item.name || 'Item'}{i < Math.min(order.items.length, 3) - 1 ? ', ' : ''}</span>
+                                                    ))}
+                                                    {order.items?.length > 3 && <span> +{order.items.length - 3} more</span>}
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <strong style={{ fontSize: 15 }}>GH₵ {Number(order.total).toFixed(2)}</strong>
+                                                    <span style={{ fontSize: 13, color: 'var(--color-brand)', fontWeight: 600 }}>View Details →</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
