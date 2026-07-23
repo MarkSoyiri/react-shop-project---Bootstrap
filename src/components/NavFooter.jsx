@@ -3,13 +3,16 @@ import { IsLogout } from './IsAuth';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export function HomeNav () {
     const { cartItems } = useContext(CartContext);
     const { user } = useContext(AuthContext);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const location = useLocation();
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const isActive = (path) => location.pathname === path;
 
     const navLinks = [
         { to: '/menu', label: 'Menu' },
@@ -42,11 +45,17 @@ export function HomeNav () {
                         <ul style={styles.navList}>
                             {navLinks.map((link) => (
                                 <li key={link.to}>
-                                    <Link to={link.to} style={styles.navLink}>{link.label}</Link>
+                                    <Link to={link.to} style={{
+                                        ...styles.navLink,
+                                        ...(isActive(link.to) ? styles.navLinkActive : {})
+                                    }}>{link.label}</Link>
                                 </li>
                             ))}
                             <li style={{ position: 'relative' }}>
-                                <Link to="/cart" style={styles.navLink}>
+                                <Link to="/cart" style={{
+                                    ...styles.navLink,
+                                    ...(isActive('/cart') ? styles.navLinkActive : {})
+                                }}>
                                     Cart
                                     {cartCount > 0 && (
                                         <span style={styles.cartBadge}>{cartCount}</span>
@@ -55,14 +64,30 @@ export function HomeNav () {
                             </li>
                             {user && (
                                 <>
-                                    <li><Link to="/wishlist" style={styles.navLink}>Wishlist</Link></li>
-                                    <li><Link to="/orders" style={styles.navLink}>Orders</Link></li>
+                                    <li><Link to="/wishlist" style={{
+                                        ...styles.navLink,
+                                        ...(isActive('/wishlist') ? styles.navLinkActive : {})
+                                    }}>Wishlist</Link></li>
+                                    <li><Link to="/orders" style={{
+                                        ...styles.navLink,
+                                        ...(isActive('/orders') ? styles.navLinkActive : {})
+                                    }}>Orders</Link></li>
                                 </>
                             )}
                         </ul>
-                        <span style={styles.authArea}>
-                            <IsLogout />
-                        </span>
+                        {user ? (
+                            <Link to="/userprofile" style={styles.profileBtn}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                <span>Profile</span>
+                            </Link>
+                        ) : (
+                            <span style={styles.authArea}>
+                                <IsLogout />
+                            </span>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -74,24 +99,42 @@ export function HomeNav () {
                             <Link
                                 key={link.to}
                                 to={link.to}
-                                style={styles.mobileLink}
+                                style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive(link.to) ? styles.mobileLinkActive : {})
+                                }}
                                 onClick={() => setMobileOpen(false)}
                             >
                                 {link.label}
                             </Link>
                         ))}
-                        <Link to="/cart" style={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+                        <Link to="/cart" style={{
+                            ...styles.mobileLink,
+                            ...(isActive('/cart') ? styles.mobileLinkActive : {})
+                        }} onClick={() => setMobileOpen(false)}>
                             Cart {cartCount > 0 && <span style={styles.cartBadgeMobile}>{cartCount}</span>}
                         </Link>
                         {user && (
                             <>
-                                <Link to="/wishlist" style={styles.mobileLink} onClick={() => setMobileOpen(false)}>Wishlist</Link>
-                                <Link to="/orders" style={styles.mobileLink} onClick={() => setMobileOpen(false)}>Orders</Link>
+                                <Link to="/wishlist" style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive('/wishlist') ? styles.mobileLinkActive : {})
+                                }} onClick={() => setMobileOpen(false)}>Wishlist</Link>
+                                <Link to="/orders" style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive('/orders') ? styles.mobileLinkActive : {})
+                                }} onClick={() => setMobileOpen(false)}>Orders</Link>
+                                <Link to="/userprofile" style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive('/userprofile') ? styles.mobileLinkActive : {})
+                                }} onClick={() => setMobileOpen(false)}>Profile</Link>
                             </>
                         )}
-                        <div style={{ marginTop: 8 }}>
-                            <IsLogout />
-                        </div>
+                        {!user && (
+                            <div style={{ marginTop: 8 }}>
+                                <IsLogout />
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -269,6 +312,25 @@ const styles = {
         position: 'relative',
         display: 'inline-block',
     },
+    navLinkActive: {
+        background: 'var(--color-brand)',
+        color: '#fff',
+        fontWeight: 600,
+    },
+    profileBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '8px 20px',
+        borderRadius: 'var(--radius-full)',
+        background: 'var(--color-brand)',
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 600,
+        textDecoration: 'none',
+        transition: 'all var(--transition)',
+        whiteSpace: 'nowrap',
+    },
     cartBadge: {
         position: 'absolute',
         top: -2,
@@ -318,6 +380,11 @@ const styles = {
         textDecoration: 'none',
         borderRadius: 'var(--radius-sm)',
         transition: 'all var(--transition)',
+    },
+    mobileLinkActive: {
+        background: 'var(--color-brand)',
+        color: '#fff',
+        fontWeight: 600,
     },
     cartBadgeMobile: {
         background: 'var(--color-brand)',
