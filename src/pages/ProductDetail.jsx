@@ -510,39 +510,23 @@ function ProductDetail() {
             <h3 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '20px' }}>
               You Might Also Like
             </h3>
-            <div style={{
-              display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px',
-              scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch'
-            }}>
+            <div className="pd-related-scroll">
               {relatedItems.map(ri => (
                 <div
                   key={ri._id}
+                  className="pd-related-card"
                   onClick={() => navigate(`/product/${ri._id}`)}
-                  style={{
-                    minWidth: '180px', borderRadius: 'var(--radius-xl)',
-                    background: 'var(--color-bg-card)', boxShadow: 'var(--shadow-sm)',
-                    overflow: 'hidden', cursor: 'pointer',
-                    transition: 'box-shadow 200ms, transform 200ms', flexShrink: 0
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; e.currentTarget.style.transform = 'none'; }}
                 >
-                  {ri.image ? (
-                    <img src={ri.image} alt={ri.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{
-                      width: '100%', height: '120px', background: 'var(--color-bg-alt)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--color-text-muted)', fontSize: '12px'
-                    }}>No Image</div>
-                  )}
-                  <div style={{ padding: '12px' }}>
-                    <h5 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 4px' }}>
-                      {ri.name}
-                    </h5>
-                    <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-brand)', margin: 0 }}>
-                      GH₵ {ri.price.toFixed(2)}
-                    </p>
+                  <div className="pd-related-card__img-wrap">
+                    {ri.image ? (
+                      <img src={ri.image} alt={ri.name} className="pd-related-card__img" />
+                    ) : (
+                      <div className="pd-related-card__placeholder">No Image</div>
+                    )}
+                  </div>
+                  <div className="pd-related-card__body">
+                    <h5 className="pd-related-card__name">{ri.name}</h5>
+                    <span className="pd-related-card__price">GH₵ {ri.price.toFixed(2)}</span>
                   </div>
                 </div>
               ))}

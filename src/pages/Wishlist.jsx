@@ -58,39 +58,52 @@ function Wishlist() {
       </p>
 
       {items.length > 0 ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+        <div className="foodBox">
           {items.map((item, i) => (
             <motion.div
               key={item._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
-              style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--color-border)', transition: 'box-shadow 0.2s, border-color 0.2s' }}
-              onMouseOver={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'; e.currentTarget.style.borderColor = 'transparent'; }}
-              onMouseOut={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--color-border)'; }}
+              className="zc-product-card-wrap"
+              onClick={() => navigate(`/product/${item._id}`)}
             >
-              <div style={{ height: 200, overflow: 'hidden', cursor: 'pointer' }} onClick={() => navigate(`/product/${item._id}`)}>
-                <img src={item.image || '/placeholder-food.jpg'} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'} />
-              </div>
-
-              <div style={{ padding: '16px 20px 20px' }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, cursor: 'pointer' }} onClick={() => navigate(`/product/${item._id}`)}>{item.name}</h3>
-
-                <div style={{ display: 'flex', gap: 2, marginBottom: 8 }}>
-                  {[1,2,3,4,5].map(s => (<span key={s} style={{ fontSize: 13, color: s <= 4 ? '#f59e0b' : '#d1d5db' }}>&#9733;</span>))}
+              <div className="zc-product-card">
+                <div className="zc-product-card__img-wrap">
+                  <img
+                    src={item.image || '/placeholder-food.jpg'}
+                    alt={item.name}
+                    className="zc-product-card__img"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
                 </div>
 
-                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-brand)', marginBottom: 16 }}>
-                  {formatCurrency(item.price)}
-                </div>
+                <div className="zc-product-card__body">
+                  <h3 className="zc-product-card__title">{item.name}</h3>
 
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => handleAddToCart(item)} style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: 'none', background: 'var(--color-brand)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'var(--color-brand-dark)'} onMouseOut={e => e.currentTarget.style.background = 'var(--color-brand)'}>
-                    Add to Cart
-                  </button>
-                  <button onClick={() => removeFromWishlist(item._id)} style={{ padding: '10px 14px', borderRadius: 10, border: '1.5px solid #fca5a5', background: 'transparent', color: '#dc2626', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#fee2e2'} onMouseOut={e => e.currentTarget.style.background = 'transparent'} title="Remove from wishlist">
-                    &#9825;
-                  </button>
+                  <div className="zc-product-card__rating">
+                    <span className="zc-product-card__stars">★★★★☆</span>
+                  </div>
+
+                  <div className="zc-product-card__footer">
+                    <span className="zc-product-card__price">{formatCurrency(item.price)}</span>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        className="zc-product-card__add-btn"
+                        onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
+                      >
+                        Add
+                      </button>
+                      <button
+                        className="zc-product-card__add-btn"
+                        style={{ background: 'transparent', color: '#dc2626', border: '1.5px solid #fca5a5' }}
+                        onClick={(e) => { e.stopPropagation(); removeFromWishlist(item._id); }}
+                        title="Remove from wishlist"
+                      >
+                        ♡
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>

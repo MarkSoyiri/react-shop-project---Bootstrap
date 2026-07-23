@@ -97,17 +97,6 @@
 .pd-review-card { padding: 16px 0; border-bottom: 1px solid var(--color-border-light); }
 .pd-review-card p { margin: 4px 0; color: var(--color-text-secondary); font-size: 14px; }
 
-.pd-related h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
-.pd-related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
-.pd-related-card {
-  background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-md);
-  padding: 12px; cursor: pointer; transition: all var(--transition);
-}
-.pd-related-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.pd-related-card img { width: 100%; height: 120px; object-fit: cover; border-radius: var(--radius-sm); }
-.pd-related-card h5 { font-size: 14px; margin: 8px 0 4px; }
-.pd-related-card p { font-size: 14px; font-weight: 600; color: var(--color-brand); }
-
 @media (max-width: 768px) {
   .pd-add-section { flex-direction: column; align-items: stretch; }
   .pd-add-btn { max-width: none; }

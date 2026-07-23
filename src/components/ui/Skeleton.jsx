@@ -1,13 +1,14 @@
 export const SkeletonCard = () => (
-  <div className="menu-card" style={styles.card}>
+  <div className="zc-product-card" style={styles.card}>
     <div className="skeleton skeleton-image" style={styles.cardImage} />
     <div style={styles.cardContent}>
-      <div className="skeleton skeleton-title" style={{ width: '65%', height: 16 }} />
-      <div className="skeleton skeleton-text" style={{ width: '85%', height: 12 }} />
-      <div className="skeleton skeleton-text" style={{ width: '45%', height: 12 }} />
+      <div className="skeleton skeleton-title" style={{ width: '70%', height: 16 }} />
+      <div className="skeleton skeleton-text" style={{ width: '90%', height: 12 }} />
+      <div className="skeleton skeleton-text" style={{ width: '50%', height: 12 }} />
+      <div style={styles.cardSpacer} />
       <div style={styles.cardFooter}>
         <div className="skeleton" style={{ width: 70, height: 20, borderRadius: 'var(--radius-sm)' }} />
-        <div className="skeleton" style={{ width: 64, height: 32, borderRadius: 'var(--radius-sm)' }} />
+        <div className="skeleton" style={{ width: 52, height: 30, borderRadius: 'var(--radius-sm)' }} />
       </div>
     </div>
   </div>
@@ -52,27 +53,34 @@ export const SkeletonPage = () => (
 
 const styles = {
   card: {
-    background: 'var(--color-bg-card)',
-    borderRadius: 'var(--radius-2xl)',
-    overflow: 'hidden',
-    border: '1px solid var(--color-border-light)',
+    display: 'flex',
+    flexDirection: 'column',
+    height: 340,
   },
   cardImage: {
-    height: 200,
+    height: 180,
+    minHeight: 180,
+    maxHeight: 180,
     width: '100%',
     borderRadius: 0,
   },
   cardContent: {
-    padding: 20,
+    flex: 1,
+    padding: '14px 16px 16px',
     display: 'flex',
     flexDirection: 'column',
-    gap: 8,
+    gap: 6,
+  },
+  cardSpacer: {
+    flex: 1,
   },
   cardFooter: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 10,
+    paddingTop: 10,
+    borderTop: '1px solid var(--color-border-light)',
   },
   tableWrap: {
     padding: 24,
@@ -96,7 +104,7 @@ const styles = {
   },
   pageGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+    gridTemplateColumns: 'repeat(4, 1fr)',
     gap: 24,
   },
 };
