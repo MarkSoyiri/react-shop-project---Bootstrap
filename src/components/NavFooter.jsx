@@ -74,6 +74,18 @@ export function HomeNav () {
                                     }}>Orders</Link></li>
                                 </>
                             )}
+                            {user?.role === 'admin' && (
+                                <li><Link to="/admin" style={{
+                                    ...styles.adminLink,
+                                    ...(isActive('/admin') ? styles.adminLinkActive : {})
+                                }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                    Admin
+                                </Link></li>
+                            )}
                         </ul>
                         {user ? (
                             <Link to="/userprofile" style={styles.profileBtn}>
@@ -124,6 +136,14 @@ export function HomeNav () {
                                     ...styles.mobileLink,
                                     ...(isActive('/orders') ? styles.mobileLinkActive : {})
                                 }} onClick={() => setMobileOpen(false)}>Orders</Link>
+                                {user?.role === 'admin' && (
+                                    <Link to="/admin" style={{
+                                        ...styles.mobileLink,
+                                        ...(isActive('/admin') ? styles.mobileLinkActive : {})
+                                    }} onClick={() => setMobileOpen(false)}>
+                                        Admin Panel
+                                    </Link>
+                                )}
                                 <Link to="/userprofile" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/userprofile') ? styles.mobileLinkActive : {})
@@ -394,6 +414,23 @@ const styles = {
         padding: '2px 8px',
         borderRadius: 'var(--radius-full)',
         marginLeft: 8,
+    },
+    adminLink: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        fontSize: 13,
+        fontWeight: 600,
+        color: '#fff',
+        background: 'var(--color-brand)',
+        padding: '6px 14px',
+        borderRadius: 'var(--radius-full)',
+        textDecoration: 'none',
+        transition: 'all var(--transition)',
+        whiteSpace: 'nowrap',
+    },
+    adminLinkActive: {
+        background: 'var(--color-brand-dark)',
     },
     footer: {
         background: '#111827',
