@@ -1,142 +1,248 @@
 import { useState, useEffect } from 'react';
-import useApi from '../../hooks/useApi';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { motion } from 'framer-motion';
+import { useApi } from '../../hooks/useApi';
+import { PageHeader } from './components/PageHeader';
+import { Modal } from './components/Modal';
+import { ConfirmDialog } from './components/ConfirmDialog';
+import { EmptyState } from './components/EmptyState';
+import { SkeletonTable } from './components/Skeletons';
 
-function AdminCategories() {
-  const { get, post, put, del, loading } = useApi();
+const emptyCategory = {
+  name: '',
+  description: '',
+  sortOrder: 0,
+  active: true,
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
+export default function Categories() {
+  const { request } = useApi();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editItem, setEditItem] = useState(null);
-  const [form, setForm] = useState({ name: '', description: '', isActive: true, sortOrder: 0 });
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({ ...emptyCategory });
+  const [saving, setSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
-  useEffect(() => { loadCategories(); }, []);
-
-  const loadCategories = async () => {
+  const fetchCategories = async () => {
+    setLoading(true);
     try {
-      const res = await get('/categories?includeInactive=true');
-      setCategories(res.data || []);
-    } catch (err) { console.error(err); }
+      const data = await request('/categories?includeInactive=true');
+      setCategories(data);
+    } catch {
+      // error handled by useApi
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ ...emptyCategory });
+    setShowModal(true);
+  };
+
+  const openEdit = (cat) => {
+    setEditing(cat);
+    setForm({
+      name: cat.name,
+      description: cat.description || '',
+      sortOrder: cat.sortOrder || 0,
+      active: cat.active !== false,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      if (editItem) {
-        await put(`/categories/${editItem._id}`, form);
+      if (editing) {
+        await request(`/categories/${editing._id}`, 'PUT', form);
       } else {
-        await post('/categories', form);
+        await request('/categories', 'POST', form);
       }
       setShowModal(false);
-      setEditItem(null);
-      setForm({ name: '', description: '', isActive: true, sortOrder: 0 });
-      loadCategories();
-    } catch (err) { alert(err.message); }
+      fetchCategories();
+    } catch {
+      // error handled by useApi
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this category?')) return;
-    try { await del(`/categories/${id}`); loadCategories(); } catch (err) { alert(err.message); }
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
+    try {
+      await request(`/categories/${confirmDelete._id}`, 'DELETE');
+      setConfirmDelete(null);
+      fetchCategories();
+    } catch {
+      // error handled by useApi
+    }
   };
-
-  if (loading && categories.length === 0) return <SkeletonTable rows={5} />;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Categories</h2>
-          <p style={{ color: '#6b7280', fontSize: 14 }}>{categories.length} categories</p>
-        </div>
-        <button onClick={() => { setForm({ name: '', description: '', isActive: true, sortOrder: 0 }); setEditItem(null); setShowModal(true); }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '10px 20px', background: 'linear-gradient(135deg, #e85d04, #f48c06)',
-            color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600,
-            cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)',
-          }}>
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Category
-        </button>
-      </div>
+    <div className="admin-page">
+      <PageHeader
+        title="Categories"
+        subtitle="Organize your products"
+        action={{ label: 'Add Category', onClick: openCreate }}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-        {categories.map(cat => (
-          <div key={cat._id} style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 24, transition: 'box-shadow 0.2s' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 12, background: cat.isActive ? 'rgba(232,93,4,0.08)' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke={cat.isActive ? '#e85d04' : '#9ca3af'} strokeWidth="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      {loading ? (
+        <SkeletonTable rows={6} />
+      ) : categories.length === 0 ? (
+        <EmptyState
+          message="No categories found"
+          action={{ label: 'Create Category', onClick: openCreate }}
+        />
+      ) : (
+        <motion.div
+          className="admin-grid-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {categories.map((cat) => (
+            <motion.div
+              key={cat._id}
+              className="admin-card"
+              variants={cardVariants}
+            >
+              <div className="admin-card-body">
+                <div className="admin-card-icon">
+                  <span className="admin-category-emoji">
+                    {cat.icon || '📁'}
+                  </span>
+                </div>
+                <h3 className="admin-card-title">{cat.name}</h3>
+                <p className="admin-card-text">
+                  {cat.description || 'No description'}
+                </p>
+                <span className="admin-badge admin-badge-secondary">
+                  {cat.productCount ?? cat.products?.length ?? 0} items
+                </span>
+                <div className={`admin-status-dot ${cat.active !== false ? 'admin-active' : 'admin-inactive'}`}>
+                  {cat.active !== false ? 'Active' : 'Inactive'}
+                </div>
               </div>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 4,
-                padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600,
-                background: cat.isActive ? '#dcfce7' : '#fee2e2', color: cat.isActive ? '#166534' : '#991b1b',
-              }}>
-                {cat.isActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-            <h4 style={{ fontWeight: 700, fontSize: 16, marginBottom: 4, color: '#111827' }}>{cat.name}</h4>
-            <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 16, lineHeight: 1.5 }}>
-              {cat.description || 'No description'}
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid #f3f4f6' }}>
-              <span style={{ fontSize: 12, color: '#9ca3af' }}>{cat.itemCount || 0} items</span>
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div className="admin-card-footer">
                 <button
-                  onClick={() => { setEditItem(cat); setForm({ name: cat.name, description: cat.description || '', isActive: cat.isActive, sortOrder: cat.sortOrder || 0 }); setShowModal(true); }}
-                  style={{ padding: '5px 12px', fontSize: 12, fontWeight: 600, border: '1.5px solid #e5e7eb', borderRadius: 8, background: '#fff', cursor: 'pointer' }}
+                  className="admin-btn admin-btn-sm admin-btn-outline"
+                  onClick={() => openEdit(cat)}
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(cat._id)}
-                  style={{ padding: '5px 12px', fontSize: 12, fontWeight: 600, border: '1.5px solid #fecaca', borderRadius: 8, background: '#fff', color: '#ef4444', cursor: 'pointer' }}
+                  className="admin-btn admin-btn-sm admin-btn-danger-outline"
+                  onClick={() => setConfirmDelete(cat)}
                 >
                   Delete
                 </button>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 24, backdropFilter: 'blur(4px)' }} onClick={() => setShowModal(false)}>
-          <div style={{ background: '#fff', borderRadius: 16, padding: 32, width: '100%', maxWidth: 440, boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>{editItem ? 'Edit Category' : 'Add Category'}</h3>
-              <button onClick={() => setShowModal(false)} style={{ background: '#f3f4f6', border: 'none', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>✕</button>
-            </div>
-            <form className="admin-form" onSubmit={handleSave}>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Name</label>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-              </div>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Description</label>
-                <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa', resize: 'vertical', fontFamily: 'inherit' }} />
-              </div>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Sort Order</label>
-                <input type="number" value={form.sortOrder} onChange={e => setForm({ ...form, sortOrder: parseInt(e.target.value) || 0 })} style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-              </div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', padding: '8px 14px', borderRadius: 8, background: form.isActive ? 'rgba(232,93,4,0.08)' : '#f3f4f6', color: form.isActive ? '#e85d04' : '#6b7280', fontWeight: 600 }}>
-                <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} style={{ accentColor: '#e85d04' }} /> Active
-              </label>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button type="button" onClick={() => setShowModal(false)} style={{ padding: '10px 20px', borderRadius: 10, border: '1.5px solid #e5e7eb', background: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', color: '#6b7280' }}>Cancel</button>
-                <button type="submit" style={{ padding: '10px 24px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #e85d04, #f48c06)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)' }}>{editItem ? 'Update' : 'Create'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
+            </motion.div>
+          ))}
+        </motion.div>
       )}
 
-      <style>{`
-        @media (max-width: 992px) { .admin-categories-grid { grid-template-columns: repeat(2, 1fr) !important; } }
-        @media (max-width: 576px) { .admin-categories-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title={editing ? 'Edit Category' : 'Create Category'}
+      >
+        <div className="admin-form">
+          <div className="admin-form-group">
+            <label className="admin-form-label">Name</label>
+            <input
+              className="admin-form-input"
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Category name"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">Description</label>
+            <textarea
+              className="admin-form-textarea"
+              rows={3}
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              placeholder="Short description"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">Sort Order</label>
+            <input
+              className="admin-form-input"
+              type="number"
+              value={form.sortOrder}
+              onChange={(e) =>
+                setForm({ ...form, sortOrder: Number(e.target.value) })
+              }
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-toggle">
+              <span className="admin-form-label">Active</span>
+              <input
+                type="checkbox"
+                checked={form.active}
+                onChange={(e) =>
+                  setForm({ ...form, active: e.target.checked })
+                }
+              />
+              <span className="admin-toggle-slider" />
+            </label>
+          </div>
+
+          <div className="admin-modal-footer">
+            <button
+              className="admin-btn admin-btn-secondary"
+              onClick={() => setShowModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="admin-btn admin-btn-primary"
+              onClick={handleSave}
+              disabled={saving || !form.name.trim()}
+            >
+              {saving ? 'Saving...' : editing ? 'Update' : 'Create'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        show={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={handleDelete}
+        title="Delete Category"
+        message={`Are you sure you want to delete "${confirmDelete?.name}"?`}
+      />
     </div>
   );
 }
-
-export default AdminCategories;

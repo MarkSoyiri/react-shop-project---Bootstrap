@@ -1,242 +1,297 @@
 import { useState, useEffect } from 'react';
 import useApi from '../../hooks/useApi';
-import { formatCurrency, getStatusInfo, ORDER_STATUSES, formatDateTime } from '../../utils/helpers';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { PageHeader } from './components/PageHeader';
+import { Pagination } from './components/Pagination';
+import { SkeletonTable } from './components/Skeletons';
+import { EmptyState } from './components/EmptyState';
+import { motion, AnimatePresence } from 'framer-motion';
 
-function AdminOrders() {
-  const { get, patch, loading } = useApi();
-  const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
-  const [statusFilter, setStatusFilter] = useState('');
-  const [search, setSearch] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState(null);
+const STATUS_FLOW = {
+    pending: ['confirmed', 'cancelled'],
+    confirmed: ['preparing', 'cancelled'],
+    preparing: ['ready'],
+    ready: ['out_for_delivery'],
+    out_for_delivery: ['delivered'],
+    delivered: [],
+    cancelled: [],
+};
 
-  useEffect(() => {
-    loadOrders();
-  }, [pagination.page, statusFilter]);
+const STATUS_LABELS = {
+    pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing', ready: 'Ready',
+    out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+};
 
-  const loadOrders = async () => {
-    try {
-      const params = new URLSearchParams({ page: pagination.page, limit: 15 });
-      if (statusFilter) params.append('status', statusFilter);
-      const res = await get(`/orders/all?${params}`);
-      setOrders(res.data.orders || res.data || []);
-      if (res.pagination) setPagination(res.pagination);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const FILTERS = [
+    { key: 'all', label: 'All' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'confirmed', label: 'Confirmed' },
+    { key: 'preparing', label: 'Preparing' },
+    { key: 'ready', label: 'Ready' },
+    { key: 'out_for_delivery', label: 'Out for Delivery' },
+    { key: 'delivered', label: 'Delivered' },
+    { key: 'cancelled', label: 'Cancelled' },
+];
 
-  const updateStatus = async (orderId, newStatus) => {
-    try {
-      await patch(`/orders/${orderId}/status`, { status: newStatus });
-      loadOrders();
-      if (selectedOrder?._id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
-      }
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+export default function Orders() {
+    const { get, patch, loading } = useApi();
+    const [orders, setOrders] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [search, setSearch] = useState('');
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
-  const getNextStatuses = (current) => {
-    const flow = {
-      pending: ['confirmed', 'cancelled'],
-      confirmed: ['preparing', 'cancelled'],
-      preparing: ['ready'],
-      ready: ['out_for_delivery'],
-      out_for_delivery: ['delivered'],
-      delivered: [],
-      cancelled: [],
+    const loadOrders = async () => {
+        try {
+            const params = new URLSearchParams({ page, limit: 15 });
+            if (statusFilter !== 'all') params.set('status', statusFilter);
+            const data = await get(`/orders/all?${params}`);
+            setOrders(data.orders || data || []);
+            setTotalPages(data.totalPages || 1);
+            setTotal(data.total || (data.orders || data || []).length);
+        } catch {}
     };
-    return flow[current] || [];
-  };
 
-  const filteredOrders = search
-    ? orders.filter(o => (o.user?.email || o.name || '').toLowerCase().includes(search.toLowerCase()) || o._id.includes(search))
-    : orders;
+    useEffect(() => { loadOrders(); }, [page, statusFilter, get]);
 
-  if (loading && orders.length === 0) return <SkeletonTable rows={10} />;
+    const filtered = orders.filter(o => {
+        if (!search) return true;
+        const q = search.toLowerCase();
+        return (o._id || '').toLowerCase().includes(q) ||
+            (o.user?.email || '').toLowerCase().includes(q) ||
+            (o.user?.username || '').toLowerCase().includes(q);
+    });
 
-  return (
-    <div>
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 16 }}>
-          <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Orders</h2>
-            <p style={{ color: '#6b7280', fontSize: 14 }}>{pagination.total} orders total</p>
-          </div>
-          <div style={{ position: 'relative', maxWidth: 280 }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth="2" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input
-              type="text"
-              placeholder="Search orders..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              style={{ width: '100%', padding: '9px 14px 9px 38px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 13, outline: 'none', background: '#fff' }}
-            />
-          </div>
-        </div>
+    const openDetail = async (order) => {
+        setSelectedOrder(order);
+        setDetailLoading(true);
+        try {
+            const data = await get(`/orders/${order._id}`);
+            setSelectedOrder(data.order || data);
+        } catch {}
+        setDetailLoading(false);
+    };
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => { setStatusFilter(''); setPagination(p => ({ ...p, page: 1 })); }}
-            style={{
-              padding: '6px 14px', borderRadius: 20, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              background: !statusFilter ? '#111827' : '#f3f4f6', color: !statusFilter ? '#fff' : '#6b7280',
-              transition: 'all 0.2s',
-            }}
-          >
-            All
-          </button>
-          {ORDER_STATUSES.filter(s => s.value !== 'cancelled').map(s => (
-            <button
-              key={s.value}
-              onClick={() => { setStatusFilter(s.value); setPagination(p => ({ ...p, page: 1 })); }}
-              style={{
-                padding: '6px 14px', borderRadius: 20, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                background: statusFilter === s.value ? '#e85d04' : '#f3f4f6', color: statusFilter === s.value ? '#fff' : '#6b7280',
-                transition: 'all 0.2s',
-              }}
-            >
-              {s.icon} {s.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    const updateStatus = async (orderId, newStatus) => {
+        setUpdating(true);
+        try {
+            await patch(`/orders/${orderId}/status`, { status: newStatus });
+            setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null);
+            loadOrders();
+        } catch {}
+        setUpdating(false);
+    };
 
-      <div style={{ display: 'grid', gridTemplateColumns: selectedOrder ? '1fr 380px' : '1fr', gap: 24 }}>
-        <div className="admin-table-wrapper" style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order) => {
-                const statusInfo = getStatusInfo(order.status);
-                return (
-                  <tr
-                    key={order._id}
-                    onClick={() => setSelectedOrder(order)}
-                    style={{ cursor: 'pointer', background: selectedOrder?._id === order._id ? '#f9fafb' : undefined }}
-                  >
-                    <td style={{ fontWeight: 700, fontFamily: 'monospace', fontSize: 13 }}>#{order._id.slice(-6).toUpperCase()}</td>
-                    <td>{order.user?.email || order.name || 'N/A'}</td>
-                    <td>{order.items?.length || 0} items</td>
-                    <td style={{ fontWeight: 700 }}>{formatCurrency(order.total)}</td>
-                    <td>
-                      <span className={`badge-status badge-${order.status}`}>
-                        {statusInfo.icon} {statusInfo.label}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 13, color: '#6b7280' }}>
-                      {formatDateTime(order.createdAt)}
-                    </td>
-                  </tr>
-                );
-              })}
-              {filteredOrders.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
-                    No orders found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+    const nextStatuses = selectedOrder ? (STATUS_FLOW[selectedOrder.status] || []) : [];
 
-          {pagination.pages > 1 && (
-            <div className="admin-pagination">
-              <button disabled={pagination.page <= 1} onClick={() => setPagination(p => ({ ...p, page: p.page - 1 }))}>← Prev</button>
-              <span style={{ fontSize: 13, color: '#6b7280' }}>Page {pagination.page} of {pagination.pages}</span>
-              <button disabled={pagination.page >= pagination.pages} onClick={() => setPagination(p => ({ ...p, page: p.page + 1 }))}>Next →</button>
-            </div>
-          )}
-        </div>
+    return (
+        <div>
+            <PageHeader title="Orders" subtitle="Manage and fulfill customer orders" />
 
-        {selectedOrder && (
-          <div style={{ position: 'sticky', top: 88, alignSelf: 'flex-start', background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>Order #{selectedOrder._id.slice(-6).toUpperCase()}</h3>
-              <button onClick={() => setSelectedOrder(null)} style={{ background: '#f3f4f6', border: 'none', width: 28, height: 28, borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#6b7280' }}>✕</button>
-            </div>
-            <div style={{ padding: 20 }}>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Customer</div>
-                <div style={{ fontWeight: 600, fontSize: 14 }}>{selectedOrder.user?.email || 'N/A'}</div>
-                <div style={{ fontSize: 13, color: '#6b7280' }}>{selectedOrder.deliveryAddress || selectedOrder.name}</div>
-              </div>
-
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Items</div>
-                {selectedOrder.items?.map((item, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: 13, borderBottom: i < selectedOrder.items.length - 1 ? '1px solid #f9fafb' : 'none' }}>
-                    <span style={{ color: '#374151' }}>{item.name} × {item.quantity}</span>
-                    <span style={{ fontWeight: 600 }}>{formatCurrency(item.price * item.quantity)}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: 12, marginBottom: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
-                  <span style={{ color: '#6b7280' }}>Subtotal</span>
-                  <span>{formatCurrency(selectedOrder.subtotal || selectedOrder.total)}</span>
+            {/* Status Filters */}
+            <div className="admin-toolbar">
+                <div className="admin-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                    <input placeholder="Search by order ID or customer..." value={search} onChange={e => setSearch(e.target.value)} />
                 </div>
-                {selectedOrder.deliveryFee > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
-                    <span style={{ color: '#6b7280' }}>Delivery</span>
-                    <span>{formatCurrency(selectedOrder.deliveryFee)}</span>
-                  </div>
+                <div className="admin-filter-pills">
+                    {FILTERS.map(f => (
+                        <button key={f.key} className={`admin-filter-pill ${statusFilter === f.key ? 'active' : ''}`}
+                            onClick={() => { setStatusFilter(f.key); setPage(1); }}>
+                            {f.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {loading && !orders.length ? (
+                <SkeletonTable rows={8} cols={7} />
+            ) : filtered.length === 0 ? (
+                <EmptyState
+                    icon={<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--admin-text-muted)" strokeWidth="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
+                    title="No orders found"
+                    description="Orders will appear here when customers place them."
+                />
+            ) : (
+                <>
+                    <motion.div className="admin-card" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                        <div className="admin-card-body no-pad">
+                            <div className="admin-table-wrapper">
+                                <table className="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order</th>
+                                            <th>Customer</th>
+                                            <th>Items</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filtered.map(order => (
+                                            <tr key={order._id}>
+                                                <td style={{ fontWeight: 600, fontSize: 13 }}>#{order._id?.slice(-8)}</td>
+                                                <td>
+                                                    <div style={{ fontSize: 14 }}>{order.user?.username || 'Guest'}</div>
+                                                    <div style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>{order.user?.email || ''}</div>
+                                                </td>
+                                                <td>{order.items?.length || 0} items</td>
+                                                <td style={{ fontWeight: 700 }}>GH₵ {Number(order.total || 0).toFixed(2)}</td>
+                                                <td><span className={`admin-badge ${order.status}`}><span className="admin-badge-dot" />{STATUS_LABELS[order.status] || order.status}</span></td>
+                                                <td style={{ textTransform: 'capitalize', fontSize: 13 }}>{order.deliveryType || 'delivery'}</td>
+                                                <td style={{ fontSize: 13, color: 'var(--admin-text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                                <td>
+                                                    <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => openDetail(order)}>View</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
+                    </motion.div>
+                </>
+            )}
+
+            {/* Order Detail Side Panel */}
+            <AnimatePresence>
+                {selectedOrder && (
+                    <>
+                        <motion.div className="admin-side-panel-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedOrder(null)} />
+                        <motion.div className="admin-side-panel" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }}>
+                            <div className="admin-side-panel-header">
+                                <div>
+                                    <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>Order #{selectedOrder._id?.slice(-8)}</h3>
+                                    <div style={{ fontSize: 12, color: 'var(--admin-text-muted)', marginTop: 2 }}>{new Date(selectedOrder.createdAt).toLocaleString()}</div>
+                                </div>
+                                <button className="admin-btn admin-btn-icon admin-btn-ghost" onClick={() => setSelectedOrder(null)}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                </button>
+                            </div>
+
+                            <div className="admin-side-panel-body">
+                                {detailLoading ? (
+                                    <div style={{ textAlign: 'center', padding: 40, color: 'var(--admin-text-muted)' }}>Loading...</div>
+                                ) : (
+                                    <>
+                                        {/* Status */}
+                                        <div style={{ marginBottom: 24 }}>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Status</div>
+                                            <span className={`admin-badge ${selectedOrder.status}`} style={{ fontSize: 13, padding: '5px 14px' }}>
+                                                <span className="admin-badge-dot" />{STATUS_LABELS[selectedOrder.status] || selectedOrder.status}
+                                            </span>
+                                        </div>
+
+                                        {/* Customer */}
+                                        <div style={{ marginBottom: 24 }}>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Customer</div>
+                                            <div style={{ fontSize: 14, fontWeight: 600 }}>{selectedOrder.user?.username || 'Guest'}</div>
+                                            <div style={{ fontSize: 13, color: 'var(--admin-text-secondary)' }}>{selectedOrder.user?.email || ''}</div>
+                                            {selectedOrder.user?.phone && <div style={{ fontSize: 13, color: 'var(--admin-text-secondary)' }}>{selectedOrder.user.phone}</div>}
+                                        </div>
+
+                                        {/* Delivery Address */}
+                                        {selectedOrder.deliveryAddress && (
+                                            <div style={{ marginBottom: 24 }}>
+                                                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Delivery Address</div>
+                                                <div style={{ fontSize: 14, lineHeight: 1.5 }}>{selectedOrder.deliveryAddress.street}, {selectedOrder.deliveryAddress.city}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Items */}
+                                        <div style={{ marginBottom: 24 }}>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Items</div>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                                {(selectedOrder.items || []).map((item, i) => (
+                                                    <div key={i} style={{ display: 'flex', justifyContent: 'spaceBetween', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--admin-border-light)' }}>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontSize: 14, fontWeight: 600 }}>{item.quantity}× {item.menuItem?.name || item.name || 'Item'}</div>
+                                                            {(item.variant || item.addOns) && (
+                                                                <div style={{ fontSize: 12, color: 'var(--admin-text-muted)', marginTop: 2 }}>
+                                                                    {item.variant && <span>Size: {item.variant}</span>}
+                                                                    {item.addOns?.length > 0 && <span> + {item.addOns.join(', ')}</span>}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ fontSize: 14, fontWeight: 600 }}>GH₵ {Number(item.price * item.quantity || 0).toFixed(2)}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Totals */}
+                                        <div style={{ marginBottom: 24 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6 }}>
+                                                <span style={{ color: 'var(--admin-text-secondary)' }}>Subtotal</span>
+                                                <span>GH₵ {Number(selectedOrder.subtotal || selectedOrder.total || 0).toFixed(2)}</span>
+                                            </div>
+                                            {selectedOrder.deliveryFee > 0 && (
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6 }}>
+                                                    <span style={{ color: 'var(--admin-text-secondary)' }}>Delivery Fee</span>
+                                                    <span>GH₵ {Number(selectedOrder.deliveryFee).toFixed(2)}</span>
+                                                </div>
+                                            )}
+                                            {selectedOrder.discount > 0 && (
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6, color: 'var(--admin-success)' }}>
+                                                    <span>Discount</span>
+                                                    <span>-GH₵ {Number(selectedOrder.discount).toFixed(2)}</span>
+                                                </div>
+                                            )}
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 17, fontWeight: 700, borderTop: '1px solid var(--admin-border-light)', paddingTop: 10, marginTop: 6 }}>
+                                                <span>Total</span>
+                                                <span style={{ color: 'var(--admin-brand)' }}>GH₵ {Number(selectedOrder.total || 0).toFixed(2)}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Payment */}
+                                        <div style={{ marginBottom: 24 }}>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Payment</div>
+                                            <div style={{ display: 'flex', gap: 8 }}>
+                                                <span className="admin-badge confirmed" style={{ fontSize: 12 }}>{selectedOrder.paymentMethod || 'Cash'}</span>
+                                                <span className={`admin-badge ${selectedOrder.paymentStatus === 'paid' ? 'delivered' : 'pending'}`}>
+                                                    {selectedOrder.paymentStatus || 'pending'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Notes */}
+                                        {selectedOrder.notes && (
+                                            <div style={{ marginBottom: 24 }}>
+                                                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>Notes</div>
+                                                <div style={{ fontSize: 14, padding: '10px 14px', background: '#f9fafb', borderRadius: 8 }}>{selectedOrder.notes}</div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Status Actions */}
+                            {!detailLoading && nextStatuses.length > 0 && (
+                                <div className="admin-side-panel-footer">
+                                    {nextStatuses.map(status => (
+                                        <button
+                                            key={status}
+                                            className={`admin-btn ${status === 'cancelled' ? 'admin-btn-danger' : 'admin-btn-primary'}`}
+                                            disabled={updating}
+                                            onClick={() => updateStatus(selectedOrder._id, status)}
+                                            style={{ flex: 1 }}
+                                        >
+                                            {updating ? 'Updating...' : STATUS_LABELS[status] || status}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </motion.div>
+                    </>
                 )}
-                {selectedOrder.discount > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4, color: '#2b9348' }}>
-                    <span>Discount</span>
-                    <span>-{formatCurrency(selectedOrder.discount)}</span>
-                  </div>
-                )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 700, marginTop: 8, paddingTop: 8, borderTop: '1px solid #f3f4f6' }}>
-                  <span>Total</span>
-                  <span style={{ color: '#e85d04' }}>{formatCurrency(selectedOrder.total)}</span>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Update Status</div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {getNextStatuses(selectedOrder.status).map(status => {
-                    const info = getStatusInfo(status);
-                    const colorMap = { confirmed: '#3b82f6', preparing: '#8b5cf6', ready: '#2b9348', out_for_delivery: '#0891b2', delivered: '#16a34a', cancelled: '#ef4444' };
-                    const bgMap = { confirmed: '#dbeafe', preparing: '#ede9fe', ready: '#d1fae5', out_for_delivery: '#cffafe', delivered: '#dcfce7', cancelled: '#fee2e2' };
-                    return (
-                      <button
-                        key={status}
-                        onClick={() => updateStatus(selectedOrder._id, status)}
-                        style={{
-                          padding: '6px 12px', fontSize: 12, fontWeight: 600,
-                          border: 'none', borderRadius: 8,
-                          background: bgMap[status] || '#f3f4f6', color: colorMap[status] || '#6b7280',
-                          cursor: 'pointer', transition: 'opacity 0.2s',
-                        }}
-                      >
-                        {info.icon} {info.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+            </AnimatePresence>
+        </div>
+    );
 }
-
-export default AdminOrders;

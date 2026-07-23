@@ -1,85 +1,285 @@
-import { useState, useEffect } from 'react';
-import useApi from '../../hooks/useApi';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useApi } from "../../hooks/useApi";
+import { PageHeader } from "./components/PageHeader";
+import { SkeletonTable } from "./components/Skeletons";
+import { EmptyState } from "./components/EmptyState";
+import { StatCard } from "./components/StatCard";
 
-function AdminInventory() {
-  const { get, loading } = useApi();
-  const [inventory, setInventory] = useState(null);
+const Inventory = () => {
+  const [search, setSearch] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [togglingId, setTogglingId] = useState(null);
 
-  useEffect(() => { loadInventory(); }, []);
+  const { get, put, loading: statsLoading } = useApi();
+  const [statsData, setStatsData] = useState(null);
 
-  const loadInventory = async () => {
+  const { get: getProducts, loading: productsLoading } = useApi();
+  const [productsData, setProductsData] = useState(null);
+
+  const refetchProducts = async () => {
     try {
-      const res = await get('/admin/reports/inventory');
-      setInventory(res.data);
-    } catch (err) { console.error(err); }
+      const result = await getProducts("/menu?limit=100");
+      setProductsData(result);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  if (loading && !inventory) return <SkeletonTable rows={8} />;
-  if (!inventory) return null;
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [stats, products] = await Promise.all([
+          get("/admin/reports/inventory"),
+          getProducts("/menu?limit=100"),
+        ]);
+        setStatsData(stats);
+        setProductsData(products);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    load();
+  }, [get, getProducts]);
+
+  const products = useMemo(() => productsData?.products || [], [productsData]);
+  const stats = statsData || {};
+
+  const filteredProducts = useMemo(() => {
+    let result = products;
+
+    if (activeFilter === "available") {
+      result = result.filter((p) => p.available);
+    } else if (activeFilter === "unavailable") {
+      result = result.filter((p) => !p.available);
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter((p) => p.name?.toLowerCase().includes(q));
+    }
+
+    return result;
+  }, [products, activeFilter, search]);
+
+  const toggleAvailability = async (product) => {
+    setTogglingId(product._id);
+    try {
+      await put(`/menu/${product._id}`, { available: !product.available });
+      refetchProducts();
+    } catch (err) {
+      console.error("Failed to toggle availability:", err);
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  const filterPills = [
+    { key: "all", label: "All", count: products.length },
+    {
+      key: "available",
+      label: "Available",
+      count: products.filter((p) => p.available).length,
+    },
+    {
+      key: "unavailable",
+      label: "Unavailable",
+      count: products.filter((p) => !p.available).length,
+    },
+  ];
+
+  const statCards = [
+    {
+      title: "Total Items",
+      value: stats.totalItems ?? products.length ?? 0,
+      icon: "bi-box-seam",
+      color: "primary",
+    },
+    {
+      title: "Available",
+      value:
+        stats.available ??
+        products.filter((p) => p.available).length ??
+        0,
+      icon: "bi-check-circle",
+      color: "success",
+    },
+    {
+      title: "Unavailable",
+      value:
+        stats.unavailable ??
+        products.filter((p) => !p.available).length ??
+        0,
+      icon: "bi-x-circle",
+      color: "danger",
+    },
+    {
+      title: "Low Stock",
+      value: stats.lowStock ?? 0,
+      icon: "bi-exclamation-triangle",
+      color: "warning",
+    },
+  ];
 
   return (
-    <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Inventory</h2>
-        <p style={{ color: '#6b7280', fontSize: 14 }}>Track product availability</p>
-      </div>
+    <div className="admin-inventory-page">
+      <PageHeader
+        title="Inventory Management"
+        subtitle="Manage product availability and stock status"
+      />
 
-      <div className="stat-cards" style={{ marginBottom: 28 }}>
-        {[
-          { label: 'Total Items', value: inventory.available + inventory.lowStock + inventory.unavailable, color: '#6b7280', bg: '#f3f4f6', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#6b7280" strokeWidth="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> },
-          { label: 'Available', value: inventory.available, color: '#2b9348', bg: 'rgba(43,147,72,0.1)', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#2b9348" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg> },
-          { label: 'Low Stock', value: inventory.lowStock, color: '#e85d04', bg: 'rgba(232,93,4,0.1)', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#e85d04" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-          { label: 'Unavailable', value: inventory.unavailable, color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> },
-        ].map((card, i) => (
-          <div key={i} className={`stat-card ${['','green','orange',''][i]}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-            <div style={{ width: 44, height: 44, borderRadius: 10, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {card.icon}
-            </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: 24 }}>{card.value}</div>
-              <div className="stat-label">{card.label}</div>
-            </div>
+      <div className="row g-3 mb-4">
+        {statCards.map((card, i) => (
+          <div key={i} className="col-12 col-sm-6 col-xl-3">
+            <StatCard
+              title={card.title}
+              value={statsLoading ? "—" : card.value}
+              icon={card.icon}
+              color={card.color}
+              loading={statsLoading}
+            />
           </div>
         ))}
       </div>
 
-      <div className="admin-table-wrapper" style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Category</th>
-              <th>Status</th>
-              <th>Orders</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventory.items.map(item => (
-              <tr key={item._id}>
-                <td style={{ fontWeight: 600 }}>{item.name}</td>
-                <td>
-                  <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f3f4f6', fontSize: 12, fontWeight: 600, textTransform: 'capitalize' }}>
-                    {item.category}
-                  </span>
-                </td>
-                <td>
-                  <span style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 4,
-                    padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600,
-                    background: item.isAvailable ? '#dcfce7' : '#fee2e2', color: item.isAvailable ? '#166534' : '#991b1b',
-                  }}>
-                    {item.isAvailable ? '✓ Available' : '✕ Unavailable'}
-                  </span>
-                </td>
-                <td style={{ fontWeight: 600, color: '#374151' }}>{item.orderCount || 0}</td>
-              </tr>
+      <div className="admin-card">
+        <div className="admin-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div className="admin-filter-pills d-flex flex-wrap gap-2">
+            {filterPills.map((pill) => (
+              <button
+                key={pill.key}
+                className={`admin-pill ${
+                  activeFilter === pill.key ? "active" : ""
+                }`}
+                onClick={() => setActiveFilter(pill.key)}
+              >
+                {pill.label}
+                <span className="admin-pill-count">{pill.count}</span>
+              </button>
             ))}
-          </tbody>
-        </table>
+          </div>
+
+          <div className="admin-search-box">
+            <i className="bi bi-search admin-search-icon" />
+            <input
+              type="text"
+              className="admin-search-input"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="admin-card-body p-0">
+          {productsLoading ? (
+            <SkeletonTable rows={5} columns={5} />
+          ) : filteredProducts.length === 0 ? (
+            <EmptyState
+              icon="bi-box-seam"
+              title="No products found"
+              description={
+                search
+                  ? "Try a different search term."
+                  : "No inventory data available."
+              }
+            />
+          ) : (
+            <div className="admin-table-responsive">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th className="text-center">Orders</th>
+                    <th className="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <AnimatePresence>
+                    {filteredProducts.map((product, index) => (
+                      <motion.tr
+                        key={product._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ delay: index * 0.03 }}
+                      >
+                        <td>
+                          <div className="admin-product-cell d-flex align-items-center gap-3">
+                            <img
+                              src={product.image || "/placeholder.png"}
+                              alt={product.name}
+                              className="admin-product-thumb"
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 8,
+                                objectFit: "cover",
+                              }}
+                            />
+                            <span className="admin-product-name fw-medium">
+                              {product.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="admin-category-badge">
+                            {product.category || "—"}
+                          </span>
+                        </td>
+                        <td>
+                          <label className="admin-toggle">
+                            <input
+                              type="checkbox"
+                              checked={!!product.available}
+                              disabled={togglingId === product._id}
+                              onChange={() => toggleAvailability(product)}
+                            />
+                            <span className="admin-toggle-slider" />
+                          </label>
+                        </td>
+                        <td className="text-center">
+                          <span className="admin-order-count">
+                            {product.orderCount ?? 0}
+                          </span>
+                        </td>
+                        <td className="text-end">
+                          <button
+                            className="admin-action-btn"
+                            onClick={() => toggleAvailability(product)}
+                            disabled={togglingId === product._id}
+                            title={
+                              product.available
+                                ? "Mark unavailable"
+                                : "Mark available"
+                            }
+                          >
+                            {togglingId === product._id ? (
+                              <span className="admin-spinner-sm" />
+                            ) : (
+                              <i
+                                className={`bi ${
+                                  product.available
+                                    ? "bi-eye-slash"
+                                    : "bi-eye"
+                                }`}
+                              />
+                            )}
+                          </button>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default AdminInventory;
+export default Inventory;

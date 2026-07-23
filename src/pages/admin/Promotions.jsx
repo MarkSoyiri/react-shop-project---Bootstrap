@@ -1,169 +1,382 @@
 import { useState, useEffect } from 'react';
-import useApi from '../../hooks/useApi';
-import { formatCurrency, formatDate } from '../../utils/helpers';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { motion } from 'framer-motion';
+import { useApi } from '../../hooks/useApi';
+import { PageHeader } from './components/PageHeader';
+import { Modal } from './components/Modal';
+import { ConfirmDialog } from './components/ConfirmDialog';
+import { EmptyState } from './components/EmptyState';
+import { SkeletonTable } from './components/Skeletons';
 
-function AdminPromotions() {
-  const { get, post, put, del, loading } = useApi();
-  const [promos, setPromos] = useState([]);
+const initialForm = {
+  title: '',
+  description: '',
+  type: 'percentage',
+  value: '',
+  startDate: '',
+  endDate: '',
+  minimumOrder: '',
+  active: true,
+  priority: 0,
+};
+
+const typeColors = {
+  percentage: 'bg-primary',
+  fixed: 'bg-success',
+  free_delivery: 'bg-info',
+};
+
+const typeLabels = {
+  percentage: 'Percentage',
+  fixed: 'Fixed Amount',
+  free_delivery: 'Free Delivery',
+};
+
+export default function Promotions() {
+  const { get, post, put, del, loading, error } = useApi();
+  const [promotions, setPromotions] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [editItem, setEditItem] = useState(null);
-  const [form, setForm] = useState({
-    title: '', description: '', type: 'percentage', value: '',
-    minimumOrder: '', startDate: '', endDate: '', isActive: true, priority: 0,
-  });
+  const [editingPromo, setEditingPromo] = useState(null);
+  const [form, setForm] = useState(initialForm);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => { loadPromos(); }, []);
-
-  const loadPromos = async () => {
+  const fetchPromotions = async () => {
     try {
-      const res = await get('/promotions');
-      setPromos(res.data || []);
-    } catch (err) { console.error(err); }
+      const result = await get('/promotions');
+      setPromotions(Array.isArray(result) ? result : result.promotions || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleSave = async (e) => {
+  useEffect(() => {
+    fetchPromotions();
+  }, [get]);
+
+  useEffect(() => {
+    if (editingPromo) {
+      setForm({
+        title: editingPromo.title || '',
+        description: editingPromo.description || '',
+        type: editingPromo.type || 'percentage',
+        value: editingPromo.value ?? '',
+        startDate: editingPromo.startDate ? editingPromo.startDate.slice(0, 10) : '',
+        endDate: editingPromo.endDate ? editingPromo.endDate.slice(0, 10) : '',
+        minimumOrder: editingPromo.minimumOrder ?? '',
+        active: editingPromo.active ?? true,
+        priority: editingPromo.priority ?? 0,
+      });
+    } else {
+      setForm(initialForm);
+    }
+  }, [editingPromo]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const openCreate = () => {
+    setEditingPromo(null);
+    setForm(initialForm);
+    setShowModal(true);
+  };
+
+  const openEdit = (promo) => {
+    setEditingPromo(promo);
+    setShowModal(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
-      const data = { ...form, value: parseFloat(form.value) };
-      if (form.minimumOrder) data.minimumOrder = parseFloat(form.minimumOrder);
-      if (editItem) {
-        await put(`/promotions/${editItem._id}`, data);
+      const payload = {
+        ...form,
+        value: form.type === 'free_delivery' ? 0 : Number(form.value),
+        minimumOrder: Number(form.minimumOrder) || 0,
+        priority: Number(form.priority) || 0,
+      };
+
+      if (editingPromo) {
+        await put(`/promotions/${editingPromo.id}`, payload);
       } else {
-        await post('/promotions', data);
+        await post('/promotions', payload);
       }
-      setShowModal(false); setEditItem(null); loadPromos();
-    } catch (err) { alert(err.message); }
+      setShowModal(false);
+      fetchPromotions();
+    } catch (err) {
+      console.error('Failed to save promotion:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this promotion?')) return;
-    try { await del(`/promotions/${id}`); loadPromos(); } catch (err) { alert(err.message); }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await del(`/promotions/${deleteTarget.id}`);
+      setDeleteTarget(null);
+      fetchPromotions();
+    } catch (err) {
+      console.error('Failed to delete promotion:', err);
+    }
   };
 
-  if (loading && promos.length === 0) return <SkeletonTable rows={5} />;
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const formatCurrency = (val) => `GH₵${Number(val).toFixed(2)}`;
+
+  const renderValue = (promo) => {
+    if (promo.type === 'free_delivery') return '—';
+    if (promo.type === 'percentage') return `${promo.value}%`;
+    return formatCurrency(promo.value);
+  };
+
+  if (loading) return <SkeletonTable rows={5} cols={7} />;
+
+  if (error) {
+    return (
+      <div className="admin-alert admin-alert-danger">
+        Failed to load promotions. <button className="admin-btn admin-btn-sm" onClick={fetchPromotions}>Retry</button>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Promotions</h2>
-          <p style={{ color: '#6b7280', fontSize: 14 }}>{promos.length} promotions</p>
-        </div>
-        <button onClick={() => { setForm({ title: '', description: '', type: 'percentage', value: '', minimumOrder: '', startDate: '', endDate: '', isActive: true, priority: 0 }); setEditItem(null); setShowModal(true); }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '10px 20px', background: 'linear-gradient(135deg, #e85d04, #f48c06)',
-            color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600,
-            cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)',
-          }}>
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Create Promotion
-        </button>
-      </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="admin-promotions"
+    >
+      <PageHeader
+        title="Promotions"
+        actionLabel="Add Promotion"
+        onAction={openCreate}
+      />
 
-      <div className="admin-table-wrapper" style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Value</th>
-              <th>Valid Period</th>
-              <th>Used</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {promos.map(p => (
-              <tr key={p._id}>
-                <td>
-                  <div style={{ fontWeight: 600, fontSize: 14 }}>{p.title}</div>
-                  <div style={{ fontSize: 12, color: '#6b7280' }}>{p.description?.slice(0, 50) || 'No description'}{p.description?.length > 50 ? '...' : ''}</div>
-                </td>
-                <td style={{ textTransform: 'capitalize', fontSize: 13 }}>{p.type}</td>
-                <td style={{ fontWeight: 700 }}>{p.type === 'percentage' ? `${p.value}%` : formatCurrency(p.value)}</td>
-                <td style={{ fontSize: 12, color: '#6b7280' }}>{formatDate(p.startDate)} – {formatDate(p.endDate)}</td>
-                <td style={{ fontSize: 13 }}>{p.usedCount || 0}{p.usageLimit ? ` / ${p.usageLimit}` : ''}</td>
-                <td>
-                  <span style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 4,
-                    padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600,
-                    background: p.isActive ? '#dcfce7' : '#fee2e2', color: p.isActive ? '#166534' : '#991b1b',
-                  }}>{p.isActive ? '✓ Active' : '✕ Inactive'}</span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => { setEditItem(p); setForm({ title: p.title, description: p.description, type: p.type, value: p.value, minimumOrder: p.minimumOrder || '', startDate: p.startDate?.slice(0, 10), endDate: p.endDate?.slice(0, 10), isActive: p.isActive, priority: p.priority || 0 }); setShowModal(true); }}
-                      style={{ padding: '5px 12px', fontSize: 12, fontWeight: 600, border: '1.5px solid #e5e7eb', borderRadius: 8, background: '#fff', cursor: 'pointer' }}>Edit</button>
-                    <button onClick={() => handleDelete(p._id)}
-                      style={{ padding: '5px 12px', fontSize: 12, fontWeight: 600, border: '1.5px solid #fecaca', borderRadius: 8, background: '#fff', color: '#ef4444', cursor: 'pointer' }}>Delete</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {promos.length === 0 && (
-              <tr><td colSpan={7} style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>No promotions yet</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 24, backdropFilter: 'blur(4px)' }} onClick={() => setShowModal(false)}>
-          <div style={{ background: '#fff', borderRadius: 16, padding: 32, width: '100%', maxWidth: 520, maxHeight: '90vh', overflow: 'auto', boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>{editItem ? 'Edit Promotion' : 'Create Promotion'}</h3>
-              <button onClick={() => setShowModal(false)} style={{ background: '#f3f4f6', border: 'none', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>✕</button>
-            </div>
-            <form className="admin-form" onSubmit={handleSave}>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Title</label>
-                <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-              </div>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Description</label>
-                <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa', resize: 'vertical', fontFamily: 'inherit' }} />
-              </div>
-              <div className="admin-form-row">
-                <div className="admin-form-group">
-                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Type</label>
-                  <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }}>
-                    <option value="percentage">Percentage</option>
-                    <option value="fixed">Fixed Amount</option>
-                    <option value="free_delivery">Free Delivery</option>
-                  </select>
-                </div>
-                <div className="admin-form-group">
-                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Value</label>
-                  <input type="number" step="0.01" min="0" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-                </div>
-              </div>
-              <div className="admin-form-row">
-                <div className="admin-form-group">
-                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Start Date</label>
-                  <input type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-                </div>
-                <div className="admin-form-group">
-                  <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>End Date</label>
-                  <input type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} required style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-                </div>
-              </div>
-              <div className="admin-form-group">
-                <label style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Minimum Order (optional)</label>
-                <input type="number" step="0.01" min="0" value={form.minimumOrder} onChange={e => setForm({ ...form, minimumOrder: e.target.value })} style={{ padding: '10px 14px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 14, outline: 'none', background: '#fafafa' }} />
-              </div>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button type="button" onClick={() => setShowModal(false)} style={{ padding: '10px 20px', borderRadius: 10, border: '1.5px solid #e5e7eb', background: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', color: '#6b7280' }}>Cancel</button>
-                <button type="submit" style={{ padding: '10px 24px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #e85d04, #f48c06)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(232,93,4,0.3)' }}>{editItem ? 'Update' : 'Create'}</button>
-              </div>
-            </form>
+      {!promotions || promotions.length === 0 ? (
+        <EmptyState message="No promotions found." />
+      ) : (
+        <div className="admin-card">
+          <div className="admin-table-responsive">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Value</th>
+                  <th>Valid Period</th>
+                  <th>Used</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {promotions.map((promo) => (
+                  <tr key={promo.id}>
+                    <td className="admin-fw-semibold">{promo.title}</td>
+                    <td>
+                      <span className={`admin-badge ${typeColors[promo.type] || 'bg-secondary'}`}>
+                        {typeLabels[promo.type] || promo.type}
+                      </span>
+                    </td>
+                    <td>{renderValue(promo)}</td>
+                    <td>
+                      {formatDate(promo.startDate)} — {formatDate(promo.endDate)}
+                    </td>
+                    <td>{promo.usedCount ?? 0}</td>
+                    <td>
+                      <span className={`admin-badge ${promo.active ? 'bg-success' : 'bg-secondary'}`}>
+                        {promo.active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="admin-actions">
+                        <button
+                          className="admin-btn admin-btn-sm admin-btn-outline"
+                          onClick={() => openEdit(promo)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="admin-btn admin-btn-sm admin-btn-danger-outline"
+                          onClick={() => setDeleteTarget(promo)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
-    </div>
+
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingPromo ? 'Edit Promotion' : 'Create Promotion'}
+      >
+        <form onSubmit={handleSubmit} className="admin-form">
+          <div className="admin-form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              name="title"
+              className="admin-input"
+              value={form.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label>Description</label>
+            <textarea
+              name="description"
+              className="admin-input admin-textarea"
+              rows={3}
+              value={form.description}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Type</label>
+              <select
+                name="type"
+                className="admin-select"
+                value={form.type}
+                onChange={handleChange}
+              >
+                <option value="percentage">Percentage</option>
+                <option value="fixed">Fixed Amount</option>
+                <option value="free_delivery">Free Delivery</option>
+              </select>
+            </div>
+
+            {form.type !== 'free_delivery' && (
+              <div className="admin-form-group">
+                <label>Value</label>
+                <input
+                  type="number"
+                  name="value"
+                  className="admin-input"
+                  value={form.value}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Start Date</label>
+              <input
+                type="date"
+                name="startDate"
+                className="admin-input"
+                value={form.startDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="admin-form-group">
+              <label>End Date</label>
+              <input
+                type="date"
+                name="endDate"
+                className="admin-input"
+                value={form.endDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Minimum Order</label>
+              <input
+                type="number"
+                name="minimumOrder"
+                className="admin-input"
+                value={form.minimumOrder}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div className="admin-form-group">
+              <label>Priority</label>
+              <input
+                type="number"
+                name="priority"
+                className="admin-input"
+                value={form.priority}
+                onChange={handleChange}
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-toggle-label">
+              <input
+                type="checkbox"
+                name="active"
+                className="admin-toggle-input"
+                checked={form.active}
+                onChange={handleChange}
+              />
+              Active
+            </label>
+          </div>
+
+          <div className="admin-form-actions">
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              onClick={() => setShowModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="admin-btn admin-btn-primary"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : editingPromo ? 'Update' : 'Create'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      <ConfirmDialog
+        show={!!deleteTarget}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+        title="Delete Promotion"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+      />
+    </motion.div>
   );
 }
-
-export default AdminPromotions;

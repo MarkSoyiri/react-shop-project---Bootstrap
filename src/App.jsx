@@ -28,6 +28,40 @@ import { CartProvider, CartContext } from "./context/CartContext";
 import GlobalLoader from "./components/GlobalLoader";
 import { SkeletonPage } from "./components/ui/Skeleton";
 
+function AdminLoader() {
+  return (
+    <div className="admin-layout">
+      <div className="admin-sidebar" />
+      <div className="admin-main">
+        <div className="admin-topbar" />
+        <div className="admin-content" style={{ padding: 28 }}>
+          <div className="admin-skeleton admin-skeleton-heading" style={{ width: 200, height: 28, marginBottom: 24 }} />
+          <div className="admin-stat-grid">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="admin-skeleton-card">
+                <div className="admin-skeleton admin-skeleton-text" style={{ width: 80, height: 12, marginBottom: 12 }} />
+                <div className="admin-skeleton admin-skeleton-heading" style={{ width: 120, height: 24, marginBottom: 8 }} />
+                <div className="admin-skeleton admin-skeleton-text" style={{ width: 60, height: 12 }} />
+              </div>
+            ))}
+          </div>
+          <div className="admin-card">
+            <div className="admin-card-body no-pad">
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className="admin-skeleton-table-row" style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 80px' }}>
+                  {[1,2,3,4,5].map(j => (
+                    <div key={j} className="admin-skeleton admin-skeleton-text" style={{ height: 14, width: j === 1 ? '70%' : '50%' }} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Login from "./pages/Login";
@@ -54,11 +88,14 @@ const AdminProducts = lazy(() => import("./pages/admin/Products"));
 const AdminCategories = lazy(() => import("./pages/admin/Categories"));
 const AdminOrders = lazy(() => import("./pages/admin/Orders"));
 const AdminCustomers = lazy(() => import("./pages/admin/Customers"));
+const AdminReviews = lazy(() => import("./pages/admin/Reviews"));
 const AdminCoupons = lazy(() => import("./pages/admin/Coupons"));
 const AdminPromotions = lazy(() => import("./pages/admin/Promotions"));
+const AdminAnalytics = lazy(() => import("./pages/admin/Analytics"));
 const AdminReports = lazy(() => import("./pages/admin/Reports"));
 const AdminInventory = lazy(() => import("./pages/admin/Inventory"));
 const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+const AdminProfile = lazy(() => import("./pages/admin/Profile"));
 
 export const ThemeContext = createContext();
 
@@ -118,7 +155,7 @@ function Layout() {
 
       {pageLoading && <GlobalLoader />}
 
-      <Suspense fallback={<SkeletonPage />}>
+      <Suspense fallback={isAdmin ? <AdminLoader /> : <SkeletonPage />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
@@ -142,15 +179,18 @@ function Layout() {
           </Route>
 
           <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout><AdminDashboard /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminLayout><AdminOrders /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/products" element={<ProtectedRoute role="admin"><AdminLayout><AdminProducts /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/categories" element={<ProtectedRoute role="admin"><AdminLayout><AdminCategories /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminLayout><AdminOrders /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/customers" element={<ProtectedRoute role="admin"><AdminLayout><AdminCustomers /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/reviews" element={<ProtectedRoute role="admin"><AdminLayout><AdminReviews /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/coupons" element={<ProtectedRoute role="admin"><AdminLayout><AdminCoupons /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/promotions" element={<ProtectedRoute role="admin"><AdminLayout><AdminPromotions /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminLayout><AdminAnalytics /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/reports" element={<ProtectedRoute role="admin"><AdminLayout><AdminReports /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/inventory" element={<ProtectedRoute role="admin"><AdminLayout><AdminInventory /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute role="admin"><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/profile" element={<ProtectedRoute role="admin"><AdminLayout><AdminProfile /></AdminLayout></ProtectedRoute>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

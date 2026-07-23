@@ -1,0 +1,43 @@
+import { motion } from 'framer-motion';
+
+export function StatCard({ label, value, change, changeLabel, icon, color = 'brand', delay = 0 }) {
+    const isPositive = change >= 0;
+
+    return (
+        <motion.div
+            className={`admin-stat-card ${color}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay }}
+        >
+            <div className="admin-stat-header">
+                <span className="admin-stat-label">{label}</span>
+                {icon && (
+                    <div className={`admin-stat-icon ${color}`}>
+                        {icon}
+                    </div>
+                )}
+            </div>
+            <div className="admin-stat-value">{value}</div>
+            {change !== undefined && (
+                <div className={`admin-stat-change ${isPositive ? 'up' : 'down'}`}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        {isPositive ? (
+                            <>
+                                <polyline points="18 15 12 9 6 15" />
+                                <polyline points="18 15 12 9 6 15" transform="translate(0, 4)" />
+                            </>
+                        ) : (
+                            <>
+                                <polyline points="6 9 12 15 18 9" />
+                                <polyline points="6 9 12 15 18 9" transform="translate(0, -4)" />
+                            </>
+                        )}
+                    </svg>
+                    {isPositive ? '+' : ''}{change}%
+                    {changeLabel && <span style={{ fontWeight: 400, opacity: 0.7 }}>&nbsp;{changeLabel}</span>}
+                </div>
+            )}
+        </motion.div>
+    );
+}

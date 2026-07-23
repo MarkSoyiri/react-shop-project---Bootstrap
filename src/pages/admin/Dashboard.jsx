@@ -1,216 +1,308 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useApi from '../../hooks/useApi';
-import { formatCurrency, getStatusInfo } from '../../utils/helpers';
-import { SkeletonStat } from '../../components/ui/Skeleton';
+import { AuthContext } from '../../context/AuthContext';
+import { StatCard } from './components/StatCard';
+import { SkeletonStatCards } from './components/Skeletons';
+import { motion } from 'framer-motion';
 
-function AdminDashboard() {
-  const { get, loading } = useApi();
-  const [dashboard, setDashboard] = useState(null);
-  const navigate = useNavigate();
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.06 } }
+};
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
+const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.35 } }
+};
 
-  const loadDashboard = async () => {
-    try {
-      const res = await get('/admin/dashboard');
-      setDashboard(res.data);
-    } catch (err) {
-      console.error('Failed to load dashboard:', err);
-    }
-  };
-
-  if (loading && !dashboard) {
+function MiniBarChart({ data, color = 'var(--admin-brand)' }) {
+    if (!data || data.length === 0) return null;
+    const max = Math.max(...data.map(d => d.value));
     return (
-      <div>
-        <div className="stat-cards">
-          {[1, 2, 3, 4].map(i => <SkeletonStat key={i} />)}
-        </div>
-      </div>
-    );
-  }
-
-  if (!dashboard) return null;
-
-  const { stats, recentOrders, popularItems, statusBreakdown } = dashboard;
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-  return (
-    <div>
-      <div style={{ background: 'linear-gradient(135deg, #e85d04, #f48c06)', borderRadius: 16, padding: '32px 36px', marginBottom: 28, color: '#fff' }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Welcome back, Admin</h2>
-        <p style={{ opacity: 0.85, fontSize: 14 }}>{today}</p>
-      </div>
-
-      <div className="stat-cards" style={{ marginBottom: 28 }}>
-        {[
-          { label: 'Revenue This Month', value: formatCurrency(stats.monthRevenue), sub: `↑ ${stats.monthOrders} orders`, color: '#e85d04', bg: 'rgba(232,93,4,0.1)', icon: <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#e85d04" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-          { label: 'Orders This Month', value: stats.monthOrders, sub: `↑ ${stats.todayOrders} today`, color: '#2b9348', bg: 'rgba(43,147,72,0.1)', icon: <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#2b9348" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> },
-          { label: 'Total Customers', value: stats.totalCustomers, sub: stats.newCustomersThisMonth > 0 ? `+${stats.newCustomersThisMonth} new` : '', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', icon: <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> },
-          { label: 'Menu Items', value: stats.totalProducts, sub: `${stats.totalCategories} categories`, color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)', icon: <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#8b5cf6" strokeWidth="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9.5" r="1"/><circle cx="15" cy="9.5" r="1"/></svg> },
-        ].map((card, i) => (
-          <div key={i} className={`stat-card ${['orange','green','blue','purple'][i]}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {card.icon}
-            </div>
-            <div>
-              <div className="stat-value" style={{ fontSize: 26 }}>{card.value}</div>
-              <div className="stat-label">{card.label}</div>
-              {card.sub && <div className="stat-change up">{card.sub}</div>}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24, marginBottom: 28 }}>
-        <div className="admin-table-wrapper">
-          <div className="admin-table-header">
-            <h3 style={{ fontSize: 16, fontWeight: 700 }}>Recent Orders</h3>
-            <button
-              onClick={() => navigate('/admin/orders')}
-              style={{
-                background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 8,
-                padding: '6px 14px', fontSize: 13, fontWeight: 600, color: '#6b7280',
-                cursor: 'pointer', transition: 'all 0.2s',
-              }}
-            >
-              View All →
-            </button>
-          </div>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order) => {
-                const statusInfo = getStatusInfo(order.status);
-                return (
-                  <tr key={order._id}>
-                    <td style={{ fontWeight: 600 }}>#{order._id.slice(-6).toUpperCase()}</td>
-                    <td>{order.user?.email || 'Unknown'}</td>
-                    <td style={{ fontWeight: 600 }}>{formatCurrency(order.total)}</td>
-                    <td>
-                      <span className={`badge-status badge-${order.status}`}>
-                        {statusInfo.icon} {statusInfo.label}
-                      </span>
-                    </td>
-                    <td style={{ color: '#6b7280', fontSize: 13 }}>
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                );
-              })}
-              {recentOrders.length === 0 && (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: 40, color: '#9ca3af' }}>
-                    No orders yet
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <h3>Popular Items</h3>
-            </div>
-            <div className="admin-card-body" style={{ padding: '12px 24px' }}>
-              {popularItems.map((item, i) => (
-                <div key={item._id} style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '10px 0',
-                  borderBottom: i < popularItems.length - 1 ? '1px solid #f3f4f6' : 'none',
-                }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    background: '#f3f4f6',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 13, fontWeight: 700, color: '#e85d04', flexShrink: 0,
-                  }}>
-                    {i + 1}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>{item.orderCount} orders</div>
-                  </div>
-                  <div style={{ fontWeight: 600, fontSize: 14, flexShrink: 0 }}>{formatCurrency(item.price)}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <h3>Order Status</h3>
-            </div>
-            <div className="admin-card-body" style={{ padding: '12px 24px' }}>
-              {Object.entries(statusBreakdown).map(([status, count]) => {
-                const info = getStatusInfo(status);
-                return (
-                  <div key={status} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '8px 0',
-                  }}>
-                    <span className={`badge-status badge-${status}`}>
-                      {info.icon} {info.label}
-                    </span>
-                    <span style={{ fontWeight: 600, fontSize: 14 }}>{count}</span>
-                  </div>
-                );
-              })}
-              {Object.keys(statusBreakdown).length === 0 && (
-                <p style={{ color: '#9ca3af', textAlign: 'center', fontSize: 14 }}>No orders this month</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="admin-card">
-        <div className="admin-card-header">
-          <h3>Quick Actions</h3>
-        </div>
-        <div className="admin-card-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-            {[
-              { label: 'Manage Products', path: '/admin/products', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>, color: '#e85d04', bg: 'rgba(232,93,4,0.08)' },
-              { label: 'View Orders', path: '/admin/orders', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>, color: '#2b9348', bg: 'rgba(43,147,72,0.08)' },
-              { label: 'Customers', path: '/admin/customers', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>, color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
-              { label: 'Reports', path: '/admin/reports', icon: <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>, color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)' },
-            ].map(action => (
-              <button
-                key={action.path}
-                onClick={() => navigate(action.path)}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-                  padding: '20px 16px', background: '#fff', border: '1.5px solid #e5e7eb',
-                  borderRadius: 12, cursor: 'pointer', transition: 'all 0.2s',
-                  textAlign: 'center',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = action.color; e.currentTarget.style.background = action.bg; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; }}
-              >
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: action.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: action.color }}>
-                  {action.icon}
-                </div>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>{action.label}</span>
-              </button>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 48 }}>
+            {data.map((d, i) => (
+                <div key={i} style={{
+                    flex: 1, borderRadius: 3, transition: 'height 0.4s ease-out',
+                    height: `${max > 0 ? (d.value / max) * 100 : 0}%`,
+                    background: color, opacity: 0.7,
+                }} title={`${d.label}: ${d.value}`} />
             ))}
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
-export default AdminDashboard;
+function StatusChart({ data }) {
+    const colors = {
+        pending: '#f59e0b', confirmed: '#3b82f6', preparing: '#f59e0b',
+        ready: '#06b6d4', out_for_delivery: '#6366f1', delivered: '#22c55e', cancelled: '#ef4444',
+    };
+    const labels = {
+        pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing',
+        ready: 'Ready', out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+    };
+    const total = Object.values(data).reduce((a, b) => a + b, 0);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {Object.entries(data).map(([key, count]) => (
+                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ width: 110, fontSize: 13, color: 'var(--admin-text-secondary)', textAlign: 'right' }}>
+                        {labels[key] || key}
+                    </span>
+                    <div style={{ flex: 1, height: 24, background: '#f3f4f6', borderRadius: 6, overflow: 'hidden' }}>
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: total > 0 ? `${(count / total) * 100}%` : '0%' }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            style={{ height: '100%', background: colors[key] || '#9ca3af', borderRadius: 6 }}
+                        />
+                    </div>
+                    <span style={{ width: 32, fontSize: 13, fontWeight: 600, textAlign: 'right' }}>{count}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default function Dashboard() {
+    const { get, loading } = useApi();
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [dashboard, setDashboard] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const data = await get('/admin/dashboard');
+                setDashboard(data);
+            } catch (err) {
+                setError(err.message || 'Failed to load dashboard');
+            }
+        };
+        load();
+    }, [get]);
+
+    if (loading && !dashboard) return <SkeletonStatCards />;
+
+    if (error) {
+        return (
+            <div style={{ textAlign: 'center', padding: 60 }}>
+                <p style={{ color: 'var(--admin-danger)', fontSize: 15, fontWeight: 600 }}>Failed to load dashboard</p>
+                <p style={{ color: 'var(--admin-text-secondary)', marginTop: 8 }}>{error}</p>
+                <button className="admin-btn admin-btn-primary" style={{ marginTop: 16 }} onClick={() => window.location.reload()}>Retry</button>
+            </div>
+        );
+    }
+
+    if (!dashboard) return null;
+
+    const { stats = {}, recentOrders = [], popularItems = [], orderStatus = {}, weeklyRevenue = [] } = dashboard;
+
+    const revenueData = weeklyRevenue.map((d, i) => ({ label: d._id || `Day ${i + 1}`, value: d.revenue || 0 }));
+
+    const activityItems = [
+        { icon: '🛒', bg: '#fff7ed', text: 'New order received', time: '2 min ago' },
+        { icon: '👤', bg: '#eff6ff', text: 'New customer registered', time: '15 min ago' },
+        { icon: '⭐', bg: '#fffbeb', text: 'New review submitted', time: '1 hour ago' },
+        { icon: '🏷️', bg: '#f0fdf4', text: 'Coupon "WELCOME10" activated', time: '3 hours ago' },
+        { icon: '📦', bg: '#eef2ff', text: 'Product "BBQ Bacon Burger" updated', time: '5 hours ago' },
+    ];
+
+    return (
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            {/* Welcome Banner */}
+            <motion.div variants={itemVariants} style={{
+                background: 'linear-gradient(135deg, #111827 0%, #1e293b 100%)',
+                borderRadius: 16, padding: '28px 32px', marginBottom: 24,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16,
+            }}>
+                <div>
+                    <h2 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>
+                        Welcome back, {user?.username || 'Admin'} 👋
+                    </h2>
+                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 6 }}>
+                        Here's what's happening with your restaurant today.
+                    </p>
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, textAlign: 'right' }}>
+                    <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</div>
+                    <div>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                </div>
+            </motion.div>
+
+            {/* Stat Cards */}
+            <div className="admin-stat-grid">
+                <StatCard label="Revenue Today" value={`GH₵ ${(stats.todayRevenue || 0).toFixed(2)}`} change={stats.revenueChange || 0} changeLabel="vs yesterday" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>} color="brand" delay={0} />
+                <StatCard label="Orders Today" value={stats.todayOrders || 0} change={stats.ordersChange || 0} changeLabel="vs yesterday" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>} color="info" delay={0.05} />
+                <StatCard label="Pending Orders" value={stats.pendingOrders || 0} icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>} color="warning" delay={0.1} />
+                <StatCard label="Total Customers" value={stats.totalCustomers || 0} change={stats.customersChange || 0} changeLabel="this month" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>} color="success" delay={0.15} />
+            </div>
+
+            {/* Second row stats */}
+            <div className="admin-stat-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+                <StatCard label="Avg Order Value" value={`GH₵ ${(stats.avgOrderValue || 0).toFixed(2)}`} icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>} color="brand" delay={0.2} />
+                <StatCard label="Menu Items" value={stats.totalProducts || 0} icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg>} color="info" delay={0.25} />
+                <StatCard label="Monthly Revenue" value={`GH₵ ${(stats.monthRevenue || 0).toLocaleString()}`} icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>} color="success" delay={0.3} />
+            </div>
+
+            {/* Charts Row */}
+            <div className="admin-grid-2" style={{ marginBottom: 24 }}>
+                {/* Weekly Revenue Chart */}
+                <motion.div variants={itemVariants} className="admin-card">
+                    <div className="admin-card-header">
+                        <h3 className="admin-card-title">Revenue This Week</h3>
+                    </div>
+                    <div className="admin-card-body">
+                        {revenueData.length > 0 ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                <MiniBarChart data={revenueData} />
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--admin-text-muted)' }}>
+                                    {revenueData.map((d, i) => (
+                                        <span key={i}>{typeof d.label === 'string' ? d.label.slice(0, 3) : d.label}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <p style={{ color: 'var(--admin-text-muted)', textAlign: 'center', padding: 32, fontSize: 14 }}>No revenue data yet</p>
+                        )}
+                    </div>
+                </motion.div>
+
+                {/* Order Status */}
+                <motion.div variants={itemVariants} className="admin-card">
+                    <div className="admin-card-header">
+                        <h3 className="admin-card-title">Order Status Overview</h3>
+                    </div>
+                    <div className="admin-card-body">
+                        {Object.keys(orderStatus).length > 0 ? (
+                            <StatusChart data={orderStatus} />
+                        ) : (
+                            <p style={{ color: 'var(--admin-text-muted)', textAlign: 'center', padding: 32, fontSize: 14 }}>No orders yet</p>
+                        )}
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Recent Orders + Sidebar */}
+            <div className="admin-grid-2" style={{ gridTemplateColumns: '2fr 1fr' }}>
+                {/* Recent Orders */}
+                <motion.div variants={itemVariants} className="admin-card">
+                    <div className="admin-card-header">
+                        <h3 className="admin-card-title">Recent Orders</h3>
+                        <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => navigate('/admin/orders')}>View All</button>
+                    </div>
+                    <div className="admin-card-body no-pad">
+                        <div className="admin-table-wrapper">
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentOrders.length > 0 ? recentOrders.slice(0, 6).map((order) => (
+                                        <tr key={order._id} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/orders')}>
+                                            <td style={{ fontWeight: 600 }}>#{order._id?.slice(-8)}</td>
+                                            <td>{order.user?.email || order.user?.username || 'Guest'}</td>
+                                            <td style={{ fontWeight: 600 }}>GH₵ {Number(order.total || 0).toFixed(2)}</td>
+                                            <td><span className={`admin-badge ${order.status}`}><span className="admin-badge-dot" />{order.status?.replace(/_/g, ' ')}</span></td>
+                                        </tr>
+                                    )) : (
+                                        <tr><td colSpan={4} style={{ textAlign: 'center', padding: 32, color: 'var(--admin-text-muted)' }}>No orders yet</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Popular Items */}
+                <motion.div variants={itemVariants} className="admin-card">
+                    <div className="admin-card-header">
+                        <h3 className="admin-card-title">Best Sellers</h3>
+                    </div>
+                    <div className="admin-card-body">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {popularItems.length > 0 ? popularItems.slice(0, 5).map((item, i) => (
+                                <div key={item._id || i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div style={{
+                                        width: 36, height: 36, borderRadius: 8, overflow: 'hidden',
+                                        background: 'var(--admin-surface-hover)', flexShrink: 0,
+                                    }}>
+                                        {item.image ? (
+                                            <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🍔</div>
+                                        )}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+                                        <div style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>{item.orders || 0} orders</div>
+                                    </div>
+                                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-brand)' }}>GH₵ {Number(item.revenue || 0).toFixed(0)}</div>
+                                </div>
+                            )) : (
+                                <p style={{ color: 'var(--admin-text-muted)', textAlign: 'center', padding: 24, fontSize: 14 }}>No data yet</p>
+                            )}
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Quick Actions */}
+            <motion.div variants={itemVariants} style={{ marginTop: 24 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Quick Actions</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+                    {[
+                        { to: '/admin/products', label: 'Manage Products', icon: '📦', bg: '#fff7ed' },
+                        { to: '/admin/orders', label: 'View Orders', icon: '🛒', bg: '#eff6ff' },
+                        { to: '/admin/customers', label: 'Customers', icon: '👥', bg: '#f0fdf4' },
+                        { to: '/admin/reports', label: 'Reports', icon: '📊', bg: '#faf5ff' },
+                        { to: '/admin/coupons', label: 'Coupons', icon: '🏷️', bg: '#fffbeb' },
+                        { to: '/admin/settings', label: 'Settings', icon: '⚙️', bg: '#f8fafc' },
+                    ].map((action) => (
+                        <button
+                            key={action.to}
+                            className="admin-btn admin-btn-secondary"
+                            onClick={() => navigate(action.to)}
+                            style={{ justifyContent: 'flex-start', padding: '14px 16px', gap: 12 }}
+                        >
+                            <span style={{
+                                width: 36, height: 36, borderRadius: 8, background: action.bg,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+                            }}>{action.icon}</span>
+                            {action.label}
+                        </button>
+                    ))}
+                </div>
+            </motion.div>
+
+            {/* Activity Feed */}
+            <motion.div variants={itemVariants} style={{ marginTop: 24 }}>
+                <div className="admin-card">
+                    <div className="admin-card-header">
+                        <h3 className="admin-card-title">Recent Activity</h3>
+                    </div>
+                    <div className="admin-card-body no-pad" style={{ padding: '0 24px' }}>
+                        <div className="admin-activity">
+                            {activityItems.map((item, i) => (
+                                <div key={i} className="admin-activity-item">
+                                    <div className="admin-activity-icon" style={{ background: item.bg }}>{item.icon}</div>
+                                    <div className="admin-activity-text">
+                                        <p>{item.text}</p>
+                                        <div className="admin-activity-time">{item.time}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </motion.div>
+    );
+}
