@@ -103,6 +103,11 @@ function Home() {
 
     return (
         <>
+            {/* Ambient floating glass orbs */}
+            <div className="glass-orb glass-orb--1" aria-hidden="true" />
+            <div className="glass-orb glass-orb--2" aria-hidden="true" />
+            <div className="glass-orb glass-orb--3" aria-hidden="true" />
+
             {/* ===== HERO SECTION ===== */}
             <section className="hero-section">
                 <div className="hero-overlay" />
