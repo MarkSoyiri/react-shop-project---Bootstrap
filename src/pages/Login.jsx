@@ -35,7 +35,7 @@ function Login () {
                 return;
             }
     
-            const response = await axiosFetch.post('/login', {
+            const response = await axiosFetch.post('/api/auth/login', {
                 email: Email,
                 password: Password
             })
@@ -82,7 +82,7 @@ function Login () {
                 return;
             }
  
-            const response = await axiosFetch.post("/register", {
+            const response = await axiosFetch.post("/api/auth/register", {
                 username: Username,
                 email: Email,
                 password: Password

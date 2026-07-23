@@ -1,20 +1,24 @@
 import zestylogo from '../images/zestylogo.png'
 import xlogo from '../images/x.png'
-import { IsLoginSuccess, IsLogout } from './IsAuth';
+import { IsLogout } from './IsAuth';
 import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function HomeNav () {
     const { cartItems } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <div className="fixed-top">
             <nav className="navbar navbar-expand-lg bg-body-tertiary my-nav">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="/">
+                    <Link className="navbar-brand" to="/">
                         <img className='logo' src={zestylogo} alt="Zesty Cave" />
-                    </a>
+                    </Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarText" aria-controls="navbarText"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -23,32 +27,37 @@ export function HomeNav () {
                     <div className="collapse navbar-collapse" id="navbarText">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <a className="nav-link active" href="/menu">Menu</a>
+                                <Link className="nav-link" to="/menu">Menu</Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/storelocation">Store Location</a>
+                                <Link className="nav-link" to="/search">Search</Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/contact">Contact</a>
+                                <Link className="nav-link" to="/storelocation">Store Location</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/contact">Contact</Link>
                             </li>
                             <li className="nav-item position-relative">
-                                <a className="nav-link" href="/cart">
+                                <Link className="nav-link" to="/cart">
                                     Cart
                                     {cartCount > 0 && (
                                         <span className="badge bg-danger ms-1" style={{ fontSize: '11px' }}>
                                             {cartCount}
                                         </span>
                                     )}
-                                </a>
+                                </Link>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" type="button" data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasWithBothOptions"
-                                    aria-controls="offcanvasWithBothOptions">
-                                    My Order
-                                </a>
-                            </li>
-                            <IsLoginSuccess />
+                            {user && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/wishlist">Wishlist</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/orders">Orders</Link>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                         <span className="navbar-text">
                             <IsLogout />
@@ -67,26 +76,31 @@ export function Footer () {
                 <div className="footerTop">
                     <div className="linkBox">
                         <ul>Zesty
-                            <li><a href="/menu">Our Menu</a></li>
-                            <li><a href="/storelocation">Store Locations</a></li>
-                            <li><a href="/contact">Contact Us</a></li>
+                            <li><Link to="/menu">Our Menu</Link></li>
+                            <li><Link to="/storelocation">Store Locations</Link></li>
+                            <li><Link to="/contact">Contact Us</Link></li>
+                            <li><Link to="/faq">FAQ</Link></li>
+                        </ul>
+                    </div>
+                    <div className="linkBox">
+                        <ul>Account
+                            <li><Link to="/userprofile">My Profile</Link></li>
+                            <li><Link to="/orders">Order History</Link></li>
+                            <li><Link to="/wishlist">Wishlist</Link></li>
+                            <li><Link to="/cart">My Cart</Link></li>
                         </ul>
                     </div>
                     <div className="linkBox">
                         <ul>Contact
-                            <li><a href="/contact">Customer Support</a></li>
+                            <li><Link to="/contact">Customer Support</Link></li>
                             <li><a href="mailto:info@zestycave.com">info@zestycave.com</a></li>
+                            <li><a href="tel:+233507478237">+233 507 478 237</a></li>
                         </ul>
                     </div>
                     <div className="linkBox">
                         <ul>Legal
-                            <li><a href="">Privacy Policy</a></li>
-                            <li><a href="">Terms of Use</a></li>
-                        </ul>
-                    </div>
-                    <div className="linkBox">
-                        <ul>Location
-                            <li><a href="/storelocation">Find a Zesty</a></li>
+                            <li><Link to="/privacy">Privacy Policy</Link></li>
+                            <li><Link to="/terms">Terms of Service</Link></li>
                         </ul>
                     </div>
                 </div>
@@ -94,9 +108,9 @@ export function Footer () {
                     <div className="follow-us">
                         <p>Follow us:</p>
                         <div className="socialsLink">
-                            <a href="" aria-label="Twitter"><img className='sImage' src={xlogo} alt="twitter" /></a>
-                            <a href="" aria-label="Facebook"><img className='sImage' src={xlogo} alt="facebook" /></a>
-                            <a href="" aria-label="Instagram"><img className='sImage' src={xlogo} alt="instagram" /></a>
+                            <a href="https://twitter.com/zestycave" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><img className='sImage' src={xlogo} alt="twitter" /></a>
+                            <a href="https://facebook.com/zestycave" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img className='sImage' src={xlogo} alt="facebook" /></a>
+                            <a href="https://instagram.com/zestycave" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img className='sImage' src={xlogo} alt="instagram" /></a>
                         </div>
                     </div>
                     <p>&copy; {new Date().getFullYear()} Zesty Cave Restaurant. All rights reserved.</p>

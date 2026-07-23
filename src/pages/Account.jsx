@@ -1,32 +1,40 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosFetch from "../api/axiosFetchAPI";
+import "./Account.css";
 
-function UserProfile(){
+function UserProfile() {
     const navigate = useNavigate();
-    const [ActiveMenu,SetActiveMenu] = useState("AS");
-    const [name,setName] = useState("");
-    const [email,setEmail] = useState("");
+    const [activeMenu, setActiveMenu] = useState("AS");
+    const [profile, setProfile] = useState(null);
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [saving, setSaving] = useState(false);
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
+    const [addresses, setAddresses] = useState([]);
+    const [newAddress, setNewAddress] = useState({ label: 'Home', street: '', city: 'Accra', area: '', phone: '' });
+    const [addingAddress, setAddingAddress] = useState(false);
 
     useEffect(() => {
-        axiosFetch.get('/profile')
-            .then((res) => {
-                if (res.data && res.data.user) {
-                    setName(res.data.user.username || res.data.user.name || '');
-                    setEmail(res.data.user.email || '');
+        axiosFetch.get('/api/auth/profile')
+            .then(res => {
+                if (res.data?.user) {
+                    setProfile(res.data.user);
+                    setName(res.data.user.username || '');
+                    setPhone(res.data.user.phone || '');
+                    setAddresses(res.data.user.addresses || []);
                 }
             })
-            .catch((err) => console.error(err.message));
+            .catch(err => console.error(err.message));
     }, []);
 
     const loadOrders = async () => {
         if (orders.length > 0) return;
         setOrdersLoading(true);
         try {
-            const { data } = await axiosFetch.get('/order');
-            setOrders(data);
+            const { data } = await axiosFetch.get('/api/orders');
+            setOrders(data.orders || data || []);
         } catch (err) {
             console.error(err.message);
         } finally {
@@ -35,78 +43,194 @@ function UserProfile(){
     };
 
     const handleMenuClick = (menu) => {
-        SetActiveMenu(menu);
+        setActiveMenu(menu);
         if (menu === "PO") loadOrders();
     };
 
-    return(
-        <div className="container-lg" style={{ marginTop: '120px', minHeight: '60vh' }}>
+    const saveProfile = async () => {
+        setSaving(true);
+        try {
+            await axiosFetch.put('/api/auth/profile', { username: name, phone });
+            alert('Profile updated!');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const addAddress = async () => {
+        if (!newAddress.street || !newAddress.phone) {
+            alert('Street and phone are required');
+            return;
+        }
+        setAddingAddress(true);
+        try {
+            const { data } = await axiosFetch.post('/api/auth/addresses', newAddress);
+            setAddresses(data.addresses || []);
+            setNewAddress({ label: 'Home', street: '', city: 'Accra', area: '', phone: '' });
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to add address');
+        } finally {
+            setAddingAddress(false);
+        }
+    };
+
+    const deleteAddress = async (addrId) => {
+        if (!window.confirm('Delete this address?')) return;
+        try {
+            const { data } = await axiosFetch.delete(`/api/auth/addresses/${addrId}`);
+            setAddresses(data.addresses || []);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed');
+        }
+    };
+
+    const statusBadge = (status) => {
+        const colors = { delivered: 'success', cancelled: 'danger', placed: 'info', confirmed: 'info', preparing: 'warning', ready: 'primary', out_for_delivery: 'primary' };
+        return colors[status] || 'secondary';
+    };
+
+    return (
+        <div className="container-lg account-page">
             <div className="row">
-                <div className="col-md-4 mb-4">
-                    <div className="card p-4">
+                <div className="col-md-3 mb-4">
+                    <div className="account-sidebar">
+                        <div className="account-avatar">{name ? name[0].toUpperCase() : 'U'}</div>
                         <h3>Hello, {name || "User"}!</h3>
-                        <div className="d-flex flex-column gap-2 mt-3">
-                            <button className={`btn ${ActiveMenu === "AS" ? "btn-primary" : "btn-outline-primary"}`}
-                                onClick={() => handleMenuClick("AS")}>Account Settings</button>
-                            <button className={`btn ${ActiveMenu === "PO" ? "btn-primary" : "btn-outline-primary"}`}
-                                onClick={() => handleMenuClick("PO")}>Past Orders</button>
-                            <button className={`btn ${ActiveMenu === "PM" ? "btn-primary" : "btn-outline-primary"}`}
-                                onClick={() => handleMenuClick("PM")}>Payment Methods</button>
+                        <p className="text-muted small">{profile?.email}</p>
+                        <div className="account-nav">
+                            {[
+                                { key: 'AS', label: 'Profile', icon: '👤' },
+                                { key: 'PO', label: 'Past Orders', icon: '📦' },
+                                { key: 'ADDR', label: 'Addresses', icon: '📍' },
+                            ].map(item => (
+                                <button key={item.key}
+                                    className={`account-nav-btn ${activeMenu === item.key ? 'active' : ''}`}
+                                    onClick={() => handleMenuClick(item.key)}>
+                                    <span>{item.icon}</span> {item.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
-                <div className="col-md-8">
-                    {ActiveMenu === "AS" && (
-                        <div className="card p-4">
-                            <h4>Account Settings</h4>
-                            <hr />
-                            <p><strong>Name:</strong> {name}</p>
-                            <p><strong>Email:</strong> {email}</p>
-                            <p className="text-muted small">Edit functionality coming soon</p>
+                <div className="col-md-9">
+                    {activeMenu === "AS" && (
+                        <div className="account-card">
+                            <h4>Profile Settings</h4>
+                            <div className="account-form">
+                                <div className="account-field">
+                                    <label>Username</label>
+                                    <input type="text" value={name} onChange={e => setName(e.target.value)} />
+                                </div>
+                                <div className="account-field">
+                                    <label>Email</label>
+                                    <input type="email" value={profile?.email || ''} disabled />
+                                </div>
+                                <div className="account-field">
+                                    <label>Phone</label>
+                                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" />
+                                </div>
+                                <button className="btn btn-primary" onClick={saveProfile} disabled={saving}>
+                                    {saving ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
                         </div>
                     )}
-                    {ActiveMenu === "PO" && (
-                        <div className="card p-4">
-                            <h4>Past Orders</h4>
-                            <hr />
+
+                    {activeMenu === "PO" && (
+                        <div className="account-card">
+                            <h4>Order History</h4>
                             {ordersLoading ? (
                                 <p className="text-muted">Loading orders...</p>
                             ) : orders.length === 0 ? (
-                                <div>
+                                <div className="account-empty">
                                     <p>No orders yet.</p>
-                                    <button className="btn btn-primary" onClick={() => navigate('/menu')}>
-                                        Browse Menu
-                                    </button>
+                                    <button className="btn btn-primary" onClick={() => navigate('/menu')}>Browse Menu</button>
                                 </div>
                             ) : (
-                                orders.map(order => (
-                                    <div key={order._id} className="border-bottom pb-3 mb-3">
-                                        <div className="d-flex justify-content-between">
-                                            <strong>Order #{order._id.slice(-6)}</strong>
-                                            <span className={`badge bg-${order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`}>
-                                                {order.status}
-                                            </span>
+                                <div className="orders-list">
+                                    {orders.map(order => (
+                                        <div key={order._id} className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
+                                            <div className="order-card-header">
+                                                <div>
+                                                    <strong>Order #{order._id.slice(-8)}</strong>
+                                                    <small className="text-muted d-block">
+                                                        {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </small>
+                                                </div>
+                                                <span className={`badge bg-${statusBadge(order.status)}`}>{order.status}</span>
+                                            </div>
+                                            <div className="order-card-items">
+                                                {order.items?.slice(0, 3).map((item, i) => (
+                                                    <span key={i}>{item.quantity}× {item.menuItem?.name || item.name || 'Item'}{i < Math.min(order.items.length, 3) - 1 ? ', ' : ''}</span>
+                                                ))}
+                                                {order.items?.length > 3 && <span className="text-muted"> +{order.items.length - 3} more</span>}
+                                            </div>
+                                            <div className="order-card-footer">
+                                                <strong>GH₵ {Number(order.total).toFixed(2)}</strong>
+                                                <span className="view-order-link">View Details →</span>
+                                            </div>
                                         </div>
-                                        <small className="text-muted">
-                                            {new Date(order.createdAt).toLocaleDateString()} — GH₵ {Number(order.total).toFixed(2)}
-                                        </small>
-                                        <div className="mt-1">
-                                            {order.items?.map((item, i) => (
-                                                <small key={i} className="d-block">
-                                                    {item.quantity}x {item.menuItem?.name || '(item)'}
-                                                </small>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))
+                                    ))}
+                                </div>
                             )}
                         </div>
                     )}
-                    {ActiveMenu === "PM" && (
-                        <div className="card p-4">
-                            <h4>Payment Methods</h4>
-                            <hr />
-                            <p className="text-muted">No payment methods saved yet.</p>
+
+                    {activeMenu === "ADDR" && (
+                        <div className="account-card">
+                            <h4>Saved Addresses</h4>
+                            {addresses.length > 0 ? (
+                                <div className="addresses-list">
+                                    {addresses.map(addr => (
+                                        <div key={addr._id} className="address-card">
+                                            <div className="address-info">
+                                                <strong>{addr.label || 'Address'}</strong>
+                                                <p>{addr.street}{addr.area ? `, ${addr.area}` : ''}, {addr.city}</p>
+                                                {addr.phone && <small className="text-muted">📞 {addr.phone}</small>}
+                                                {addr.isDefault && <span className="badge bg-success ms-2">Default</span>}
+                                            </div>
+                                            <button className="btn btn-sm btn-outline-danger" onClick={() => deleteAddress(addr._id)}>Delete</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-muted mb-3">No saved addresses.</p>
+                            )}
+
+                            <div className="address-form mt-4">
+                                <h5>Add New Address</h5>
+                                <div className="row g-3">
+                                    <div className="col-md-6">
+                                        <label className="form-label">Label</label>
+                                        <select className="form-select" value={newAddress.label} onChange={e => setNewAddress({...newAddress, label: e.target.value})}>
+                                            <option>Home</option><option>Work</option><option>Other</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label">Phone</label>
+                                        <input type="tel" className="form-control" value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} placeholder="Phone number" />
+                                    </div>
+                                    <div className="col-12">
+                                        <label className="form-label">Street Address *</label>
+                                        <input type="text" className="form-control" value={newAddress.street} onChange={e => setNewAddress({...newAddress, street: e.target.value})} placeholder="Street address" />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label">Area/Landmark</label>
+                                        <input type="text" className="form-control" value={newAddress.area} onChange={e => setNewAddress({...newAddress, area: e.target.value})} placeholder="Area" />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label">City</label>
+                                        <input type="text" className="form-control" value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} />
+                                    </div>
+                                    <div className="col-12">
+                                        <button className="btn btn-primary" onClick={addAddress} disabled={addingAddress}>
+                                            {addingAddress ? 'Adding...' : 'Add Address'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

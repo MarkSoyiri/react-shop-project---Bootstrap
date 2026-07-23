@@ -2,20 +2,16 @@ import {
   useState,
   createContext,
   useContext,
-  useEffect
+  useEffect,
+  lazy,
+  Suspense,
 } from "react";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import "./App.css";
-
-import Home from "./pages/Home";
-import Menu from "./pages/Menu";
-import Login from "./pages/Login";
-import StoreLocation from "./pages/StoreLocation";
-import Contact from "./pages/Contact";
-import UserProfile from "./pages/Account";
-import Cart from "./pages/Cart";
+import "./css/Pages.css";
+import "./css/Admin.css";
 
 import { HomeNav, Footer } from "./components/NavFooter";
 import MenuNav from "./components/MenuNav";
@@ -31,94 +27,142 @@ import {
 import { CartProvider, CartContext } from "./context/CartContext";
 
 import GlobalLoader from "./components/GlobalLoader";
+import { SkeletonPage } from "./components/ui/Skeleton";
 
-/* =====================
-   THEME CONTEXT
-===================== */
+import Home from "./pages/Home";
+import Menu from "./pages/Menu";
+import Login from "./pages/Login";
+import StoreLocation from "./pages/StoreLocation";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
+
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Search = lazy(() => import("./pages/Search"));
+const UserProfile = lazy(() => import("./pages/Account"));
+const Cart = lazy(() => import("./pages/Cart"));
+const OrderTracking = lazy(() => import("./pages/OrderTracking"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Wishlist = lazy(() => import("./pages/Wishlist"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminProducts = lazy(() => import("./pages/admin/Products"));
+const AdminCategories = lazy(() => import("./pages/admin/Categories"));
+const AdminOrders = lazy(() => import("./pages/admin/Orders"));
+const AdminCustomers = lazy(() => import("./pages/admin/Customers"));
+const AdminCoupons = lazy(() => import("./pages/admin/Coupons"));
+const AdminPromotions = lazy(() => import("./pages/admin/Promotions"));
+const AdminReports = lazy(() => import("./pages/admin/Reports"));
+const AdminInventory = lazy(() => import("./pages/admin/Inventory"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+
 export const ThemeContext = createContext();
 
-/* =====================
-   LAYOUT
-===================== */
 function Layout() {
   const location = useLocation();
-  const { pageLoading, setPageLoading } = useContext(PageLoaderContext);
-  const { cartItems, getTotalPrice, clearCart } = useContext(CartContext);
+  const { pageLoading } = useContext(PageLoaderContext);
+  const { cartItems, getTotalPrice } = useContext(CartContext);
+  const isAdmin = location.pathname.startsWith("/admin");
 
   useEffect(() => {
-    setPageLoading(true);
-
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 400);
-
-    return () => clearTimeout(timer);
+    window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  const showMenuNav = location.pathname === "/menu" || location.pathname.startsWith("/search");
+  const hideNav = location.pathname === "/login" || isAdmin;
+  const hideFooter = location.pathname === "/login" || isAdmin;
 
   return (
     <>
-      {location.pathname === "/menu" ? <MenuNav /> : <HomeNav />}
+      {!hideNav && (showMenuNav ? <MenuNav /> : <HomeNav />)}
 
-      {/* PAGE LOADER */}
-       {/* ORDER SECTION */}
-      <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">ORDER SUMMARY</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-          {cartItems.length === 0 ? (
-            <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{color:"black",fontWeight:500}}>place order</a>?</p>
-          ) : (
-            <>
-              <div className='ordered-item-box'>
-                {cartItems.map((item) => (
-                  <div key={item._id} style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
-                    <h6>{item.name}</h6>
-                    <p>x{item.quantity} - GH₵ {(item.price * item.quantity).toFixed(2)}</p>
-                  </div>
-                ))}
-              </div>
-              <hr />
-              <div style={{ marginBottom: '20px' }}>
-                <h5>Total: GH₵ {getTotalPrice().toFixed(2)}</h5>
-              </div>
-            </>
-          )}
-          <div className='coupon-btn'>
-            <input type='text' placeholder='Type coupon code here'/>
-            <p>Apply</p>
+      {!isAdmin && (
+        <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+          <div className="offcanvas-header">
+            <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">ORDER SUMMARY</h5>
+            <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
-          <div className='checkout-btn'>
-            <a href="/cart"><p>Checkout</p></a>
-            <p>GHC {getTotalPrice().toFixed(2)}</p>
+          <div className="offcanvas-body">
+            {cartItems.length === 0 ? (
+              <p>Looks like you have not placed an order yet. Do you want to <a href="/menu" style={{ color: "black", fontWeight: 500 }}>place an order</a>?</p>
+            ) : (
+              <>
+                <div className='ordered-item-box'>
+                  {cartItems.map((item, idx) => (
+                    <div key={idx} style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
+                      <h6>{item.name}</h6>
+                      <p>x{item.quantity} - GH₵ {(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+                <hr />
+                <div style={{ marginBottom: '20px' }}>
+                  <h5>Total: GH₵ {getTotalPrice().toFixed(2)}</h5>
+                </div>
+              </>
+            )}
+            <div className='coupon-btn'>
+              <input type='text' placeholder='Type coupon code here' />
+              <p>Apply</p>
+            </div>
+            <div className='checkout-btn'>
+              <a href="/checkout"><p>Checkout</p></a>
+              <p>GH₵ {getTotalPrice().toFixed(2)}</p>
+            </div>
           </div>
         </div>
-      </div>
-      {/* END */}
+      )}
+
       {pageLoading && <GlobalLoader />}
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/storelocation" element={<StoreLocation />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+      <Suspense fallback={<SkeletonPage />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/storelocation" element={<StoreLocation />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+          <Route path="/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="/order/:id" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
 
-        <Route element={<DontShowLoginRegister />}>
-          <Route path="/login" element={<Login />} />
-        </Route>
-      </Routes>
+          <Route element={<DontShowLoginRegister />}>
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-      <Footer />
+          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout><AdminDashboard /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/products" element={<ProtectedRoute role="admin"><AdminLayout><AdminProducts /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/categories" element={<ProtectedRoute role="admin"><AdminLayout><AdminCategories /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminLayout><AdminOrders /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/customers" element={<ProtectedRoute role="admin"><AdminLayout><AdminCustomers /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/coupons" element={<ProtectedRoute role="admin"><AdminLayout><AdminCoupons /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/promotions" element={<ProtectedRoute role="admin"><AdminLayout><AdminPromotions /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/reports" element={<ProtectedRoute role="admin"><AdminLayout><AdminReports /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/inventory" element={<ProtectedRoute role="admin"><AdminLayout><AdminInventory /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute role="admin"><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+
+      {!hideFooter && <Footer />}
     </>
   );
 }
 
-/* =====================
-   APP
-===================== */
 function App() {
   const [theme, setTheme] = useState("Light");
   const { isLoading } = useContext(LoadingContext);
