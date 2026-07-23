@@ -88,9 +88,9 @@ function ProductDetail() {
     }
   };
 
-  if (loading) return <div style={{ marginTop: '150px' }}><Loader /></div>;
+  if (loading) return <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 80 }}><Loader /></div>;
   if (error) return (
-    <div className="container-lg" style={{ marginTop: '150px', textAlign: 'center' }}>
+    <div className="container-lg" style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, textAlign: 'center' }}>
       <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)' }}>Item Not Found</h2>
       <p style={{ color: 'var(--color-text-secondary)', marginTop: '8px' }}>{error}</p>
       <button
@@ -106,7 +106,7 @@ function ProductDetail() {
 
   return (
     <div className="product-detail-page">
-      <div className="container-lg" style={{ paddingTop: '120px', paddingBottom: '80px' }}>
+      <div className="container-lg" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
         {/* Breadcrumb */}
         <nav style={{ marginBottom: '32px', fontSize: '14px', color: 'var(--color-text-muted)' }}>
           <span

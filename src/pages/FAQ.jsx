@@ -71,7 +71,7 @@ function FAQ() {
   }, [search, activeCategory]);
 
   return (
-    <div style={{ marginTop: '150px', marginBottom: '80px' }}>
+    <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, marginBottom: 80 }}>
       <div style={{ maxWidth: 740, margin: '0 auto', padding: '0 24px' }}>
         <h1 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text)', textAlign: 'center', marginBottom: 8 }}>
           Frequently Asked Questions

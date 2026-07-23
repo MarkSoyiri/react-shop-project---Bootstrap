@@ -13,7 +13,7 @@ function Terms() {
   };
 
   return (
-    <div style={{ marginTop: '150px', marginBottom: '80px' }}>
+    <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, marginBottom: 80 }}>
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
         <h1 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text)', marginBottom: 8 }}>
           Terms of Service

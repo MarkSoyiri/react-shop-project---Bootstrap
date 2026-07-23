@@ -55,9 +55,9 @@ function Menu() {
 
   if (loading) {
     return (
-      <div className="menu-page" style={{ paddingTop: '100px', paddingBottom: '80px' }}>
+      <div className="menu-page" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
         <div className="container-lg">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -69,7 +69,7 @@ function Menu() {
 
   if (error) {
     return (
-      <div className="container-lg" style={{ marginTop: '150px', textAlign: 'center' }}>
+      <div className="container-lg" style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, textAlign: 'center' }}>
         <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)' }}>Unable to load menu</h2>
         <p style={{ color: 'var(--color-text-secondary)', marginTop: '8px' }}>{error}</p>
         <button
@@ -86,7 +86,7 @@ function Menu() {
 
   return (
     <div className="menu-page">
-      <div style={{ marginTop: '72px', padding: '48px 0 24px' }}>
+      <div style={{ marginTop: 'var(--navbar-height)', padding: '48px 0 24px' }}>
         <div className="container-lg">
           {/* Page Header */}
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -187,12 +187,7 @@ function Menu() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '24px'
-            }}
-            className="menu-grid"
+            className="foodBox"
           >
             {filteredProducts.map(product => (
               <motion.div key={product._id} variants={itemVariants}>
@@ -202,13 +197,6 @@ function Menu() {
           </motion.div>
         )}
       </div>
-
-      <style>{`
-        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        @media (max-width: 992px) { .menu-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 768px) { .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
-        @media (max-width: 480px) { .menu-grid { grid-template-columns: 1fr; } }
-      `}</style>
     </div>
   );
 }

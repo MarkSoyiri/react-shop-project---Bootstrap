@@ -13,7 +13,7 @@ function Contact() {
   };
 
   return (
-    <div style={{ marginTop: '150px', marginBottom: '80px' }}>
+    <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, marginBottom: 80 }}>
       <div className="container-lg">
         {sent && (
           <div style={{

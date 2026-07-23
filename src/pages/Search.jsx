@@ -58,7 +58,7 @@ function Search() {
 
   return (
     <div className="search-page">
-      <div className="container-lg" style={{ paddingTop: '120px', paddingBottom: '80px' }}>
+      <div className="container-lg" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
         {/* Heading */}
         <h1 style={{ fontSize: '32px', fontWeight: 700, color: 'var(--color-text)', textAlign: 'center', marginBottom: '32px' }}>
           Search Menu

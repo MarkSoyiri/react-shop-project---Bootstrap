@@ -14,7 +14,6 @@ import "./css/Pages.css";
 import "./css/Admin.css";
 
 import { HomeNav, Footer } from "./components/NavFooter";
-import MenuNav from "./components/MenuNav";
 import { DontShowLoginRegister } from "./components/IsAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -73,13 +72,12 @@ function Layout() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const showMenuNav = location.pathname === "/menu" || location.pathname.startsWith("/search");
   const hideNav = location.pathname === "/login" || isAdmin;
   const hideFooter = location.pathname === "/login" || isAdmin;
 
   return (
     <>
-      {!hideNav && (showMenuNav ? <MenuNav /> : <HomeNav />)}
+      {!hideNav && <HomeNav />}
 
       {!isAdmin && (
         <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">

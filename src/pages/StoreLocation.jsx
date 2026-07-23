@@ -2,7 +2,7 @@ import DirectionCard from '../components/DirectionCard';
 
 function StoreLocation() {
   return (
-    <div style={{ marginTop: '150px', marginBottom: '80px' }}>
+    <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, marginBottom: 80 }}>
       <div className="container-lg">
         <h1 style={{
           fontSize: 36, fontWeight: 800, color: 'var(--color-text)',
