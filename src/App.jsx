@@ -20,6 +20,7 @@ import Cart from "./pages/Cart";
 import { HomeNav, Footer } from "./components/NavFooter";
 import MenuNav from "./components/MenuNav";
 import { DontShowLoginRegister } from "./components/IsAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import useAxiosLoader from "./api/useAxiosLoader";
 import { LoadingContext } from "./context/LoadingContext";
@@ -102,8 +103,8 @@ function Layout() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/storelocation" element={<StoreLocation />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/userprofile" element={<UserProfile />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
         <Route element={<DontShowLoginRegister />}>
           <Route path="/login" element={<Login />} />

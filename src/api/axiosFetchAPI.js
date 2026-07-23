@@ -1,23 +1,23 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.DEV
+  ? (import.meta.env.VITE_BACKEND_LOCAL_URL || "http://localhost:5000")
+  : (import.meta.env.VITE_EXPRESS_BACKEND_ONLINE_URL || "http://localhost:5000");
+
 const axiosFetch = axios.create({
-  baseURL: "https://express-js-on-vercel-liart-chi.vercel.app/",
+  baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json'
   },
-  
 });
 
-// axiosFetch.interceptors.request.use(function (config) {  
-//     // Do something before request is sent
-//     return config;
-//   }, function (error) {
-//     // Do something with request error
-//     return Promise.reject(error);
-//   },
-// //   { synchronous: true, runWhen: () => /* This function returns true */}
-// );
-  
+axiosFetch.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default axiosFetch;

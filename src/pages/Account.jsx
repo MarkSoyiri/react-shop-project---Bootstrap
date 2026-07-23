@@ -1,5 +1,4 @@
-import { useState,useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState, useEffect } from "react";
 import axiosFetch from "../api/axiosFetchAPI";
 
 
@@ -7,10 +6,20 @@ import axiosFetch from "../api/axiosFetchAPI";
 function UserProfile(){
 
     const [ActiveMenu,SetActiveMenu] = useState("AS")
-    // const {logout} = useContext(AuthContext);
+    const [name,setName] = useState("");
+    const [email,setEmail] = useState("");
+
+    useEffect(() => {
+        axiosFetch.get('/profile').then((res)=>{
+            if (res.data && res.data.user) {
+                setName(res.data.user.username);
+                setEmail(res.data.user.email);
+            }
+        }).catch((err)=> console.error(err.message))
+    }, []);
 
     function showAccountSettings() {
-    SetActiveMenu("AS");
+        SetActiveMenu("AS");
     }
 
     function showPastOrders() {
@@ -21,25 +30,12 @@ function UserProfile(){
         SetActiveMenu("PM");
     }
 
-    
-        const [name,setName] = useState("");
-        const [email,setEmail] = useState("");
-
-        // FETCH USER PROFILE DATA
-         axiosFetch.get('/profile').then((res)=>{
-            setName(res.data.user.username);
-            setEmail(res.data.user.email);      
-        }).catch((err)=> console.error(err.message))
-
-    
-
-
     return(
         
         <>
             <div className="container-lg account-box">
                 <div className="acc-menu-box">
-                    <h1>Hello,Mark!</h1>
+                    <h1>Hello, {name || "User"}!</h1>
                     <div className="acc-menus">
                         <span className="menu" onClick={showAccountSettings} style={{border:ActiveMenu === "AS" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Account Settings</span>
                         <span className="menu" onClick={showPastOrders} style={{border:ActiveMenu === "PO" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Past Orders</span>
@@ -56,7 +52,6 @@ function UserProfile(){
                             <h2>PERSONAL INFO</h2>
                             <p>Name: {name}</p>
                             <p>Email: {email}</p>
-                            {/* <p>Phone: +233 50 747 8327</p> */}
                         </span>
                         <span className="btn-span">
                             <button className="btn edit-btn">Edit</button>
