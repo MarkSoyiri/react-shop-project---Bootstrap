@@ -55,12 +55,12 @@ const styles = {
   card: {
     display: 'flex',
     flexDirection: 'column',
-    height: 340,
+    height: 400,
   },
   cardImage: {
-    height: 180,
-    minHeight: 180,
-    maxHeight: 180,
+    height: 220,
+    minHeight: 220,
+    maxHeight: 220,
     width: '100%',
     borderRadius: 0,
   },
