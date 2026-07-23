@@ -313,8 +313,8 @@ const styles = {
         display: 'inline-block',
     },
     navLinkActive: {
-        background: 'var(--color-brand)',
-        color: '#fff',
+        background: 'rgba(232, 93, 4, 0.12)',
+        color: 'var(--color-brand)',
         fontWeight: 600,
     },
     profileBtn: {
@@ -382,8 +382,8 @@ const styles = {
         transition: 'all var(--transition)',
     },
     mobileLinkActive: {
-        background: 'var(--color-brand)',
-        color: '#fff',
+        background: 'rgba(232, 93, 4, 0.12)',
+        color: 'var(--color-brand)',
         fontWeight: 600,
     },
     cartBadgeMobile: {
