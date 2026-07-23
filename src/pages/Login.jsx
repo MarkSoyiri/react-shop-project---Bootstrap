@@ -120,6 +120,7 @@ function Login() {
   const [rememberMe, SetRememberMe] = useState(false);
   const [agreeTerms, SetAgreeTerms] = useState(false);
   const [tabDirection, setTabDirection] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   /* ── helpers ── */
   function clearErrors() {
@@ -127,6 +128,12 @@ function Login() {
     SetEmailError('');
     SetPasswordError('');
     SetUsernameError('');
+  }
+
+  function handleSuccessDismiss() {
+    setShowSuccess(false);
+    SetShowLogin(true);
+    setTabDirection(-1);
   }
 
   function regClick() {
@@ -193,15 +200,13 @@ function Login() {
       });
 
       if (response.status === 200 || response.status === 201) {
-        alert('Registration Successful! Please Login.');
         SetUsername('');
         SetEmail('');
         SetPassword('');
         SetUsernameError('');
         SetEmailError('');
         SetPasswordError('');
-        SetShowLogin(true);
-        setTabDirection(-1);
+        setShowSuccess(true);
       }
     } catch (error) {
       if (error.response) {
@@ -505,6 +510,71 @@ function Login() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* ====== SUCCESS OVERLAY ====== */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="auth-success-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="auth-success-card"
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {/* animated checkmark circle */}
+              <motion.div
+                className="auth-success-icon"
+                initial={{ scale: 0, rotate: -90 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.15, duration: 0.5, type: 'spring', stiffness: 200, damping: 14 }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <motion.path
+                    d="M5 12l5 5L20 7"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ delay: 0.4, duration: 0.5, ease: 'easeOut' }}
+                  />
+                </svg>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+              >
+                Registration Successful!
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.4 }}
+              >
+                Your account has been created. Please sign in to continue.
+              </motion.p>
+
+              <motion.button
+                className="zc-btn zc-btn--primary zc-btn--lg zc-btn--rounded"
+                style={{ width: '100%', marginTop: 8 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.4 }}
+                onClick={handleSuccessDismiss}
+              >
+                Continue to Sign In
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

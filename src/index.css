@@ -1373,6 +1373,62 @@ h1, h2, h3, h4, h5, h6 {
 .send-btn { display: none; }
 .log-switch { display: none; }
 
+/* ── Success Overlay ── */
+.auth-success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 24px;
+}
+
+.auth-success-card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  padding: 48px 40px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+}
+
+.auth-success-icon {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #1a7a3a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(43, 147, 72, 0.35);
+}
+
+.auth-success-card h2 {
+  font-size: 22px;
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.auth-success-card p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: 28px;
+}
+
+@media (max-width: 480px) {
+  .auth-success-card {
+    padding: 36px 24px;
+  }
+}
+
 /* ==========================================================
    16. CONTACT FORM
    ========================================================== */
