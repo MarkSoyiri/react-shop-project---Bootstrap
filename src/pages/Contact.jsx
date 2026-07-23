@@ -1,36 +1,39 @@
+import { useState } from "react";
 
-function Contact (){
+function Contact () {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [sent, setSent] = useState(false);
 
-    return(
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) return;
+    setSent(true);
+    setTimeout(() => setSent(false), 5000);
+    setForm({ name: '', email: '', message: '' });
+  };
 
-        <>
-            <div>
-                <div className="container-lg topMargin-150">
-                    <div className="contactContent">
-                        <form className="contactForm" action="">
-                            <h1>CONTACT OUR CUSTOMER CARE TEAM</h1>
-                            <p>We prioritise the views of our customers very much that we are always pleased to receive your contact.
-                                Please fill in the prompts below to send in your request.Thank You!
-                            </p>
-                            <fieldset>
-                                <label htmlFor="">Name*</label>
-                                <input type="text" />
-
-                                <label htmlFor="">Email*</label>
-                                <input type="email" />
-
-                                <label htmlFor="">Message*</label>
-                                <textarea className="TA" type="text" />
-
-                                <button>Send</button>
-                            </fieldset>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+  return (
+    <div>
+      <div className="container-lg" style={{ marginTop: '150px' }}>
+        <div className="contactContent">
+          <form className="contactForm" onSubmit={handleSubmit}>
+            <h1>Contact Our Customer Care Team</h1>
+            <p>We value your feedback. Please fill in the form below to send us your request.</p>
+            {sent && <div className="alert alert-success">Message sent successfully! We'll get back to you soon.</div>}
+            <fieldset>
+              <label>Name *</label>
+              <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+              <label>Email *</label>
+              <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+              <label>Message *</label>
+              <textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} required />
+              <button type="submit">Send</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Contact
+export default Contact;

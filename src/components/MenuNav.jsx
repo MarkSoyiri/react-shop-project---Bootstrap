@@ -1,91 +1,61 @@
-import logo from '../images/kfclogo.png'
-import account from '../images/account.png'
-import xlogo from '../images/x.png'
 import zestylogo from '../images/zestylogo.png'
-import { IsLoginSuccess,IsLogout } from '../components/IsAuth';
+import { IsLoginSuccess, IsLogout } from './IsAuth';
 import { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
 
-
-
-
 function MenuNav () {
-    const { getCartCount } = useContext(CartContext);
-    const cartCount = getCartCount();
+    const { cartItems } = useContext(CartContext);
+    const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <>
-        <div class="fixed-top">
-            <nav class="navbar navbar-expand-lg bg-body-tertiary my-nav">
-                <div class="container-fluid ">
-                <a class="navbar-brand" href="/"><img className='logo' src={zestylogo} alt="" /></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon resive-navbar-toggle-icon-resize"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarText">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/menu">Menu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/storelocation">Location</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cart">
-                            Cart 
-                            {cartCount > 0 && (
-                                <span className="badge bg-danger ms-2">{cartCount}</span>
-                            )}
+            <div className="fixed-top">
+                <nav className="navbar navbar-expand-lg bg-body-tertiary my-nav">
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="/">
+                            <img className='logo' src={zestylogo} alt="Zesty Cave" />
                         </a>
-                    </li>
-                    <IsLoginSuccess>
-                   
-                    </IsLoginSuccess>
-                    </ul>
-                    <span class="navbar-text">
-                    <IsLogout>
-                        {/* LOGOUT CONTENT */}
-                    </IsLogout>
-
-                    </span>
-                </div>
-                </div>
-
-              
-            </nav>
-
-            
-
-            <div class="mb-5">
-                <nav id="navbar-example2" class="">
-  
-                    <div className=" my-view">
-                        
-                        <a class="" href="#scrollspyHeading1">PROMOTIONS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading2">MEALS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading3">BURGERS</a>
-                        
-                        
-                        <a class="" href="#scrollspyHeading4">DESSERTS</a>
-                        
-                        
-                        {/* <a class="" href="#scrollspyHeading5">DEALS</a> */}
-                        
-                        
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarText" aria-controls="navbarText"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarText">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <a className="nav-link active" href="/menu">Menu</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/storelocation">Location</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/contact">Contact</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/cart">
+                                        Cart
+                                        {cartCount > 0 && (
+                                            <span className="badge bg-danger ms-1" style={{ fontSize: '11px' }}>
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                    </a>
+                                </li>
+                                <IsLoginSuccess />
+                            </ul>
+                            <span className="navbar-text">
+                                <IsLogout />
+                            </span>
+                        </div>
                     </div>
                 </nav>
+                <nav id="navbar-example2" className="my-view">
+                    <a href="#promotions">Promotions</a>
+                    <a href="#meals">Meals</a>
+                    <a href="#burgers">Burgers</a>
+                    <a href="#desserts">Desserts</a>
+                </nav>
             </div>
-        </div>
-        
-           
-            
         </>
     );
 }

@@ -1,61 +1,46 @@
-
-import banner from '../images/kfcbanner.jpeg'
-import { HomeHeadingNL,HomeHeadingWL } from '../components/HomeHeading';
+import { HomeHeadingWL } from '../components/HomeHeading';
 import { Card, MiniCard} from '../components/Card';
 import About from '../components/About';
-import zestybanner from '../images/zestybanner.png'
+import zestybanner from '../images/zestybanner.jpg'
 import { useEffect,useState } from 'react';
 import axiosFetch from '../api/axiosFetchAPI';
-
+import Loader from '../components/Loader';
 
 function Home () {
-
-
-    const [products,setProducts]=useState([])
-    const [loading, setLoading] = useState(true)
-
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(()=>{
-
-        axiosFetch.get('/menu').then((res)=>{
-            setProducts(res.data);
-            setLoading(false);
-            console.log(res.data);
-        }).catch((err)=>{
-            console.error(err.message);
-            setLoading(false);
-        })
-
-
-    },[])
-
-    
+        axiosFetch.get('/menu')
+          .then((res) => setProducts(res.data))
+          .catch((err) => setError(err.response?.data?.message || err.message))
+          .finally(() => setLoading(false));
+    },[]);
 
     return(
-            <>
+        <>
             <div className="bannerContainer">
-                <img className='banner' src={zestybanner} alt="banner" />
+                <img className='banner' src={zestybanner} alt="Zesty Cave banner" />
             </div>
-                
-
-                <HomeHeadingWL heading="LIMITED TIME OFFER" className="red" />
-                <div class="container-lg">
-                    <div className="foodBox">
-                    <Card products={products}/>
-                    </div>
+            <HomeHeadingWL heading="Limited Time Offer" className="red" />
+            <div className="container-lg">
+              {loading ? <Loader /> : error ? (
+                <p className="text-center text-muted py-4">{error}</p>
+              ) : (
+                <div className="foodBox">
+                    <Card products={products.slice(0, 4)} />
                 </div>
-                
-                <HomeHeadingWL heading="EXPLORE OUR MENU"/>
-                <div class="container-lg"> 
-                    <a href="/menu" style={{textDecoration:"none",color:"black"}}><MiniCard/></a>
-                </div>
-
-                <div class="container-lg">
-                    <About/>
-                </div>
-                    
-                
-            </>
+              )}
+            </div>
+            <HomeHeadingWL heading="Explore Our Menu"/>
+            <div className="container-lg"> 
+                <MiniCard />
+            </div>
+            <div className="container-lg">
+                <About/>
+            </div>
+        </>
     );
 }
 

@@ -1,84 +1,118 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosFetch from "../api/axiosFetchAPI";
 
-
-
 function UserProfile(){
-
-    const [ActiveMenu,SetActiveMenu] = useState("AS")
+    const navigate = useNavigate();
+    const [ActiveMenu,SetActiveMenu] = useState("AS");
     const [name,setName] = useState("");
     const [email,setEmail] = useState("");
+    const [orders, setOrders] = useState([]);
+    const [ordersLoading, setOrdersLoading] = useState(false);
 
     useEffect(() => {
-        axiosFetch.get('/profile').then((res)=>{
-            if (res.data && res.data.user) {
-                setName(res.data.user.username);
-                setEmail(res.data.user.email);
-            }
-        }).catch((err)=> console.error(err.message))
+        axiosFetch.get('/profile')
+            .then((res) => {
+                if (res.data && res.data.user) {
+                    setName(res.data.user.username || res.data.user.name || '');
+                    setEmail(res.data.user.email || '');
+                }
+            })
+            .catch((err) => console.error(err.message));
     }, []);
 
-    function showAccountSettings() {
-        SetActiveMenu("AS");
-    }
+    const loadOrders = async () => {
+        if (orders.length > 0) return;
+        setOrdersLoading(true);
+        try {
+            const { data } = await axiosFetch.get('/order');
+            setOrders(data);
+        } catch (err) {
+            console.error(err.message);
+        } finally {
+            setOrdersLoading(false);
+        }
+    };
 
-    function showPastOrders() {
-        SetActiveMenu("PO");
-    }
-
-    function showPaymentMethod() {
-        SetActiveMenu("PM");
-    }
+    const handleMenuClick = (menu) => {
+        SetActiveMenu(menu);
+        if (menu === "PO") loadOrders();
+    };
 
     return(
-        
-        <>
-            <div className="container-lg account-box">
-                <div className="acc-menu-box">
-                    <h1>Hello, {name || "User"}!</h1>
-                    <div className="acc-menus">
-                        <span className="menu" onClick={showAccountSettings} style={{border:ActiveMenu === "AS" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Account Settings</span>
-                        <span className="menu" onClick={showPastOrders} style={{border:ActiveMenu === "PO" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Past Orders</span>
-                        <span className="menu" onClick={showPaymentMethod} style={{border:ActiveMenu === "PM" ? "2px solid rgba(67, 170, 255, 0.58)": "none",borderRadius:"5px"}}>Payment Methods</span>
-                        <span className="menu">Saved Address</span>
+        <div className="container-lg" style={{ marginTop: '120px', minHeight: '60vh' }}>
+            <div className="row">
+                <div className="col-md-4 mb-4">
+                    <div className="card p-4">
+                        <h3>Hello, {name || "User"}!</h3>
+                        <div className="d-flex flex-column gap-2 mt-3">
+                            <button className={`btn ${ActiveMenu === "AS" ? "btn-primary" : "btn-outline-primary"}`}
+                                onClick={() => handleMenuClick("AS")}>Account Settings</button>
+                            <button className={`btn ${ActiveMenu === "PO" ? "btn-primary" : "btn-outline-primary"}`}
+                                onClick={() => handleMenuClick("PO")}>Past Orders</button>
+                            <button className={`btn ${ActiveMenu === "PM" ? "btn-primary" : "btn-outline-primary"}`}
+                                onClick={() => handleMenuClick("PM")}>Payment Methods</button>
+                        </div>
                     </div>
                 </div>
-                <div className="acc-menu-info-box">
-                    <div className="menu-info-n-btn" style={{display:ActiveMenu === "AS" ? "flex" : "none" }}>
-                        <span className="menu-info-span">
-                            <h1>ACCOUNT SETTINGS</h1>
-                        </span>
-                        <span className="menu-info-span">
-                            <h2>PERSONAL INFO</h2>
-                            <p>Name: {name}</p>
-                            <p>Email: {email}</p>
-                        </span>
-                        <span className="btn-span">
-                            <button className="btn edit-btn">Edit</button>
-                            <button className="btn save-btn">Save</button>
-                            <button className="btn edit-btn">Delete</button>
-                        </span>
-                        
-                    </div>
-                    <div className="menu-info-n-btn" style={{display:ActiveMenu === "PO" ? "flex" : "none"}}>
-                        <span className="menu-info-span">
-                            <h1>PAST ORDERS</h1>
-                        </span>
-                        <span className="menu-info-span">
-                            <h2 >No orders here</h2>
-                            <p style={{}}>Looks like you dont have any orders yet...</p>
-                            
-                        </span>
-                        <span className="btn-span" style={{border:"none"}}>
-                            <a href="/menu"><button className="btn edit-btn" style={{width:"150px"}}>Order now</button></a>
-                            
-                        </span>
-                    </div>
+                <div className="col-md-8">
+                    {ActiveMenu === "AS" && (
+                        <div className="card p-4">
+                            <h4>Account Settings</h4>
+                            <hr />
+                            <p><strong>Name:</strong> {name}</p>
+                            <p><strong>Email:</strong> {email}</p>
+                            <p className="text-muted small">Edit functionality coming soon</p>
+                        </div>
+                    )}
+                    {ActiveMenu === "PO" && (
+                        <div className="card p-4">
+                            <h4>Past Orders</h4>
+                            <hr />
+                            {ordersLoading ? (
+                                <p className="text-muted">Loading orders...</p>
+                            ) : orders.length === 0 ? (
+                                <div>
+                                    <p>No orders yet.</p>
+                                    <button className="btn btn-primary" onClick={() => navigate('/menu')}>
+                                        Browse Menu
+                                    </button>
+                                </div>
+                            ) : (
+                                orders.map(order => (
+                                    <div key={order._id} className="border-bottom pb-3 mb-3">
+                                        <div className="d-flex justify-content-between">
+                                            <strong>Order #{order._id.slice(-6)}</strong>
+                                            <span className={`badge bg-${order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`}>
+                                                {order.status}
+                                            </span>
+                                        </div>
+                                        <small className="text-muted">
+                                            {new Date(order.createdAt).toLocaleDateString()} — GH₵ {Number(order.total).toFixed(2)}
+                                        </small>
+                                        <div className="mt-1">
+                                            {order.items?.map((item, i) => (
+                                                <small key={i} className="d-block">
+                                                    {item.quantity}x {item.menuItem?.name || '(item)'}
+                                                </small>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
+                    {ActiveMenu === "PM" && (
+                        <div className="card p-4">
+                            <h4>Payment Methods</h4>
+                            <hr />
+                            <p className="text-muted">No payment methods saved yet.</p>
+                        </div>
+                    )}
                 </div>
-
             </div>
-        </>
+        </div>
     );
 }
 
-export default UserProfile
+export default UserProfile;

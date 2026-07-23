@@ -1,48 +1,34 @@
-// import { motion } from "framer-motion";
-
-// function Loader() {
-//   return (
-//     <div className="flex items-center justify-center h-screen">
-//       <motion.div
-//         className="w-16 h-16 border-4 border-gray-300 border-t-gray-900 rounded-full"
-//         animate={{ rotate: 360 }}
-//         transition={{
-//           repeat: Infinity,
-//           duration: 1,
-//           ease: "linear",
-//         }}
-//       />
-//     </div>
-//   );
-// }
-
-// export default Loader;
-
-
-function Loader() {
+function Loader({ text = "Loading..." }) {
   return (
     <div style={styles.container}>
-      <div style={styles.spinner}></div>
+      <div style={styles.spinner} />
+      <p style={styles.text}>{text}</p>
     </div>
   );
 }
 
 const styles = {
   container: {
-    height: "100vh",
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    padding: "60px 0",
+    gap: 16,
   },
   spinner: {
-    width: "60px",
-    height: "60px",
-    border: "6px solid #ccc",
-    borderTop: "6px solid #111",
+    width: 40,
+    height: 40,
+    border: "3px solid #e2e8f0",
+    borderTop: "3px solid #e85d04",
     borderRadius: "50%",
-    animation: "spin 1s linear infinite",
+    animation: "spin 0.8s linear infinite",
+  },
+  text: {
+    color: "#64748b",
+    fontSize: 14,
+    fontWeight: 500,
   },
 };
 
 export default Loader;
-
