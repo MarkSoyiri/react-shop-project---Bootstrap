@@ -138,8 +138,8 @@ export default function Analytics() {
           get(`/admin/reports/sales?${params}`),
           getInventory(`/admin/reports/inventory?${params}`),
         ]);
-        setSalesData(sales);
-        setInventoryData(inv);
+        setSalesData(sales.data || sales);
+        setInventoryData(inv.data || inv);
       } catch (err) {
         console.error(err);
       }
@@ -159,30 +159,30 @@ export default function Analytics() {
     return {
       revenue: salesData.totalRevenue ?? 0,
       orders: salesData.totalOrders ?? 0,
-      avgOrderValue: salesData.avgOrderValue ?? 0,
-      returningCustomers: salesData.returningCustomers ?? 0,
+      avgOrderValue: salesData.totalOrders > 0 ? (salesData.totalRevenue / salesData.totalOrders) : 0,
+      returningCustomers: 0,
     };
   }, [salesData]);
 
   const revenueByDay = useMemo(() => {
-    if (!salesData?.revenueByDay) return [];
-    return salesData.revenueByDay;
+    if (!salesData?.sales) return [];
+    return salesData.sales.map(d => ({ label: d._id, value: d.revenue || 0 }));
   }, [salesData]);
 
   const salesByCategory = useMemo(() => {
-    if (!inventoryData?.categoryBreakdown) return [];
-    return inventoryData.categoryBreakdown;
-  }, [inventoryData]);
+    if (!salesData?.categorySales) return [];
+    return salesData.categorySales.map(c => ({ name: c._id || 'Unknown', value: c.revenue || 0 }));
+  }, [salesData]);
 
   const popularProducts = useMemo(() => {
-    if (!salesData?.popularProducts) return [];
-    return salesData.popularProducts.slice(0, 5);
-  }, [salesData]);
+    if (!inventoryData?.items) return [];
+    return inventoryData.items
+      .sort((a, b) => (b.orderCount || 0) - (a.orderCount || 0))
+      .slice(0, 5)
+      .map(p => ({ name: p.name, orders: p.orderCount || 0 }));
+  }, [inventoryData]);
 
-  const peakHours = useMemo(() => {
-    if (!salesData?.peakHours) return Array(24).fill(0);
-    return salesData.peakHours;
-  }, [salesData]);
+  const peakHours = useMemo(() => Array(24).fill(0), []);
 
   const revenueMax = useMemo(
     () => Math.max(...revenueByDay.map((d) => d.value), 1),

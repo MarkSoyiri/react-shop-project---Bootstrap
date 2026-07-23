@@ -48,7 +48,8 @@ export default function Coupons() {
     const load = async () => {
       try {
         const result = await get('/coupons');
-        setCoupons(Array.isArray(result) ? result : result.coupons || []);
+        const couponData = result.data || result;
+        setCoupons(Array.isArray(couponData) ? couponData : couponData?.coupons || []);
       } catch (err) {
         console.error(err);
       }

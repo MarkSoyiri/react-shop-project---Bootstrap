@@ -85,7 +85,7 @@ export default function Reports() {
     const load = async () => {
       try {
         const result = await get(`/admin/reports/sales?startDate=${params.startDate}&endDate=${params.endDate}&groupBy=${params.groupBy}`);
-        setData(result);
+        setData(result.data || result);
       } catch (err) {
         console.error(err);
       }
@@ -102,7 +102,7 @@ export default function Reports() {
   };
 
   const salesData = data?.sales || [];
-  const categoryData = data?.categories || [];
+  const categoryData = data?.categorySales || data?.categories || [];
   const totalRevenue = data?.totalRevenue ?? 0;
   const totalOrders = data?.totalOrders ?? 0;
   const avgOrderValue = data?.avgOrderValue ?? (totalOrders > 0 ? totalRevenue / totalOrders : 0);

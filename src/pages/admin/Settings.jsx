@@ -125,7 +125,7 @@ export default function Settings() {
     const load = async () => {
       try {
         const result = await get("/settings");
-        setData(result);
+        setData(result.data || result);
       } catch (err) {
         console.error(err);
       }

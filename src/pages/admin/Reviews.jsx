@@ -54,8 +54,9 @@ export default function Reviews() {
 
   const fetchReviews = async () => {
     try {
-      const result = await get('/reviews?includeHidden=true');
-      setReviews(Array.isArray(result) ? result : result.reviews || []);
+      const result = await get('/menu/reviews/all?includeHidden=true');
+      const reviewData = result.data || result;
+      setReviews(Array.isArray(reviewData) ? reviewData : reviewData?.reviews || []);
     } catch (err) {
       console.error(err);
     }
@@ -92,7 +93,7 @@ export default function Reviews() {
     async (review) => {
       setPatching(true);
       try {
-        await patch(`/reviews/${review.id}`, { visible: !review.visible });
+        await patch(`/menu/reviews/${review.id}`, { visible: !review.visible });
         await fetchReviews();
       } finally {
         setPatching(false);
@@ -104,7 +105,7 @@ export default function Reviews() {
   const confirmDelete = useCallback(() => {
     if (!deleteTarget) return;
     setDeleting(true);
-    del(`/reviews/${deleteTarget.id}`).then(() => {
+    del(`/menu/reviews/${deleteTarget.id}`).then(() => {
       setDeleteTarget(null);
       fetchReviews();
     }).finally(() => {

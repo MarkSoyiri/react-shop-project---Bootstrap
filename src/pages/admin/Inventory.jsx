@@ -33,8 +33,8 @@ const Inventory = () => {
           get("/admin/reports/inventory"),
           getProducts("/menu?limit=100"),
         ]);
-        setStatsData(stats);
-        setProductsData(products);
+        setStatsData(stats.data || stats);
+        setProductsData(products.data || products);
       } catch (err) {
         console.error(err);
       }
@@ -42,16 +42,20 @@ const Inventory = () => {
     load();
   }, [get, getProducts]);
 
-  const products = useMemo(() => productsData?.products || [], [productsData]);
+  const products = useMemo(() => {
+    if (!productsData) return [];
+    const items = productsData.data?.items || productsData.items || productsData.data || productsData;
+    return Array.isArray(items) ? items : [];
+  }, [productsData]);
   const stats = statsData || {};
 
   const filteredProducts = useMemo(() => {
     let result = products;
 
     if (activeFilter === "available") {
-      result = result.filter((p) => p.available);
+      result = result.filter((p) => p.isAvailable !== false);
     } else if (activeFilter === "unavailable") {
-      result = result.filter((p) => !p.available);
+      result = result.filter((p) => p.isAvailable === false);
     }
 
     if (search.trim()) {
@@ -65,7 +69,7 @@ const Inventory = () => {
   const toggleAvailability = async (product) => {
     setTogglingId(product._id);
     try {
-      await put(`/menu/${product._id}`, { available: !product.available });
+      await put(`/menu/${product._id}`, { isAvailable: product.isAvailable === false });
       refetchProducts();
     } catch (err) {
       console.error("Failed to toggle availability:", err);
@@ -79,12 +83,12 @@ const Inventory = () => {
     {
       key: "available",
       label: "Available",
-      count: products.filter((p) => p.available).length,
+      count: products.filter((p) => p.isAvailable !== false).length,
     },
     {
       key: "unavailable",
       label: "Unavailable",
-      count: products.filter((p) => !p.available).length,
+      count: products.filter((p) => p.isAvailable === false).length,
     },
   ];
 
@@ -99,7 +103,7 @@ const Inventory = () => {
       title: "Available",
       value:
         stats.available ??
-        products.filter((p) => p.available).length ??
+        products.filter((p) => p.isAvailable !== false).length ??
         0,
       icon: "bi-check-circle",
       color: "success",
@@ -108,7 +112,7 @@ const Inventory = () => {
       title: "Unavailable",
       value:
         stats.unavailable ??
-        products.filter((p) => !p.available).length ??
+        products.filter((p) => p.isAvailable === false).length ??
         0,
       icon: "bi-x-circle",
       color: "danger",
@@ -233,7 +237,7 @@ const Inventory = () => {
                           <label className="admin-toggle">
                             <input
                               type="checkbox"
-                              checked={!!product.available}
+                              checked={product.isAvailable !== false}
                               disabled={togglingId === product._id}
                               onChange={() => toggleAvailability(product)}
                             />
@@ -251,7 +255,7 @@ const Inventory = () => {
                             onClick={() => toggleAvailability(product)}
                             disabled={togglingId === product._id}
                             title={
-                              product.available
+                              product.isAvailable !== false
                                 ? "Mark unavailable"
                                 : "Mark available"
                             }
@@ -261,7 +265,7 @@ const Inventory = () => {
                             ) : (
                               <i
                                 className={`bi ${
-                                  product.available
+                                  product.isAvailable !== false
                                     ? "bi-eye-slash"
                                     : "bi-eye"
                                 }`}

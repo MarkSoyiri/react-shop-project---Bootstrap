@@ -21,11 +21,12 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const data = await get('/auth/profile');
-        setProfile(data);
+        const profileData = data.data || data.user || data;
+        setProfile(profileData);
         setPersonalForm({
-          username: data.username || user?.username || '',
-          email: data.email || user?.email || '',
-          phone: data.phone || '',
+          username: profileData.username || user?.username || '',
+          email: profileData.email || user?.email || '',
+          phone: profileData.phone || '',
         });
       } catch (error) {
         if (user) {
@@ -47,7 +48,7 @@ const Profile = () => {
     setPersonalSaved(false);
     try {
       const response = await put('/auth/profile', { username: personalForm.username, phone: personalForm.phone });
-      setProfile(response);
+      setProfile(response.data || response.user || response);
       setPersonalSaved(true);
       setTimeout(() => setPersonalSaved(false), 2500);
     } catch (error) {
@@ -74,7 +75,7 @@ const Profile = () => {
     setPasswordSaving(true);
     setPasswordSaved(false);
     try {
-      await put('/auth/password', { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword });
+      await put('/auth/change-password', { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword });
       setPasswordSaved(true);
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => setPasswordSaved(false), 2500);

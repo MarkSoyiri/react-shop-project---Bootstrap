@@ -28,7 +28,7 @@ const cardVariants = {
 };
 
 export default function Categories() {
-  const { request } = useApi();
+  const { get, post, put, del, loading: apiLoading } = useApi();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -40,8 +40,8 @@ export default function Categories() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const data = await request('/categories?includeInactive=true');
-      setCategories(data);
+      const data = await get('/categories?includeInactive=true');
+      setCategories(data.data || data || []);
     } catch {
       // error handled by useApi
     } finally {
@@ -74,9 +74,9 @@ export default function Categories() {
     setSaving(true);
     try {
       if (editing) {
-        await request(`/categories/${editing._id}`, 'PUT', form);
+        await put(`/categories/${editing._id}`, form);
       } else {
-        await request('/categories', 'POST', form);
+        await post('/categories', form);
       }
       setShowModal(false);
       fetchCategories();
@@ -90,7 +90,7 @@ export default function Categories() {
   const handleDelete = async () => {
     if (!confirmDelete) return;
     try {
-      await request(`/categories/${confirmDelete._id}`, 'DELETE');
+      await del(`/categories/${confirmDelete._id}`);
       setConfirmDelete(null);
       fetchCategories();
     } catch {

@@ -43,7 +43,8 @@ export default function Promotions() {
   const fetchPromotions = async () => {
     try {
       const result = await get('/promotions');
-      setPromotions(Array.isArray(result) ? result : result.promotions || []);
+      const promoData = result.data || result;
+      setPromotions(Array.isArray(promoData) ? promoData : promoData?.promotions || []);
     } catch (err) {
       console.error(err);
     }

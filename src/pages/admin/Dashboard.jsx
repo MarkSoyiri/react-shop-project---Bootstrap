@@ -76,7 +76,7 @@ export default function Dashboard() {
         const load = async () => {
             try {
                 const data = await get('/admin/dashboard');
-                setDashboard(data);
+                setDashboard(data.data || data);
             } catch (err) {
                 setError(err.message || 'Failed to load dashboard');
             }
@@ -98,9 +98,9 @@ export default function Dashboard() {
 
     if (!dashboard) return null;
 
-    const { stats = {}, recentOrders = [], popularItems = [], orderStatus = {}, weeklyRevenue = [] } = dashboard;
+    const { stats = {}, recentOrders = [], popularItems = [], orderStatus = {}, dailyRevenue = [], monthlyRevenue = [] } = dashboard;
 
-    const revenueData = weeklyRevenue.map((d, i) => ({ label: d._id || `Day ${i + 1}`, value: d.revenue || 0 }));
+    const revenueData = dailyRevenue.map((d, i) => ({ label: d._id || `Day ${i + 1}`, value: d.revenue || 0 }));
 
     const activityItems = [
         { icon: '🛒', bg: '#fff7ed', text: 'New order received', time: '2 min ago' },
@@ -242,9 +242,9 @@ export default function Dashboard() {
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
-                                        <div style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>{item.orders || 0} orders</div>
+                                        <div style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>{item.orderCount || item.orders || 0} orders</div>
                                     </div>
-                                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-brand)' }}>GH₵ {Number(item.revenue || 0).toFixed(0)}</div>
+                                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-brand)' }}>GH₵ {Number(item.price || item.revenue || 0).toFixed(0)}</div>
                                 </div>
                             )) : (
                                 <p style={{ color: 'var(--admin-text-muted)', textAlign: 'center', padding: 24, fontSize: 14 }}>No data yet</p>

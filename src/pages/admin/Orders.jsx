@@ -48,10 +48,10 @@ export default function Orders() {
         try {
             const params = new URLSearchParams({ page, limit: 15 });
             if (statusFilter !== 'all') params.set('status', statusFilter);
-            const data = await get(`/orders/all?${params}`);
-            setOrders(data.orders || data || []);
-            setTotalPages(data.totalPages || 1);
-            setTotal(data.total || (data.orders || data || []).length);
+            const data = await get(`/orders/admin?${params}`);
+            setOrders(data.orders || data.data || []);
+            setTotalPages(data.pagination?.pages || data.totalPages || 1);
+            setTotal(data.pagination?.total || data.total || (data.orders || data.data || []).length);
         } catch {}
     };
 
@@ -70,7 +70,7 @@ export default function Orders() {
         setDetailLoading(true);
         try {
             const data = await get(`/orders/${order._id}`);
-            setSelectedOrder(data.order || data);
+            setSelectedOrder(data.data || data.order || data);
         } catch {}
         setDetailLoading(false);
     };
