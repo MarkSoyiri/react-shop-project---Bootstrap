@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosFetch from "../api/axiosFetchAPI";
+import { AuthContext } from "../context/AuthContext";
 import "./Account.css";
 
 function UserProfile() {
     const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
     const [activeMenu, setActiveMenu] = useState("AS");
     const [profile, setProfile] = useState(null);
     const [name, setName] = useState("");
@@ -126,7 +128,8 @@ function UserProfile() {
     ];
 
     return (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', paddingTop: 'var(--navbar-height)', paddingBottom: 80 }}>
+            <div style={{ paddingTop: 40 }}>
             <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>My Account</h1>
 
             <div style={{ display: 'flex', gap: 32 }}>
@@ -168,6 +171,27 @@ function UserProfile() {
                             </button>
                         ))}
                     </nav>
+
+                    <div style={{ borderTop: '1px solid var(--color-border)', marginTop: 16, paddingTop: 12 }}>
+                        <button
+                            onClick={() => { logout(); navigate('/login'); }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                                padding: '10px 14px', borderRadius: 12, border: 'none',
+                                cursor: 'pointer', fontSize: 14, fontWeight: 500,
+                                transition: 'all 0.2s', background: 'transparent', color: '#dc2626',
+                            }}
+                            onMouseOver={e => e.currentTarget.style.background = '#fef2f2'}
+                            onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
 
                 {/* Content */}
@@ -421,6 +445,7 @@ function UserProfile() {
                         </div>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );
