@@ -93,7 +93,7 @@ export default function Reviews() {
     async (review) => {
       setPatching(true);
       try {
-        await patch(`/menu/reviews/${review.id}`, { visible: !review.visible });
+        await patch(`/menu/reviews/${review._id}`, { visible: !review.visible });
         await fetchReviews();
       } finally {
         setPatching(false);
@@ -105,7 +105,7 @@ export default function Reviews() {
   const confirmDelete = useCallback(() => {
     if (!deleteTarget) return;
     setDeleting(true);
-    del(`/menu/reviews/${deleteTarget.id}`).then(() => {
+    del(`/menu/reviews/${deleteTarget._id}`).then(() => {
       setDeleteTarget(null);
       fetchReviews();
     }).finally(() => {
@@ -170,7 +170,7 @@ export default function Reviews() {
           >
             {paged.map((review) => (
               <motion.div
-                key={review.id}
+                key={review._id}
                 className={`admin-review-card${review.visible ? '' : ' admin-review-hidden'}`}
                 variants={cardVariants}
               >

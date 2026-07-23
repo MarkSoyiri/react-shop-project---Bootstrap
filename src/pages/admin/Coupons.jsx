@@ -92,7 +92,7 @@ export default function Coupons() {
     };
     try {
       if (editing) {
-        await put(`/coupons/${editing.id}`, payload);
+        await put(`/coupons/${editing._id || editing.id}`, payload);
       } else {
         await post('/coupons', payload);
       }
@@ -108,7 +108,7 @@ export default function Coupons() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await del(`/coupons/${deleteTarget.id}`);
+      await del(`/coupons/${deleteTarget._id || deleteTarget.id}`);
       setDeleteTarget(null);
     } catch (err) {
       console.error(err);
@@ -173,8 +173,8 @@ export default function Coupons() {
               </tr>
             </thead>
             <tbody>
-              {coupons.map((coupon) => (
-                <tr key={coupon.id}>
+                {coupons.map((coupon) => (
+                  <tr key={coupon._id || coupon.id}>
                   <td>
                     <code className="admin-code-badge">{coupon.code}</code>
                   </td>

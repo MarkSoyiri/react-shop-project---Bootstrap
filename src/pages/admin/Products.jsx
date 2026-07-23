@@ -62,9 +62,10 @@ export default function Products() {
       if (search) params.append('search', search);
       if (categoryFilter) params.append('category', categoryFilter);
 
-      const response = await get(`/products?${params.toString()}`);
-      setProducts(response.data.products || response.data);
-      setTotalPages(response.data.totalPages || Math.ceil((response.data.total || response.data.length) / itemsPerPage));
+      const response = await get(`/menu?${params.toString()}`);
+      const items = response.data?.items || response.items || response.data || response;
+      setProducts(Array.isArray(items) ? items : []);
+      setTotalPages(response.data?.pagination?.pages || response.pagination?.pages || Math.ceil((response.data?.pagination?.total || response.pagination?.total || (Array.isArray(items) ? items.length : 0)) / itemsPerPage));
     } catch (err) {
       console.error('Failed to fetch products:', err);
     } finally {
@@ -80,7 +81,8 @@ export default function Products() {
     const loadCategories = async () => {
       try {
         const response = await get('/categories');
-        setCategories(response.data);
+        const cats = response.data || response;
+        setCategories(Array.isArray(cats) ? cats : []);
       } catch {
         setCategories(CATEGORIES);
       }
@@ -111,7 +113,7 @@ export default function Products() {
       description: product.description || '',
       price: product.price?.toString() || '',
       category: product.category || product.categoryId || 'meals',
-      available: product.available ?? product.status ?? true,
+      available: product.isAvailable ?? product.available ?? true,
       featured: product.featured ?? false,
       image: null,
     });
@@ -195,19 +197,19 @@ export default function Products() {
         formData.append('image', form.image);
 
         if (editingProduct) {
-          await put(`/products/${editingProduct.id || editingProduct._id}`, formData, {
+          await put(`/menu/${editingProduct.id || editingProduct._id}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
         } else {
-          await post('/products', formData, {
+          await post('/menu', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
         }
       } else {
         if (editingProduct) {
-          await put(`/products/${editingProduct.id || editingProduct._id}`, payload);
+          await put(`/menu/${editingProduct.id || editingProduct._id}`, payload);
         } else {
-          await post('/products', payload);
+          await post('/menu', payload);
         }
       }
 
@@ -224,13 +226,13 @@ export default function Products() {
 
   const handleToggleStatus = async (product) => {
     try {
-      await put(`/products/${product.id || product._id}`, {
-        available: !product.available,
+      await put(`/menu/${product.id || product._id}`, {
+        isAvailable: !product.isAvailable,
       });
       setProducts(prev =>
         prev.map(p =>
           (p.id || p._id) === (product.id || product._id)
-            ? { ...p, available: !p.available }
+            ? { ...p, isAvailable: !p.isAvailable }
             : p
         )
       );
@@ -253,7 +255,7 @@ export default function Products() {
     if (!deletingProduct) return;
     setDeleting(true);
     try {
-      await del(`/products/${deletingProduct.id || deletingProduct._id}`);
+      await del(`/menu/${deletingProduct.id || deletingProduct._id}`);
       closeDeleteConfirm();
       fetchProducts();
     } catch (err) {
@@ -265,7 +267,7 @@ export default function Products() {
 
   const formatPrice = (price) => {
     const num = typeof price === 'number' ? price : parseFloat(price);
-    return isNaN(num) ? '$0.00' : `$${num.toFixed(2)}`;
+    return isNaN(num) ? 'GH₵0.00' : `GH₵${num.toFixed(2)}`;
   };
 
   return (
@@ -387,7 +389,7 @@ export default function Products() {
                       <label className="admin-products__toggle">
                         <input
                           type="checkbox"
-                          checked={product.available ?? product.status ?? true}
+                          checked={product.isAvailable ?? product.available ?? true}
                           onChange={() => handleToggleStatus(product)}
                           className="admin-products__toggle-input"
                         />
@@ -486,7 +488,7 @@ export default function Products() {
                 Price <span className="admin-products__required">*</span>
               </label>
               <div className="admin-products__input-wrapper">
-                <span className="admin-products__input-prefix">$</span>
+                <span className="admin-products__input-prefix">GH₵</span>
                 <input
                   id="product-price"
                   type="number"

@@ -29,7 +29,7 @@ function getDefaultEndDate() {
 }
 
 function formatCurrency(val) {
-  return `$${Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `GH₵${Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function BarChart({ data, maxEntries = 15, labelKey, valueKey, colorFn }) {

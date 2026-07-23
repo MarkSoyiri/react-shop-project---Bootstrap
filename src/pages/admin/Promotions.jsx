@@ -103,7 +103,7 @@ export default function Promotions() {
       };
 
       if (editingPromo) {
-        await put(`/promotions/${editingPromo.id}`, payload);
+        await put(`/promotions/${editingPromo._id || editingPromo.id}`, payload);
       } else {
         await post('/promotions', payload);
       }
@@ -119,7 +119,7 @@ export default function Promotions() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      await del(`/promotions/${deleteTarget.id}`);
+      await del(`/promotions/${deleteTarget._id || deleteTarget.id}`);
       setDeleteTarget(null);
       fetchPromotions();
     } catch (err) {
@@ -186,7 +186,7 @@ export default function Promotions() {
               </thead>
               <tbody>
                 {promotions.map((promo) => (
-                  <tr key={promo.id}>
+                  <tr key={promo._id || promo.id}>
                     <td className="admin-fw-semibold">{promo.title}</td>
                     <td>
                       <span className={`admin-badge ${typeColors[promo.type] || 'bg-secondary'}`}>

@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import zestylogo from '../../images/zestylogo.png';
@@ -67,7 +67,7 @@ const pageTitles = {
     '/admin/profile': 'Profile',
 };
 
-export default function AdminLayout() {
+export default function AdminLayout({ children }) {
     const { user, logout } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
@@ -232,7 +232,7 @@ export default function AdminLayout() {
                             exit={{ opacity: 0, y: -8 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <Outlet />
+                            {children}
                         </motion.div>
                     </AnimatePresence>
                 </main>

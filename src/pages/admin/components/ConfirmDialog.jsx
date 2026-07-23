@@ -1,17 +1,21 @@
 import { Modal } from './Modal';
 
-export function ConfirmDialog({ open, onClose, onConfirm, title, message, confirmLabel = 'Delete', type = 'danger', loading }) {
+export function ConfirmDialog({ open, onClose, onConfirm, title, message, confirmLabel = 'Delete', type = 'danger', loading, show, onCancel, onOk, isOpen, danger, close, confirm }) {
+    const isOpenState = open ?? show ?? isOpen ?? false;
+    const handleClose = onClose ?? onCancel ?? close;
+    const handleConfirm = onConfirm ?? onOk ?? confirm;
+
     return (
         <Modal
-            open={open}
-            onClose={onClose}
+            open={isOpenState}
+            onClose={handleClose}
             title=""
             footer={
                 <>
-                    <button className="admin-btn admin-btn-secondary" onClick={onClose} disabled={loading}>Cancel</button>
+                    <button className="admin-btn admin-btn-secondary" onClick={handleClose} disabled={loading}>Cancel</button>
                     <button
-                        className={`admin-btn admin-btn-${type === 'danger' ? 'danger' : 'primary'}`}
-                        onClick={onConfirm}
+                        className={`admin-btn admin-btn-${(type === 'danger' || danger) ? 'danger' : 'primary'}`}
+                        onClick={handleConfirm}
                         disabled={loading}
                     >
                         {loading ? 'Processing...' : confirmLabel}
@@ -20,8 +24,8 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, message, confir
             }
         >
             <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                <div className={`admin-confirm-icon ${type}`}>
-                    {type === 'danger' ? (
+                <div className={`admin-confirm-icon ${(type === 'danger' || danger) ? 'danger' : ''}`}>
+                    {(type === 'danger' || danger) ? (
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                             <line x1="12" y1="9" x2="12" y2="13" />

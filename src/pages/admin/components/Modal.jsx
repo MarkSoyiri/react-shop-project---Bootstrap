@@ -1,29 +1,30 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function Modal({ open, onClose, title, children, footer, wide }) {
+export function Modal({ open, onClose, title, children, footer, wide, show }) {
+    const isOpen = open ?? show ?? false;
     const ref = useRef();
 
     useEffect(() => {
-        if (open) {
+        if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
         }
         return () => { document.body.style.overflow = ''; };
-    }, [open]);
+    }, [isOpen]);
 
     useEffect(() => {
         const handler = (e) => {
             if (e.key === 'Escape') onClose?.();
         };
-        if (open) window.addEventListener('keydown', handler);
+        if (isOpen) window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
-    }, [open, onClose]);
+    }, [isOpen, onClose]);
 
     return (
         <AnimatePresence>
-            {open && (
+            {isOpen && (
                 <motion.div
                     className="admin-modal-overlay"
                     initial={{ opacity: 0 }}

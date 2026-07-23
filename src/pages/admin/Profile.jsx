@@ -6,7 +6,7 @@ import { PageHeader } from './components/PageHeader';
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
-  const { get, put, loading } = useApi();
+  const { get, post, put, loading } = useApi();
 
   const [profile, setProfile] = useState(null);
   const [personalForm, setPersonalForm] = useState({ username: '', email: '', phone: '' });
@@ -75,7 +75,7 @@ const Profile = () => {
     setPasswordSaving(true);
     setPasswordSaved(false);
     try {
-      await put('/auth/change-password', { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword });
+      await post('/auth/change-password', { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword });
       setPasswordSaved(true);
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => setPasswordSaved(false), 2500);

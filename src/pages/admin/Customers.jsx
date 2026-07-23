@@ -23,11 +23,11 @@ export default function Customers() {
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await get('/admin/customers', {
-        params: { page, limit: 10, search },
-      });
-      setCustomers(res.data.customers || res.data || []);
-      setTotalPages(res.data.totalPages || 1);
+      const params = new URLSearchParams({ page, limit: 10 });
+      if (search) params.set('search', search);
+      const res = await get(`/admin/customers?${params.toString()}`);
+      setCustomers(res.data?.customers || res.customers || res.data || res || []);
+      setTotalPages(res.data?.totalPages || res.totalPages || 1);
     } catch {
       setCustomers([]);
     } finally {
@@ -80,11 +80,11 @@ export default function Customers() {
   };
 
   const formatCurrency = (amount) => {
-    if (amount == null) return '$0.00';
-    return Number(amount).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
+    if (amount == null) return 'GH₵0.00';
+    return `GH₵${Number(amount).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   };
 
   return (

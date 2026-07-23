@@ -15,15 +15,16 @@ export function SkeletonStatCards({ count = 4 }) {
     );
 }
 
-export function SkeletonTable({ rows = 5, cols = 5 }) {
+export function SkeletonTable({ rows = 5, cols = 5, columns }) {
+    const numCols = cols || columns || 5;
     return (
         <div className="admin-card">
             <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--admin-border-light)' }}>
                 <div className="admin-skeleton admin-skeleton-text" style={{ width: 120, height: 20 }} />
             </div>
             {Array.from({ length: rows }).map((_, i) => (
-                <div key={i} className="admin-skeleton-table-row" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-                    {Array.from({ length: cols }).map((_, j) => (
+                <div key={i} className="admin-skeleton-table-row" style={{ gridTemplateColumns: `repeat(${numCols}, 1fr)` }}>
+                    {Array.from({ length: numCols }).map((_, j) => (
                         <div key={j} className="admin-skeleton admin-skeleton-text" style={{ height: 16, width: j === 0 ? '80%' : '60%' }} />
                     ))}
                 </div>

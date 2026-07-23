@@ -234,7 +234,7 @@ export default function Analytics() {
           <motion.div variants={itemVariants}>
             <StatCard
               title="Revenue"
-              value={`$${stats.revenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              value={`GH₵${stats.revenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="1" x2="12" y2="23" />
@@ -261,7 +261,7 @@ export default function Analytics() {
           <motion.div variants={itemVariants}>
             <StatCard
               title="Avg Order Value"
-              value={`$${stats.avgOrderValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              value={`GH₵${stats.avgOrderValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
@@ -303,7 +303,7 @@ export default function Analytics() {
                   <HorizontalBar
                     key={item.label}
                     label={item.label}
-                    value={`$${item.value.toLocaleString()}`}
+                    value={`GH₵${item.value.toLocaleString()}`}
                     maxValue={revenueMax}
                     color="#6366f1"
                     index={i}
@@ -324,7 +324,7 @@ export default function Analytics() {
                   <HorizontalBar
                     key={item.name}
                     label={item.name}
-                    value={`$${item.value.toLocaleString()}`}
+                    value={`GH₵${item.value.toLocaleString()}`}
                     maxValue={categoryMax}
                     color={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
                     index={i}
