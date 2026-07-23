@@ -167,7 +167,11 @@ function Login() {
         if (token && user) {
           localStorage.setItem('token', token);
           login(user, token);
-          navigate('/');
+          if (user.role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/');
+          }
         } else {
           SetServerError('Invalid response from server');
         }
