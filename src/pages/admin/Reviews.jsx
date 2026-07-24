@@ -93,7 +93,7 @@ export default function Reviews() {
     async (review) => {
       setPatching(true);
       try {
-        await patch(`/menu/reviews/${review._id}`, { visible: !review.visible });
+        await patch(`/menu/reviews/${review._id}`, { isHidden: review.visible });
         await fetchReviews();
       } finally {
         setPatching(false);
@@ -218,10 +218,10 @@ export default function Reviews() {
 
       <ConfirmDialog
         open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
         title="Delete Review"
         message={`Are you sure you want to delete this review by ${deleteTarget?.customerName}?`}
-        onConfirm={confirmDelete}
-        onCancel={() => setDeleteTarget(null)}
         loading={deleting}
       />
     </div>

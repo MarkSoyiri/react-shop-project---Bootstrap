@@ -13,11 +13,9 @@ export function EmptyState({ icon, title, description, action, message }) {
             {displayTitle && <h3>{displayTitle}</h3>}
             {description && <p>{description}</p>}
             {action && (
-                typeof action === 'object' && action.label ? (
-                    <button className="admin-btn admin-btn-primary" onClick={action.onClick}>
-                        {action.label}
-                    </button>
-                ) : action
+                typeof action === 'object' && action.label
+                    ? <button className="admin-btn admin-btn-primary" onClick={action.onClick}>{action.label}</button>
+                    : action
             )}
         </motion.div>
     );

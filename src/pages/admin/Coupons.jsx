@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { PageHeader } from './components/PageHeader';
 import { Modal } from './components/Modal';
@@ -44,18 +44,19 @@ export default function Coupons() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await get('/coupons');
-        const couponData = result.data || result;
-        setCoupons(Array.isArray(couponData) ? couponData : couponData?.coupons || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    load();
+  const fetchCoupons = useCallback(async () => {
+    try {
+      const result = await get('/coupons');
+      const couponData = result.data || result;
+      setCoupons(Array.isArray(couponData) ? couponData : couponData?.coupons || []);
+    } catch (err) {
+      console.error(err);
+    }
   }, [get]);
+
+  useEffect(() => {
+    fetchCoupons();
+  }, [fetchCoupons]);
 
   const setField = (key, val) => setForm((prev) => ({ ...prev, [key]: val }));
 
@@ -97,6 +98,7 @@ export default function Coupons() {
         await post('/coupons', payload);
       }
       setShowModal(false);
+      await fetchCoupons();
     } catch (err) {
       console.error(err);
     } finally {
@@ -110,6 +112,7 @@ export default function Coupons() {
     try {
       await del(`/coupons/${deleteTarget._id || deleteTarget.id}`);
       setDeleteTarget(null);
+      await fetchCoupons();
     } catch (err) {
       console.error(err);
     } finally {
@@ -173,8 +176,8 @@ export default function Coupons() {
               </tr>
             </thead>
             <tbody>
-                {coupons.map((coupon) => (
-                  <tr key={coupon._id || coupon.id}>
+              {coupons.map((coupon) => (
+                <tr key={coupon._id || coupon.id}>
                   <td>
                     <code className="admin-code-badge">{coupon.code}</code>
                   </td>
@@ -222,14 +225,14 @@ export default function Coupons() {
                   <td>
                     <div className="admin-actions">
                       <button
-                        className="admin-btn admin-btn--sm admin-btn--outline"
+                        className="admin-btn admin-btn-sm admin-btn-outline"
                         onClick={() => openEdit(coupon)}
                         title="Edit"
                       >
                         Edit
                       </button>
                       <button
-                        className="admin-btn admin-btn--sm admin-btn--danger-outline"
+                        className="admin-btn admin-btn-sm admin-btn-danger-outline"
                         onClick={() => setDeleteTarget(coupon)}
                         title="Delete"
                       >
@@ -245,13 +248,13 @@ export default function Coupons() {
       )}
 
       <Modal
-        isOpen={showModal}
+        open={showModal}
         onClose={() => setShowModal(false)}
         title={editing ? 'Edit Coupon' : 'Create Coupon'}
       >
         <form className="admin-form" onSubmit={handleSubmit}>
           <div className="admin-form-group">
-            <label htmlFor="coupon-code">Code</label>
+            <label className="admin-form-label" htmlFor="coupon-code">Code</label>
             <input
               id="coupon-code"
               type="text"
@@ -266,7 +269,7 @@ export default function Coupons() {
 
           <div className="admin-form-row">
             <div className="admin-form-group">
-              <label htmlFor="coupon-type">Type</label>
+              <label className="admin-form-label" htmlFor="coupon-type">Type</label>
               <select
                 id="coupon-type"
                 className="admin-select"
@@ -283,7 +286,7 @@ export default function Coupons() {
 
             {form.type !== 'free_delivery' && (
               <div className="admin-form-group">
-                <label htmlFor="coupon-value">
+                <label className="admin-form-label" htmlFor="coupon-value">
                   {form.type === 'percentage' ? 'Percentage (%)' : 'Amount'}
                 </label>
                 <input
@@ -302,7 +305,7 @@ export default function Coupons() {
           </div>
 
           <div className="admin-form-group">
-            <label htmlFor="coupon-min-order">Minimum Order</label>
+            <label className="admin-form-label" htmlFor="coupon-min-order">Minimum Order</label>
             <input
               id="coupon-min-order"
               type="number"
@@ -317,7 +320,7 @@ export default function Coupons() {
 
           <div className="admin-form-row">
             <div className="admin-form-group">
-              <label htmlFor="coupon-start">Start Date</label>
+              <label className="admin-form-label" htmlFor="coupon-start">Start Date</label>
               <input
                 id="coupon-start"
                 type="date"
@@ -328,7 +331,7 @@ export default function Coupons() {
               />
             </div>
             <div className="admin-form-group">
-              <label htmlFor="coupon-end">End Date</label>
+              <label className="admin-form-label" htmlFor="coupon-end">End Date</label>
               <input
                 id="coupon-end"
                 type="date"
@@ -341,7 +344,7 @@ export default function Coupons() {
           </div>
 
           <div className="admin-form-group">
-            <label htmlFor="coupon-limit">Usage Limit</label>
+            <label className="admin-form-label" htmlFor="coupon-limit">Usage Limit</label>
             <input
               id="coupon-limit"
               type="number"
@@ -353,11 +356,10 @@ export default function Coupons() {
             />
           </div>
 
-          <div className="admin-form-group admin-form-group--toggle">
-            <label htmlFor="coupon-active">Active</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Active</label>
             <label className="admin-toggle">
               <input
-                id="coupon-active"
                 type="checkbox"
                 checked={form.is_active}
                 onChange={(e) => setField('is_active', e.target.checked)}
@@ -369,14 +371,14 @@ export default function Coupons() {
           <div className="admin-form-actions">
             <button
               type="button"
-              className="admin-btn admin-btn--secondary"
+              className="admin-btn admin-btn-secondary"
               onClick={() => setShowModal(false)}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="admin-btn admin-btn--primary"
+              className="admin-btn admin-btn-primary"
               disabled={saving}
             >
               {saving ? 'Saving...' : editing ? 'Update Coupon' : 'Create Coupon'}
@@ -386,7 +388,7 @@ export default function Coupons() {
       </Modal>
 
       <ConfirmDialog
-        isOpen={!!deleteTarget}
+        open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         title="Delete Coupon"
@@ -397,7 +399,6 @@ export default function Coupons() {
         }
         confirmLabel={deleting ? 'Deleting...' : 'Delete'}
         loading={deleting}
-        danger
       />
     </div>
   );

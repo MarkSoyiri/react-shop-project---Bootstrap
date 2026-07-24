@@ -20,9 +20,9 @@ const initialForm = {
 };
 
 const typeColors = {
-  percentage: 'bg-primary',
-  fixed: 'bg-success',
-  free_delivery: 'bg-info',
+  percentage: 'admin-badge--primary',
+  fixed: 'admin-badge--success',
+  free_delivery: 'admin-badge--info',
 };
 
 const typeLabels = {
@@ -189,7 +189,7 @@ export default function Promotions() {
                   <tr key={promo._id || promo.id}>
                     <td className="admin-fw-semibold">{promo.title}</td>
                     <td>
-                      <span className={`admin-badge ${typeColors[promo.type] || 'bg-secondary'}`}>
+                      <span className={`admin-badge ${typeColors[promo.type] || 'admin-badge--secondary'}`}>
                         {typeLabels[promo.type] || promo.type}
                       </span>
                     </td>
@@ -199,7 +199,7 @@ export default function Promotions() {
                     </td>
                     <td>{promo.usedCount ?? 0}</td>
                     <td>
-                      <span className={`admin-badge ${promo.active ? 'bg-success' : 'bg-secondary'}`}>
+                      <span className={`admin-badge ${promo.active ? 'admin-badge--success' : 'admin-badge--secondary'}`}>
                         {promo.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>

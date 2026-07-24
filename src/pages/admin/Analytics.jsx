@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useApi } from "../../hooks/useApi";
 import { PageHeader } from "./components/PageHeader";
 import { StatCard } from "./components/StatCard";
+import { EmptyState } from "./components/EmptyState";
 import { SkeletonStatCards } from "./components/Skeletons";
 
 const DATE_RANGES = ["Today", "Week", "Month", "Year"];
@@ -94,29 +95,6 @@ function HorizontalBar({ label, value, maxValue, color, index }) {
         />
       </div>
       <span className="admin-chart-bar-value">{value}</span>
-    </div>
-  );
-}
-
-function EmptyState({ message = "No data yet" }) {
-  return (
-    <div className="admin-chart-empty">
-      <svg
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M3 3v18h18" />
-        <path d="M18 17V9" />
-        <path d="M13 17V5" />
-        <path d="M8 17v-3" />
-      </svg>
-      <p>{message}</p>
     </div>
   );
 }
@@ -233,7 +211,7 @@ export default function Analytics() {
         >
           <motion.div variants={itemVariants}>
             <StatCard
-              title="Revenue"
+              label="Revenue"
               value={`GH₵${stats.revenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -241,12 +219,12 @@ export default function Analytics() {
                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
               }
-              trend={salesData?.revenueTrend}
+              change={salesData?.revenueTrend}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatCard
-              title="Orders"
+              label="Orders"
               value={stats.orders.toLocaleString()}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -255,12 +233,12 @@ export default function Analytics() {
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
               }
-              trend={salesData?.ordersTrend}
+              change={salesData?.ordersTrend}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatCard
-              title="Avg Order Value"
+              label="Avg Order Value"
               value={`GH₵${stats.avgOrderValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -268,12 +246,12 @@ export default function Analytics() {
                   <path d="M22 12A10 10 0 0 0 12 2v10z" />
                 </svg>
               }
-              trend={salesData?.aovTrend}
+              change={salesData?.aovTrend}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatCard
-              title="Returning Customers"
+              label="Returning Customers"
               value={stats.returningCustomers.toLocaleString()}
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -283,7 +261,7 @@ export default function Analytics() {
                   <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
               }
-              trend={salesData?.returningTrend}
+              change={salesData?.returningTrend}
             />
           </motion.div>
         </motion.div>
@@ -311,7 +289,7 @@ export default function Analytics() {
                 ))}
               </div>
             ) : (
-              <EmptyState />
+              <EmptyState message="No revenue data available" />
             )}
           </AdminCard>
         </motion.div>
@@ -332,7 +310,7 @@ export default function Analytics() {
                 ))}
               </div>
             ) : (
-              <EmptyState />
+              <EmptyState message="No category data available" />
             )}
           </AdminCard>
         </motion.div>
@@ -353,7 +331,7 @@ export default function Analytics() {
                 ))}
               </div>
             ) : (
-              <EmptyState />
+              <EmptyState message="No product data available" />
             )}
           </AdminCard>
         </motion.div>
@@ -397,175 +375,11 @@ export default function Analytics() {
                 </div>
               </div>
             ) : (
-              <EmptyState />
+              <EmptyState message="No peak hours data available" />
             )}
           </AdminCard>
         </motion.div>
       </motion.div>
-
-      <style>{`
-        .admin-date-range-filter {
-          display: flex;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-          flex-wrap: wrap;
-        }
-
-        .admin-date-range-btn {
-          padding: 0.5rem 1.25rem;
-          border: 1px solid #e2e8f0;
-          border-radius: 0.5rem;
-          background: #fff;
-          color: #64748b;
-          font-size: 0.875rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .admin-date-range-btn:hover {
-          border-color: #6366f1;
-          color: #6366f1;
-        }
-
-        .admin-date-range-btn.active {
-          background: #6366f1;
-          border-color: #6366f1;
-          color: #fff;
-        }
-
-        .admin-charts-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.5rem;
-          margin-top: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-          .admin-charts-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .admin-chart-bars {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .admin-chart-bar-row {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .admin-chart-bar-label {
-          min-width: 100px;
-          max-width: 120px;
-          font-size: 0.8125rem;
-          color: #475569;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          flex-shrink: 0;
-        }
-
-        .admin-chart-bar-track {
-          flex: 1;
-          height: 28px;
-          background: #f1f5f9;
-          border-radius: 0.375rem;
-          overflow: hidden;
-        }
-
-        .admin-chart-bar-fill {
-          height: 100%;
-          border-radius: 0.375rem;
-          min-width: 2px;
-        }
-
-        .admin-chart-bar-value {
-          min-width: 60px;
-          text-align: right;
-          font-size: 0.8125rem;
-          font-weight: 600;
-          color: #1e293b;
-          flex-shrink: 0;
-        }
-
-        .admin-chart-empty {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 3rem 1rem;
-          color: #94a3b8;
-          gap: 0.75rem;
-        }
-
-        .admin-chart-empty p {
-          margin: 0;
-          font-size: 0.9375rem;
-        }
-
-        .admin-chart-bars-vertical {
-          gap: 0;
-        }
-
-        .admin-chart-vertical-bars {
-          display: flex;
-          align-items: flex-end;
-          gap: 2px;
-          height: 160px;
-          padding-bottom: 0.25rem;
-        }
-
-        .admin-chart-vertical-col {
-          flex: 1;
-          height: 100%;
-          display: flex;
-          align-items: flex-end;
-          position: relative;
-        }
-
-        .admin-chart-vertical-col:hover::after {
-          content: attr(title);
-          position: absolute;
-          bottom: calc(100% + 4px);
-          left: 50%;
-          transform: translateX(-50%);
-          background: #1e293b;
-          color: #fff;
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.25rem;
-          font-size: 0.6875rem;
-          white-space: nowrap;
-          z-index: 10;
-        }
-
-        .admin-chart-vertical-bar {
-          width: 100%;
-          background: linear-gradient(to top, #6366f1, #a78bfa);
-          border-radius: 0.25rem 0.25rem 0 0;
-        }
-
-        .admin-chart-vertical-labels {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 0.5rem;
-        }
-
-        .admin-chart-vertical-label {
-          font-size: 0.625rem;
-          color: #94a3b8;
-          text-align: center;
-          flex: 1;
-        }
-
-        .admin-chart-vertical-label.hidden {
-          visibility: hidden;
-        }
-      `}</style>
     </div>
   );
 }

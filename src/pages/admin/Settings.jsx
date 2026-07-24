@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useApi } from "../../hooks/useApi";
+import useApi from "../../hooks/useApi";
 import { motion } from "framer-motion";
 import { PageHeader } from "./components/PageHeader";
-import { SkeletonStatCards } from "./components/Skeletons";
 
 const TABS = [
   { key: "general", label: "General" },
@@ -18,7 +17,7 @@ function detectType(value) {
   return "string";
 }
 
-function renderInput(setting, type, localValue, onChange, saving) {
+function renderInput(type, localValue, onChange, saving) {
   if (type === "boolean") {
     return (
       <div className="admin-toggle-wrapper">
@@ -91,27 +90,34 @@ function SettingRow({ setting, onSaved }) {
         )}
       </div>
       <div className="admin-setting-control">
-        {renderInput(setting, type, localValue, setLocalValue, saving)}
-        {type !== "boolean" && (
-          <button
-            className="admin-btn admin-btn-sm admin-btn-primary"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save"}
-          </button>
-        )}
-        {type === "boolean" && (
-          <button
-            className="admin-btn admin-btn-sm admin-btn-primary"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save"}
-          </button>
-        )}
+        {renderInput(type, localValue, setLocalValue, saving)}
+        <button
+          className="admin-btn admin-btn-primary admin-btn-sm"
+          onClick={handleSave}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save"}
+        </button>
         {saved && <span className="admin-setting-saved">Saved</span>}
       </div>
+    </div>
+  );
+}
+
+function SettingsSkeleton() {
+  return (
+    <div className="admin-settings-list">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="admin-setting-row">
+          <div className="admin-setting-info">
+            <div className="admin-skeleton admin-skeleton-text" />
+            <div className="admin-skeleton admin-skeleton-text" style={{ width: "200px", marginTop: "6px" }} />
+          </div>
+          <div className="admin-setting-control">
+            <div className="admin-skeleton" style={{ width: "160px", height: "36px" }} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -149,7 +155,7 @@ export default function Settings() {
         {TABS.map((tab) => (
           <button
             key={tab.key}
-            className={`admin-tab ${activeTab === tab.key ? "admin-tab-active" : ""}`}
+            className={`admin-tab${activeTab === tab.key ? " active" : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
             {tab.label}
@@ -159,10 +165,14 @@ export default function Settings() {
 
       <div className="admin-settings-content">
         {loading ? (
-          <SkeletonStatCards count={4} />
+          <SettingsSkeleton />
         ) : currentSettings.length === 0 ? (
-          <div className="admin-empty-state">
-            <p>No settings for this category</p>
+          <div className="admin-empty">
+            <div className="admin-empty-icon">
+              <i className="bi bi-gear" style={{ fontSize: "24px" }}></i>
+            </div>
+            <h3>No Settings Found</h3>
+            <p>No settings available for this category.</p>
           </div>
         ) : (
           <div className="admin-settings-list">

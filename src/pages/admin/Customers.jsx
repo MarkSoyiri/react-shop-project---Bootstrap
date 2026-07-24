@@ -23,8 +23,10 @@ export default function Customers() {
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page, limit: 10 });
-      if (search) params.set('search', search);
+      const params = new URLSearchParams();
+      params.append('page', page);
+      params.append('limit', '10');
+      if (search) params.append('search', search);
       const res = await get(`/admin/customers?${params.toString()}`);
       setCustomers(res.data?.customers || res.customers || res.data || res || []);
       setTotalPages(res.data?.totalPages || res.totalPages || 1);
@@ -50,8 +52,8 @@ export default function Customers() {
     setDetailLoading(true);
     setDetailError(null);
     try {
-      const res = await get(`/admin/customers/${customer.id || customer._id}`);
-      setSelectedCustomer(res.data.customer || res.data);
+      const res = await get(`/admin/customers/${customer._id || customer.id}`);
+      setSelectedCustomer(res.data?.customer || res.data);
     } catch {
       setDetailError('Failed to load customer details.');
       setSelectedCustomer(null);
@@ -135,7 +137,7 @@ export default function Customers() {
               <tbody>
                 {customers.map((customer, index) => (
                   <motion.tr
-                    key={customer.id || customer._id || index}
+                    key={customer._id || customer.id || index}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2, delay: index * 0.03 }}
@@ -230,11 +232,11 @@ export default function Customers() {
                 <ul className="admin-customers__detail-recent-list">
                   {selectedCustomer.recentOrders.map((order, idx) => (
                     <li
-                      key={order.id || order._id || idx}
+                      key={order._id || order.id || idx}
                       className="admin-customers__detail-recent-item"
                     >
                       <span className="admin-customers__detail-recent-id">
-                        #{(order.id || order._id || '').slice(-8) || order.orderNumber || '—'}
+                        #{(order._id || order.id || '').slice(-8) || order.orderNumber || '—'}
                       </span>
                       <span className="admin-customers__detail-recent-date">
                         {formatDate(order.createdAt)}

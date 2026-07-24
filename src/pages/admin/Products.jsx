@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { useApi } from '../../hooks/useApi';
+import useApi from '../../hooks/useApi';
 import { PageHeader } from './components/PageHeader';
 import { Pagination } from './components/Pagination';
 import { Modal } from './components/Modal';
@@ -187,7 +187,7 @@ export default function Products() {
         description: form.description.trim(),
         price: parseFloat(form.price),
         category: form.category,
-        available: form.available,
+        isAvailable: form.available,
         featured: form.featured,
       };
 
@@ -284,7 +284,7 @@ export default function Products() {
         onAction={openCreate}
       />
 
-      <div className="admin-products__filters">
+      <div className="admin-toolbar">
         <div className="admin-products__search">
           <span className="admin-products__search-icon">
             <i className="fas fa-search" />
@@ -308,7 +308,7 @@ export default function Products() {
         </div>
         <div className="admin-products__category-filter">
           <select
-            className="admin-products__category-select"
+            className="admin-form-select"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
@@ -433,44 +433,44 @@ export default function Products() {
       )}
 
       <Modal
-        isOpen={modalOpen}
+        open={modalOpen}
         onClose={closeModal}
         title={editingProduct ? 'Edit Product' : 'Add Product'}
-        size="md"
+        wide
       >
         <form className="admin-products__form" onSubmit={handleSubmit}>
           {formErrors.submit && (
-            <div className="admin-products__form-error">
+            <div className="admin-alert admin-alert--danger">
               <i className="fas fa-exclamation-circle" />
               <span>{formErrors.submit}</span>
             </div>
           )}
 
-          <div className="admin-products__form-group">
-            <label className="admin-products__label" htmlFor="product-name">
-              Name <span className="admin-products__required">*</span>
+          <div className="admin-form-group">
+            <label className="admin-form-label" htmlFor="product-name">
+              Name <span className="text-danger">*</span>
             </label>
             <input
               id="product-name"
               type="text"
-              className={`admin-products__input ${formErrors.name ? 'admin-products__input--error' : ''}`}
+              className={`admin-form-input ${formErrors.name ? 'admin-form-input--error' : ''}`}
               placeholder="Product name"
               value={form.name}
               onChange={(e) => handleFormChange('name', e.target.value)}
               maxLength={100}
             />
             {formErrors.name && (
-              <span className="admin-products__field-error">{formErrors.name}</span>
+              <span className="admin-form-hint" style={{ color: 'var(--admin-danger)' }}>{formErrors.name}</span>
             )}
           </div>
 
-          <div className="admin-products__form-group">
-            <label className="admin-products__label" htmlFor="product-description">
-              Description <span className="admin-products__required">*</span>
+          <div className="admin-form-group">
+            <label className="admin-form-label" htmlFor="product-description">
+              Description <span className="text-danger">*</span>
             </label>
             <textarea
               id="product-description"
-              className={`admin-products__textarea ${formErrors.description ? 'admin-products__textarea--error' : ''}`}
+              className={`admin-form-textarea ${formErrors.description ? 'admin-form-textarea--error' : ''}`}
               placeholder="Product description"
               value={form.description}
               onChange={(e) => handleFormChange('description', e.target.value)}
@@ -478,40 +478,37 @@ export default function Products() {
               maxLength={500}
             />
             {formErrors.description && (
-              <span className="admin-products__field-error">{formErrors.description}</span>
+              <span className="admin-form-hint" style={{ color: 'var(--admin-danger)' }}>{formErrors.description}</span>
             )}
           </div>
 
-          <div className="admin-products__form-row">
-            <div className="admin-products__form-group admin-products__form-group--half">
-              <label className="admin-products__label" htmlFor="product-price">
-                Price <span className="admin-products__required">*</span>
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label className="admin-form-label" htmlFor="product-price">
+                Price <span className="text-danger">*</span>
               </label>
-              <div className="admin-products__input-wrapper">
-                <span className="admin-products__input-prefix">GH₵</span>
-                <input
-                  id="product-price"
-                  type="number"
-                  className={`admin-products__input admin-products__input--prefixed ${formErrors.price ? 'admin-products__input--error' : ''}`}
-                  placeholder="0.00"
-                  value={form.price}
-                  onChange={(e) => handleFormChange('price', e.target.value)}
-                  min="0"
-                  step="0.01"
-                />
-              </div>
+              <input
+                id="product-price"
+                type="number"
+                className={`admin-form-input ${formErrors.price ? 'admin-form-input--error' : ''}`}
+                placeholder="0.00"
+                value={form.price}
+                onChange={(e) => handleFormChange('price', e.target.value)}
+                min="0"
+                step="0.01"
+              />
               {formErrors.price && (
-                <span className="admin-products__field-error">{formErrors.price}</span>
+                <span className="admin-form-hint" style={{ color: 'var(--admin-danger)' }}>{formErrors.price}</span>
               )}
             </div>
 
-            <div className="admin-products__form-group admin-products__form-group--half">
-              <label className="admin-products__label" htmlFor="product-category">
-                Category <span className="admin-products__required">*</span>
+            <div className="admin-form-group">
+              <label className="admin-form-label" htmlFor="product-category">
+                Category <span className="text-danger">*</span>
               </label>
               <select
                 id="product-category"
-                className={`admin-products__select ${formErrors.category ? 'admin-products__select--error' : ''}`}
+                className={`admin-form-select ${formErrors.category ? 'admin-form-select--error' : ''}`}
                 value={form.category}
                 onChange={(e) => handleFormChange('category', e.target.value)}
               >
@@ -522,27 +519,27 @@ export default function Products() {
                 ))}
               </select>
               {formErrors.category && (
-                <span className="admin-products__field-error">{formErrors.category}</span>
+                <span className="admin-form-hint" style={{ color: 'var(--admin-danger)' }}>{formErrors.category}</span>
               )}
             </div>
           </div>
 
-          <div className="admin-products__form-group">
-            <label className="admin-products__label">Image</label>
-            <div className="admin-products__image-upload">
+          <div className="admin-form-group">
+            <label className="admin-form-label">Image</label>
+            <div className="admin-products__upload">
               {imagePreview ? (
                 <div className="admin-products__image-preview">
-                  <img src={imagePreview} alt="Preview" className="admin-products__preview-img" />
+                  <img src={imagePreview} alt="Preview" className="admin-products__upload-preview" />
                   <button
                     type="button"
-                    className="admin-products__image-remove"
+                    className="admin-btn admin-btn-sm admin-btn-ghost"
                     onClick={() => {
                       setImagePreview(null);
                       setForm(prev => ({ ...prev, image: null }));
                     }}
                     aria-label="Remove image"
                   >
-                    <i className="fas fa-times" />
+                    <i className="fas fa-times" /> Remove
                   </button>
                 </div>
               ) : (
@@ -552,53 +549,48 @@ export default function Products() {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="admin-products__file-input"
+                    style={{ display: 'none' }}
                   />
-                  <i className="fas fa-cloud-upload-alt admin-products__upload-icon" />
-                  <span className="admin-products__upload-text">Click to upload an image</span>
-                  <span className="admin-products__upload-hint">PNG, JPG up to 5MB</span>
+                  <i className="fas fa-cloud-upload-alt" style={{ fontSize: 24, color: 'var(--admin-text-muted)' }} />
+                  <span className="admin-form-text">Click to upload an image</span>
+                  <span className="admin-form-hint">PNG, JPG up to 5MB</span>
                 </label>
               )}
             </div>
             {formErrors.image && (
-              <span className="admin-products__field-error">{formErrors.image}</span>
+              <span className="admin-form-hint" style={{ color: 'var(--admin-danger)' }}>{formErrors.image}</span>
             )}
           </div>
 
-          <div className="admin-products__form-row">
-            <div className="admin-products__form-group admin-products__form-group--half">
-              <div className="admin-products__switch-group">
-                <label className="admin-products__toggle">
-                  <input
-                    type="checkbox"
-                    checked={form.available}
-                    onChange={(e) => handleFormChange('available', e.target.checked)}
-                    className="admin-products__toggle-input"
-                  />
-                  <span className="admin-products__toggle-slider" />
-                </label>
-                <span className="admin-products__switch-label">Available</span>
-              </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label className="admin-toggle">
+                <input
+                  type="checkbox"
+                  checked={form.available}
+                  onChange={(e) => handleFormChange('available', e.target.checked)}
+                />
+                <span className="admin-toggle-slider" />
+              </label>
+              <span className="admin-form-text">Available</span>
             </div>
-            <div className="admin-products__form-group admin-products__form-group--half">
-              <div className="admin-products__switch-group">
-                <label className="admin-products__toggle">
-                  <input
-                    type="checkbox"
-                    checked={form.featured}
-                    onChange={(e) => handleFormChange('featured', e.target.checked)}
-                    className="admin-products__toggle-input"
-                  />
-                  <span className="admin-products__toggle-slider" />
-                </label>
-                <span className="admin-products__switch-label">Featured</span>
-              </div>
+            <div className="admin-form-group">
+              <label className="admin-toggle">
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(e) => handleFormChange('featured', e.target.checked)}
+                />
+                <span className="admin-toggle-slider" />
+              </label>
+              <span className="admin-form-text">Featured</span>
             </div>
           </div>
 
-          <div className="admin-products__form-actions">
+          <div className="admin-modal-footer" style={{ padding: 0, border: 'none', paddingTop: 8 }}>
             <button
               type="button"
-              className="admin-products__btn admin-products__btn--secondary"
+              className="admin-btn admin-btn-secondary"
               onClick={closeModal}
               disabled={submitting}
             >
@@ -606,7 +598,7 @@ export default function Products() {
             </button>
             <button
               type="submit"
-              className="admin-products__btn admin-products__btn--primary"
+              className="admin-btn admin-btn-primary"
               disabled={submitting}
             >
               {submitting ? (
@@ -623,14 +615,14 @@ export default function Products() {
       </Modal>
 
       <ConfirmDialog
-        isOpen={confirmOpen}
+        open={confirmOpen}
         onClose={closeDeleteConfirm}
         onConfirm={handleDelete}
         title="Delete Product"
         message={`Are you sure you want to delete "${deletingProduct?.name}"? This action cannot be undone.`}
         confirmLabel="Delete"
         loading={deleting}
-        variant="danger"
+        type="danger"
       />
     </motion.div>
   );

@@ -93,7 +93,7 @@ export default function AdminLayout({ children }) {
 
     return (
         <div className="admin-layout">
-            {/* Sidebar */}
+            {/* Floating Sidebar */}
             <aside className={`admin-sidebar ${mobileOpen ? 'open' : ''}`}>
                 <div className="admin-sidebar-brand">
                     <img src={zestylogo} alt="Zesty Cave" />
@@ -128,7 +128,7 @@ export default function AdminLayout({ children }) {
                 <div className="admin-sidebar-footer">
                     <NavLink to="/" className="admin-sidebar-link">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
+                            <path d="M9 17l-5-5 5-5M18 17l-5-5 5-5" />
                         </svg>
                         <span>Back to Store</span>
                     </NavLink>
@@ -147,7 +147,7 @@ export default function AdminLayout({ children }) {
                 onClick={() => setMobileOpen(false)}
             />
 
-            {/* Main */}
+            {/* Main Content */}
             <div className="admin-main">
                 {/* Topbar */}
                 <header className="admin-topbar">
@@ -165,7 +165,7 @@ export default function AdminLayout({ children }) {
                         </button>
                         <div>
                             <div className="admin-topbar-breadcrumb">
-                                <NavLink to="/admin" style={{ textDecoration: 'none' }}>Admin</NavLink>
+                                <NavLink to="/admin">Admin</NavLink>
                                 {location.pathname !== '/admin' && (
                                     <>
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
@@ -177,17 +177,17 @@ export default function AdminLayout({ children }) {
                     </div>
 
                     <div className="admin-topbar-right">
-                        {/* Global search */}
                         {searchOpen ? (
                             <form onSubmit={handleGlobalSearch} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <input
                                     autoFocus
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search orders, products, customers..."
+                                    placeholder="Search orders, products..."
                                     style={{
-                                        width: 280, padding: '7px 12px', borderRadius: 8,
+                                        width: 260, padding: '8px 12px', borderRadius: 10,
                                         border: '1.5px solid var(--admin-border)', fontSize: 13, outline: 'none',
+                                        background: 'rgba(255,255,255,0.8)', fontFamily: 'inherit',
                                     }}
                                     onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
                                 />
@@ -196,7 +196,7 @@ export default function AdminLayout({ children }) {
                                 </button>
                             </form>
                         ) : (
-                            <button className="admin-topbar-btn" onClick={() => setSearchOpen(true)} title="Search">
+                            <button className="admin-topbar-btn" onClick={() => setSearchOpen(true)} title="Search (Ctrl+K)">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
                             </button>
                         )}
@@ -211,8 +211,9 @@ export default function AdminLayout({ children }) {
 
                         <NavLink to="/admin/profile" className="admin-topbar-btn" title="Profile">
                             <div style={{
-                                width: 32, height: 32, borderRadius: '50%',
-                                background: 'var(--admin-brand)', color: '#fff',
+                                width: 34, height: 34, borderRadius: '50%',
+                                background: 'linear-gradient(135deg, var(--admin-brand), var(--admin-brand-dark))',
+                                color: '#fff',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: 13, fontWeight: 700,
                             }}>
@@ -222,7 +223,7 @@ export default function AdminLayout({ children }) {
                     </div>
                 </header>
 
-                {/* Content */}
+                {/* Content with page transitions */}
                 <main className="admin-content">
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -230,7 +231,7 @@ export default function AdminLayout({ children }) {
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         >
                             {children}
                         </motion.div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useApi } from '../../hooks/useApi';
+import useApi from '../../hooks/useApi';
 import { PageHeader } from './components/PageHeader';
 import { Modal } from './components/Modal';
 import { ConfirmDialog } from './components/ConfirmDialog';
@@ -103,15 +103,19 @@ export default function Categories() {
       <PageHeader
         title="Categories"
         subtitle="Organize your products"
-        action={{ label: 'Add Category', onClick: openCreate }}
+        actionLabel="Add Category"
+        onAction={openCreate}
       />
 
       {loading ? (
-        <SkeletonTable rows={6} />
+        <SkeletonTable rows={6} cols={4} />
       ) : categories.length === 0 ? (
         <EmptyState
-          message="No categories found"
-          action={{ label: 'Create Category', onClick: openCreate }}
+          icon="fa-folder-open"
+          title="No categories found"
+          description="Create your first category to organize products."
+          actionLabel="Create Category"
+          onAction={openCreate}
         />
       ) : (
         <motion.div
@@ -136,10 +140,10 @@ export default function Categories() {
                 <p className="admin-card-text">
                   {cat.description || 'No description'}
                 </p>
-                <span className="admin-badge admin-badge-secondary">
+                <span className="admin-badge admin-badge--secondary">
                   {cat.productCount ?? cat.products?.length ?? 0} items
                 </span>
-                <div className={`admin-status-dot ${cat.active !== false ? 'admin-active' : 'admin-inactive'}`}>
+                <div className={`admin-badge ${cat.active !== false ? 'admin-badge--success' : 'admin-badge--secondary'}`} style={{ marginLeft: 8 }}>
                   {cat.active !== false ? 'Active' : 'Inactive'}
                 </div>
               </div>
@@ -205,20 +209,22 @@ export default function Categories() {
           </div>
 
           <div className="admin-form-group">
-            <label className="admin-form-toggle">
-              <span className="admin-form-label">Active</span>
-              <input
-                type="checkbox"
-                checked={form.active}
-                onChange={(e) =>
-                  setForm({ ...form, active: e.target.checked })
-                }
-              />
-              <span className="admin-toggle-slider" />
-            </label>
+            <div className="d-flex align-items-center gap-3">
+              <label className="admin-toggle">
+                <input
+                  type="checkbox"
+                  checked={form.active}
+                  onChange={(e) =>
+                    setForm({ ...form, active: e.target.checked })
+                  }
+                />
+                <span className="admin-toggle-slider" />
+              </label>
+              <span className="admin-form-text">Active</span>
+            </div>
           </div>
 
-          <div className="admin-modal-footer">
+          <div className="admin-modal-footer" style={{ padding: 0, border: 'none', paddingTop: 8 }}>
             <button
               className="admin-btn admin-btn-secondary"
               onClick={() => setShowModal(false)}
@@ -242,6 +248,7 @@ export default function Categories() {
         onConfirm={handleDelete}
         title="Delete Category"
         message={`Are you sure you want to delete "${confirmDelete?.name}"?`}
+        type="danger"
       />
     </div>
   );

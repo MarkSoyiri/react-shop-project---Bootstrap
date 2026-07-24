@@ -189,9 +189,9 @@ export default function Reports() {
       ) : (
         <>
           <div className="admin-reports-stats">
-            <StatCard title="Total Revenue" value={formatCurrency(totalRevenue)} />
-            <StatCard title="Total Orders" value={totalOrders.toLocaleString()} />
-            <StatCard title="Avg Order Value" value={formatCurrency(avgOrderValue)} />
+            <StatCard label="Total Revenue" value={formatCurrency(totalRevenue)} />
+            <StatCard label="Total Orders" value={totalOrders.toLocaleString()} />
+            <StatCard label="Avg Order Value" value={formatCurrency(avgOrderValue)} />
           </div>
 
           <div className="admin-reports-charts">
