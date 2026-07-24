@@ -1,5 +1,12 @@
+/* ============================================
+   ProductDetail.css — Premium Mobile-First Design
+   Desktop layout unchanged, mobile completely rebuilt
+   ============================================ */
+
+/* ── Page Animation ── */
 .product-detail-page { animation: fadeUp 0.4s ease-out; }
 
+/* ── Image Wrapper ── */
 .pd-image-wrapper {
   position: relative;
   border-radius: var(--radius-md);
@@ -12,6 +19,8 @@
   display: flex; align-items: center; justify-content: center;
   height: 100%; font-size: 1.2rem; color: var(--color-text-muted);
 }
+
+/* ── Badges ── */
 .pd-badge {
   position: absolute; top: 16px; left: 16px;
   padding: 6px 14px; border-radius: 100px;
@@ -20,15 +29,18 @@
 .pd-badge-popular { background: var(--color-brand); color: white; }
 .pd-badge-limited { background: #e53e3e; color: white; }
 
+/* ── Info Section ── */
 .pd-info h1 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin-bottom: 8px; }
 .pd-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #f59e0b; font-size: 18px; }
 .pd-rating span { font-size: 14px; color: var(--color-text-secondary); font-weight: 500; }
 .pd-price { font-size: 28px; font-weight: 700; color: var(--color-brand); margin-bottom: 12px; }
 .pd-description { font-size: 15px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 20px; }
 
+/* ── Sections ── */
 .pd-section { margin-bottom: 20px; }
 .pd-section h4 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--color-text); }
 
+/* ── Variant Options ── */
 .pd-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .pd-option-btn {
   padding: 10px 20px; border: 1.5px solid var(--color-border); border-radius: var(--radius-sm);
@@ -38,6 +50,7 @@
 .pd-option-btn.active { border-color: var(--color-brand); background: rgba(232,93,4,0.06); color: var(--color-brand); }
 .pd-option-btn:hover { border-color: var(--color-brand-light); }
 
+/* ── Add-ons ── */
 .pd-addons { display: flex; flex-wrap: wrap; gap: 8px; }
 .pd-addon {
   display: flex; align-items: center; gap: 6px;
@@ -47,6 +60,7 @@
 .pd-addon.active { border-color: var(--color-accent); background: rgba(43,147,72,0.06); }
 .pd-addon input { display: none; }
 
+/* ── Textarea ── */
 .pd-textarea {
   width: 100%; min-height: 80px; padding: 12px; border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; resize: vertical;
@@ -54,6 +68,7 @@
 }
 .pd-textarea:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(232,93,4,0.1); }
 
+/* ── Quantity ── */
 .pd-quantity {
   display: inline-flex; align-items: center; gap: 12px;
   border: 1.5px solid var(--color-border); border-radius: var(--radius-sm); padding: 4px 8px;
@@ -66,6 +81,7 @@
 .pd-quantity button:hover { background: var(--color-border); }
 .pd-quantity span { font-size: 18px; font-weight: 700; min-width: 32px; text-align: center; }
 
+/* ── Add to Cart Section ── */
 .pd-add-section { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; gap: 16px; }
 .pd-total { font-size: 22px; font-weight: 700; color: var(--color-text); }
 .pd-add-btn {
@@ -76,8 +92,10 @@
 .pd-add-btn:hover { background: var(--color-brand-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,93,4,0.3); }
 .pd-add-btn.added { background: var(--color-accent); }
 
+/* ── Meta Info ── */
 .pd-meta { display: flex; gap: 16px; margin-top: 16px; font-size: 13px; color: var(--color-text-muted); flex-wrap: wrap; }
 
+/* ── Nutrition ── */
 .pd-nutrition {
   background: var(--color-bg-alt); border-radius: var(--radius-md); padding: 24px;
 }
@@ -89,6 +107,7 @@
 .pd-nutrition-grid strong { display: block; font-size: 20px; color: var(--color-brand); }
 .pd-nutrition-grid span { font-size: 13px; color: var(--color-text-secondary); }
 
+/* ── Reviews ── */
 .pd-reviews h3 { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
 .pd-review-form { background: var(--color-bg-alt); padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px; }
 .pd-review-form .pd-textarea { min-height: 80px; margin: 12px 0; }
@@ -100,34 +119,341 @@
 .pd-review-card { padding: 16px 0; border-bottom: 1px solid var(--color-border-light); }
 .pd-review-card p { margin: 4px 0; color: var(--color-text-secondary); font-size: 14px; }
 
-.pd-mobile-stacked .pd-qty-wrap {
-  width: 100%;
+/* ── Related Products Scroll ── */
+.pd-related-scroll {
+  display: flex; gap: 16px; overflow-x: auto;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
 }
-.pd-mobile-stacked .pd-qty-wrap .pd-qty {
-  flex: 1;
+.pd-related-scroll::-webkit-scrollbar { display: none; }
+.pd-related-card {
+  flex: 0 0 200px; border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  cursor: pointer; transition: all var(--transition);
 }
-.pd-mobile-stacked .pd-price-total {
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
+.pd-related-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.pd-related-card__img-wrap {
+  width: 100%; aspect-ratio: 4/3; overflow: hidden; background: var(--color-bg-alt);
+}
+.pd-related-card__img { width: 100%; height: 100%; object-fit: cover; }
+.pd-related-card__placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted); font-size: 12px;
+}
+.pd-related-card__body { padding: 12px; }
+.pd-related-card__name { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+.pd-related-card__price { font-size: 15px; font-weight: 700; color: var(--color-brand); }
+
+/* ── Mobile Stacked Variants ── */
+.pd-mobile-stacked .pd-qty-wrap { width: 100%; }
+.pd-mobile-stacked .pd-qty-wrap .pd-qty { flex: 1; }
+.pd-mobile-stacked .pd-price-total { flex-direction: column; gap: 16px; width: 100%; }
+
+/* ============================================================
+   DESKTOP: 769px+ — Standard two-column layout
+   ============================================================ */
+@media (min-width: 769px) {
+  .pd-hero-image { display: none; }
 }
 
+/* ============================================================
+   TABLET: 768px
+   ============================================================ */
 @media (max-width: 768px) {
+  /* Stack the grid */
+  .pd-columns { gap: 24px; }
+
+  /* Make the add section full-width stacked */
   .pd-add-section { flex-direction: column; align-items: stretch; }
   .pd-add-btn { max-width: none; width: 100%; min-height: 48px; }
   .pd-quantity button { width: 44px; height: 44px; }
-  .pd-columns { gap: 24px; }
   .pd-option-btn { min-height: 44px; padding: 12px 16px; }
   .pd-addon { min-height: 44px; padding: 10px 14px; }
 }
 
+/* ============================================================
+   MOBILE: 576px — Complete Mobile-First Redesign
+   ============================================================ */
 @media (max-width: 576px) {
-  .pd-options { flex-direction: column; }
-  .pd-option-btn { width: 100%; text-align: center; min-height: 44px; }
-  .pd-info h1 { font-size: 1.3rem; }
+  /* ── Hero Image — Full-bleed ── */
+  .pd-hero-image {
+    display: block;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    width: calc(100vw - 0px);
+    aspect-ratio: 4/3;
+    border-radius: 0;
+    overflow: hidden;
+    background: var(--color-bg-alt);
+    position: relative;
+    margin-bottom: 0;
+  }
+  .pd-hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Hide the original grid image on mobile ── */
+  .pd-columns > div:first-child {
+    display: none;
+  }
+
+  /* ── Stack everything ── */
+  .pd-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── Info Section — Full-width ── */
+  .pd-info {
+    padding: 20px 16px;
+    width: 100%;
+  }
+  .pd-info h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Rating — Inline ── */
+  .pd-rating {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .pd-rating span {
+    font-size: 13px;
+  }
+
+  /* ── Price — Prominent ── */
+  .pd-price {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  /* ── Description — Full-width ── */
+  .pd-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Section Headers ── */
+  .pd-section {
+    padding: 0 16px;
+    margin-bottom: 20px;
+  }
+  .pd-section h4 {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text);
+    margin-bottom: 12px;
+  }
+
+  /* ── Variants — Full-width stacked cards ── */
+  .pd-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pd-option-btn {
+    width: 100%;
+    text-align: center;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 600;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pd-option-btn.active {
+    border-width: 2px;
+    box-shadow: 0 0 0 3px var(--color-brand-100);
+  }
+
+  /* ── Add-ons — Clean list ── */
+  .pd-addons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pd-addon {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 52px;
+    justify-content: space-between;
+  }
+
+  /* ── Textarea ── */
+  .pd-textarea {
+    min-height: 72px;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: var(--radius-md);
+  }
+
+  /* ── Quantity — Centered, large ── */
+  .pd-quantity {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--color-border);
+    overflow: hidden;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  .pd-quantity button {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+    border-radius: 0;
+    background: var(--color-bg-alt);
+  }
+  .pd-quantity button:active {
+    background: var(--color-border);
+  }
+  .pd-quantity span {
+    font-size: 20px;
+    min-width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Add Section — Stacked ── */
+  .pd-add-section {
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
+  }
+  .pd-total {
+    font-size: 20px;
+    text-align: center;
+  }
+  .pd-add-btn {
+    width: 100%;
+    max-width: none;
+    min-height: 56px;
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: var(--radius-lg);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Meta — Chip-style ── */
+  .pd-meta {
+    padding: 0 16px;
+    gap: 8px;
+  }
+  .pd-meta span {
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-alt);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* ── Nutrition — Full-width cards ── */
+  .pd-nutrition {
+    margin: 24px 16px;
+    padding: 20px 16px;
+    border-radius: var(--radius-xl);
+    width: auto;
+  }
+  .pd-nutrition h4 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .pd-nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .pd-nutrition-grid > div {
+    padding: 14px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
+  }
+  .pd-nutrition-grid strong {
+    font-size: 18px;
+  }
+
+  /* ── Reviews — Full-width ── */
+  .pd-reviews {
+    padding: 0 16px;
+  }
+  .pd-reviews h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .pd-review-form {
+    padding: 16px;
+    border-radius: var(--radius-xl);
+  }
+
+  /* ── Related — Horizontal Swipe ── */
+  .pd-related-scroll {
+    gap: 12px;
+    padding: 0 16px 16px;
+  }
+  .pd-related-card {
+    flex: 0 0 160px;
+    border-radius: var(--radius-lg);
+  }
+  .pd-related-card__body {
+    padding: 10px 12px;
+  }
+  .pd-related-card__name {
+    font-size: 13px;
+  }
+  .pd-related-card__price {
+    font-size: 14px;
+  }
+
+  /* ── Breadcrumb — Compact ── */
+  .pd-breadcrumb {
+    padding: 12px 16px;
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+
+  /* ── Container override ── */
+  .product-detail-page .container-lg {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* ── Page padding ── */
+  .product-detail-page {
+    padding-bottom: 100px;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE: 400px — Extra compact
+   ============================================================ */
+@media (max-width: 400px) {
+  .pd-info h1 { font-size: 22px; }
   .pd-price { font-size: 24px; }
-  .pd-nutrition-grid { gap: 12px; }
-  .pd-review-form { padding: 14px; }
-  .pd-quantity button { width: 44px; height: 44px; }
-  .pd-textarea { min-height: 70px; padding: 12px; font-size: 15px; }
+  .pd-nutrition-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .pd-option-btn { font-size: 14px; padding: 12px 14px; }
+  .pd-addon { font-size: 14px; padding: 12px 14px; }
+  .pd-quantity button { width: 50px; height: 50px; font-size: 20px; }
+  .pd-quantity span { min-width: 50px; font-size: 18px; }
+  .pd-related-card { flex: 0 0 140px; }
 }

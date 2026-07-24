@@ -107,8 +107,40 @@ function ProductDetail() {
   return (
     <div className="product-detail-page">
       <div className="container-lg" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
-        {/* Breadcrumb */}
-        <nav style={{ marginBottom: '32px', fontSize: '14px', color: 'var(--color-text-muted)' }}>
+
+        {/* ── Mobile Hero Image (hidden on desktop via CSS) ── */}
+        <div className="pd-hero-image">
+          {item.image ? (
+            <img src={item.image} alt={item.name} />
+          ) : (
+            <div style={{
+              width: '100%', height: '100%', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', color: 'var(--color-text-muted)', fontSize: '16px', fontWeight: 500
+            }}>
+              No Image Available
+            </div>
+          )}
+          {/* Badges on hero */}
+          <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px' }}>
+            {item.isPopular && (
+              <span style={{
+                padding: '6px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 700,
+                background: 'var(--color-brand)', color: '#fff',
+                boxShadow: '0 2px 8px rgba(232,93,4,0.3)'
+              }}>Popular</span>
+            )}
+            {item.isLimitedTime && (
+              <span style={{
+                padding: '6px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 700,
+                background: 'var(--color-brand-dark)', color: '#fff',
+                boxShadow: '0 2px 8px rgba(220,47,2,0.3)'
+              }}>Limited Time</span>
+            )}
+          </div>
+        </div>
+
+        {/* ── Breadcrumb ── */}
+        <nav className="pd-breadcrumb" style={{ marginBottom: '32px', fontSize: '14px', color: 'var(--color-text-muted)' }}>
           <span
             onClick={() => navigate('/')}
             style={{ cursor: 'pointer', color: 'var(--color-text-muted)', transition: 'color 200ms' }}
@@ -126,9 +158,10 @@ function ProductDetail() {
           <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{item.name}</span>
         </nav>
 
-        {/* Two Column Layout */}
+        {/* ── Two Column Layout (Desktop: side-by-side, Mobile: stacked) ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px' }} className="pd-columns">
-          {/* Left: Image */}
+
+          {/* ── Left: Image (hidden on mobile via CSS, replaced by hero above) ── */}
           <div>
             <div style={{
               borderRadius: 'var(--radius-2xl)', overflow: 'hidden',
@@ -163,8 +196,8 @@ function ProductDetail() {
             </div>
           </div>
 
-          {/* Right: Info */}
-          <div>
+          {/* ── Right: Info ── */}
+          <div className="pd-info">
             {/* Title */}
             <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 10px' }}>
               {item.name}
@@ -172,7 +205,7 @@ function ProductDetail() {
 
             {/* Rating */}
             {item.averageRating > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <div className="pd-rating" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', gap: '2px' }}>
                   {[1, 2, 3, 4, 5].map(s => (
                     <span key={s} style={{
@@ -187,29 +220,47 @@ function ProductDetail() {
             )}
 
             {/* Price */}
-            <p style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-brand)', margin: '0 0 14px' }}>
+            <p className="pd-price" style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-brand)', margin: '0 0 14px' }}>
               GH₵ {(selectedVariant ? selectedVariant.price : item.price).toFixed(2)}
             </p>
 
             {/* Description */}
             {item.description && (
-              <p style={{ fontSize: '15px', color: 'var(--color-text-secondary)', margin: '0 0 24px', lineHeight: 1.6 }}>
+              <p className="pd-description" style={{ fontSize: '15px', color: 'var(--color-text-secondary)', margin: '0 0 24px', lineHeight: 1.6 }}>
                 {item.description}
               </p>
             )}
 
+            {/* Category + Prep Time — inline chips */}
+            <div className="pd-meta" style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+              {item.preparationTime && (
+                <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                  {item.preparationTime} min prep
+                </span>
+              )}
+              {item.category && (
+                <span style={{
+                  fontSize: '12px', fontWeight: 600, padding: '4px 12px',
+                  borderRadius: '100px', background: 'var(--color-bg-alt)',
+                  color: 'var(--color-text-muted)', textTransform: 'capitalize'
+                }}>{item.category}</span>
+              )}
+            </div>
+
             {/* Variants */}
             {item.variants && item.variants.length > 0 && (
-              <div style={{ marginBottom: '24px' }}>
+              <div className="pd-section" style={{ marginBottom: '24px' }}>
                 <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Size / Variant
                 </h4>
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <div className="pd-options" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {item.variants.filter(v => v.available !== false).map(v => {
                     const active = selectedVariant?.name === v.name;
                     return (
                       <button
                         key={v.name}
+                        className={`pd-option-btn ${active ? 'active' : ''}`}
                         onClick={() => setSelectedVariant(v)}
                         style={{
                           padding: '10px 20px', borderRadius: '100px',
@@ -229,16 +280,17 @@ function ProductDetail() {
 
             {/* Add-ons */}
             {item.addOns && item.addOns.length > 0 && (
-              <div style={{ marginBottom: '24px' }}>
+              <div className="pd-section" style={{ marginBottom: '24px' }}>
                 <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Add-ons
                 </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="pd-addons" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {item.addOns.filter(a => a.available !== false).map(a => {
                     const checked = selectedAddOns.some(s => s.name === a.name);
                     return (
                       <label
                         key={a.name}
+                        className={`pd-addon ${checked ? 'active' : ''}`}
                         style={{
                           display: 'flex', alignItems: 'center', gap: '12px',
                           padding: '12px 16px', borderRadius: 'var(--radius-lg)',
@@ -266,8 +318,8 @@ function ProductDetail() {
                           onChange={() => toggleAddOn(a)}
                           style={{ display: 'none' }}
                         />
-                        <span style={{ fontSize: '14px', color: 'var(--color-text)', fontWeight: 500 }}>{a.name}</span>
-                        <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginLeft: 'auto' }}>+ GH₵ {a.price.toFixed(2)}</span>
+                        <span style={{ fontSize: '14px', color: 'var(--color-text)', fontWeight: 500, flex: 1 }}>{a.name}</span>
+                        <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)', flexShrink: 0 }}>+ GH₵ {a.price.toFixed(2)}</span>
                       </label>
                     );
                   })}
@@ -276,11 +328,12 @@ function ProductDetail() {
             )}
 
             {/* Special Instructions */}
-            <div style={{ marginBottom: '24px' }}>
+            <div className="pd-section" style={{ marginBottom: '24px' }}>
               <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Special Instructions
               </h4>
               <textarea
+                className="pd-textarea"
                 placeholder="e.g. No onions, extra sauce..."
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
@@ -297,11 +350,11 @@ function ProductDetail() {
             </div>
 
             {/* Quantity */}
-            <div style={{ marginBottom: '24px' }}>
+            <div className="pd-section" style={{ marginBottom: '24px' }}>
               <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Quantity
               </h4>
-              <div style={{
+              <div className="pd-quantity" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0',
                 borderRadius: 'var(--radius-xl)', border: '1.5px solid var(--color-border)',
                 overflow: 'hidden'
@@ -331,58 +384,44 @@ function ProductDetail() {
             </div>
 
             {/* Total */}
-            <div style={{ marginBottom: '20px' }}>
-              <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-brand)', margin: 0 }}>
+            <div className="pd-section" style={{ marginBottom: '20px' }}>
+              <p className="pd-total" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-brand)', margin: 0 }}>
                 Total: GH₵ {calculatePrice().toFixed(2)}
               </p>
             </div>
 
             {/* Add to Cart */}
-            <button
-              onClick={handleAddToCart}
-              style={{
-                width: '100%', padding: '16px', borderRadius: 'var(--radius-lg)',
-                border: 'none', fontWeight: 700, fontSize: '16px',
-                cursor: 'pointer', transition: 'all 300ms',
-                background: addedToCart ? 'var(--color-accent)' : 'var(--color-brand)',
-                color: '#fff',
-                boxShadow: addedToCart ? '0 4px 16px rgba(43,147,72,0.3)' : '0 4px 16px rgba(232,93,4,0.25)'
-              }}
-            >
-              {addedToCart ? '✓ Added to Cart!' : 'Add to Cart'}
-            </button>
-
-            {/* Meta */}
-            <div style={{ display: 'flex', gap: '20px', marginTop: '20px', flexWrap: 'wrap' }}>
-              {item.preparationTime && (
-                <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                  {item.preparationTime} min prep
-                </span>
-              )}
-              {item.category && (
-                <span style={{
-                  fontSize: '12px', fontWeight: 600, padding: '4px 12px',
-                  borderRadius: '100px', background: 'var(--color-bg-alt)',
-                  color: 'var(--color-text-muted)', textTransform: 'capitalize'
-                }}>{item.category}</span>
-              )}
+            <div className="pd-add-section">
+              <button
+                className={`pd-add-btn ${addedToCart ? 'added' : ''}`}
+                onClick={handleAddToCart}
+                style={{
+                  width: '100%', padding: '16px', borderRadius: 'var(--radius-lg)',
+                  border: 'none', fontWeight: 700, fontSize: '16px',
+                  cursor: 'pointer', transition: 'all 300ms',
+                  background: addedToCart ? 'var(--color-accent)' : 'var(--color-brand)',
+                  color: '#fff',
+                  boxShadow: addedToCart ? '0 4px 16px rgba(43,147,72,0.3)' : '0 4px 16px rgba(232,93,4,0.25)'
+                }}
+              >
+                {addedToCart ? '✓ Added to Cart!' : 'Add to Cart'}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Nutrition */}
+        {/* ── Nutrition ── */}
         {item.nutrition && (item.nutrition.calories || item.nutrition.protein) && (
-          <div style={{
+          <div className="pd-nutrition" style={{
             marginTop: '48px', padding: '32px', borderRadius: 'var(--radius-xl)',
             background: 'var(--color-bg-card)', boxShadow: 'var(--shadow-sm)'
           }}>
             <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 20px' }}>
               Nutrition Information
             </h4>
-            <div style={{
+            <div className="pd-nutrition-grid" style={{
               display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px'
-            }} className="pd-nutrition-grid">
+            }}>
               {[
                 { value: item.nutrition.calories, label: 'Calories', unit: '' },
                 { value: item.nutrition.protein, label: 'Protein', unit: 'g' },
@@ -406,8 +445,8 @@ function ProductDetail() {
           </div>
         )}
 
-        {/* Reviews */}
-        <div style={{ marginTop: '48px' }}>
+        {/* ── Reviews ── */}
+        <div className="pd-reviews" style={{ marginTop: '48px' }}>
           <h3 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '24px' }}>
             Reviews ({reviews.length})
           </h3>
@@ -415,13 +454,14 @@ function ProductDetail() {
           {user && (
             <form
               onSubmit={handleSubmitReview}
+              className="pd-review-form"
               style={{
                 padding: '24px', borderRadius: 'var(--radius-xl)',
                 background: 'var(--color-bg-card)', boxShadow: 'var(--shadow-sm)',
                 marginBottom: '24px'
               }}
             >
-              <div style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
+              <div className="pd-review-stars" style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
                 {[1, 2, 3, 4, 5].map(s => (
                   <span
                     key={s}
@@ -435,6 +475,7 @@ function ProductDetail() {
                 ))}
               </div>
               <textarea
+                className="pd-textarea"
                 placeholder="Write your review..."
                 value={newReview.comment}
                 onChange={e => setNewReview({ ...newReview, comment: e.target.value })}
@@ -470,11 +511,11 @@ function ProductDetail() {
               </p>
             )}
             {reviews.map(r => (
-              <div key={r._id} style={{
+              <div key={r._id} className="pd-review-card" style={{
                 padding: '20px', borderRadius: 'var(--radius-xl)',
                 background: 'var(--color-bg-card)', boxShadow: 'var(--shadow-sm)'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                <div className="pd-review-header" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                   {/* Avatar */}
                   <div style={{
                     width: '36px', height: '36px', borderRadius: 'var(--radius-full)',
@@ -504,10 +545,10 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* Related */}
+        {/* ── Related ── */}
         {relatedItems.length > 0 && (
           <div style={{ marginTop: '48px' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '20px', padding: '0 16px' }}>
               You Might Also Like
             </h3>
             <div className="pd-related-scroll">
@@ -535,7 +576,7 @@ function ProductDetail() {
         )}
       </div>
 
-      {/* Sticky Mobile Add to Cart Bar */}
+      {/* ── Sticky Mobile CTA Bar ── */}
       <div className="pd-mobile-cta" style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: '#fff', borderTop: '1px solid var(--color-border)',
@@ -564,20 +605,43 @@ function ProductDetail() {
       </div>
 
       <style>{`
+        /* Desktop: standard two-column grid */
         .pd-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-        @media (max-width: 768px) { 
-          .pd-columns { grid-template-columns: 1fr; gap: 24px; }
-          .pd-columns > div:first-child { order: -1; }
-        }
-        .pd-nutrition-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-        @media (max-width: 768px) { .pd-nutrition-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 480px) { .pd-nutrition-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+        /* Mobile CTA bar */
         .pd-mobile-cta { display: none !important; }
+        .pd-hero-image { display: none; }
+
         @media (max-width: 768px) {
           .pd-mobile-cta { display: flex !important; }
-          .product-detail-page { padding-bottom: 90px !important; }
-          .pd-columns { gap: 16px; }
-          .product-detail-page .container-lg { padding-left: 16px; padding-right: 16px; }
+          .product-detail-page { padding-bottom: 100px !important; }
+          .pd-columns { gap: 24px; }
+        }
+
+        @media (max-width: 576px) {
+          /* Show hero, hide grid image */
+          .pd-hero-image { display: block; }
+          .pd-columns > div:first-child { display: none; }
+
+          /* Stack the grid into single column */
+          .pd-columns {
+            display: flex !important;
+            flex-direction: column;
+            gap: 0;
+          }
+
+          /* Remove container padding for full-bleed */
+          .product-detail-page .container-lg {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+
+          /* Compact breadcrumb */
+          .pd-breadcrumb {
+            padding: 12px 16px;
+            font-size: 12px;
+            margin-bottom: 0 !important;
+          }
         }
       `}</style>
     </div>
