@@ -16,55 +16,59 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
 };
 
-function MiniBarChart({ data, color = 'var(--admin-brand)' }) {
-    if (!data || data.length === 0) return null;
+const statusColors = {
+    pending: '#f59e0b', confirmed: '#3b82f6', preparing: '#f59e0b',
+    ready: '#06b6d4', out_for_delivery: '#6366f1', delivered: '#059669', cancelled: '#dc2626',
+};
+const statusLabels = {
+    pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing',
+    ready: 'Ready', out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+};
+
+function RevenueChart({ data }) {
+    if (!data || data.length === 0) return <div className="admin-chart-empty">No revenue data yet</div>;
     const max = Math.max(...data.map(d => d.value));
     return (
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 52 }}>
-            {data.map((d, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ height: 0 }}
-                    animate={{ height: max > 0 ? `${(d.value / max) * 100}%` : '0%' }}
-                    transition={{ duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                    style={{
-                        flex: 1, borderRadius: 4,
-                        background: `linear-gradient(180deg, ${color}, ${color}88)`,
-                    }}
-                    title={`${d.label}: GH₵ ${d.value}`}
-                />
-            ))}
-        </div>
+        <>
+            <div className="admin-chart-bars">
+                {data.map((d, i) => (
+                    <motion.div
+                        key={i}
+                        className="admin-chart-bar"
+                        initial={{ height: 0 }}
+                        animate={{ height: max > 0 ? `${(d.value / max) * 100}%` : '4px' }}
+                        transition={{ duration: 0.5, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                        data-value={`GH₵ ${d.value.toFixed(0)}`}
+                    />
+                ))}
+            </div>
+            <div className="admin-chart-labels">
+                {data.map((d, i) => (
+                    <span key={i}>{typeof d.label === 'string' ? d.label.slice(0, 3) : d.label}</span>
+                ))}
+            </div>
+        </>
     );
 }
 
 function StatusChart({ data }) {
-    const colors = {
-        pending: '#f59e0b', confirmed: '#3b82f6', preparing: '#f59e0b',
-        ready: '#06b6d4', out_for_delivery: '#6366f1', delivered: '#059669', cancelled: '#dc2626',
-    };
-    const labels = {
-        pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing',
-        ready: 'Ready', out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
-    };
     const total = Object.values(data).reduce((a, b) => a + b, 0);
-
+    if (total === 0) return <div className="admin-chart-empty">No orders yet</div>;
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="admin-status-bars">
             {Object.entries(data).map(([key, count]) => (
-                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ width: 110, fontSize: 13, color: 'var(--admin-text-secondary)', textAlign: 'right', fontWeight: 500 }}>
-                        {labels[key] || key}
-                    </span>
-                    <div style={{ flex: 1, height: 26, background: 'rgba(0,0,0,0.03)', borderRadius: 8, overflow: 'hidden' }}>
+                <div key={key} className="admin-status-row">
+                    <span className="admin-status-label">{statusLabels[key] || key}</span>
+                    <div className="admin-status-track">
                         <motion.div
+                            className="admin-status-fill"
                             initial={{ width: 0 }}
-                            animate={{ width: total > 0 ? `${(count / total) * 100}%` : '0%' }}
+                            animate={{ width: `${(count / total) * 100}%` }}
                             transition={{ duration: 0.8, ease: 'easeOut' }}
-                            style={{ height: '100%', background: colors[key] || '#94a3b8', borderRadius: 8 }}
+                            style={{ background: statusColors[key] || '#94a3b8' }}
                         />
                     </div>
-                    <span style={{ width: 32, fontSize: 13, fontWeight: 700, textAlign: 'right', color: 'var(--admin-text)' }}>{count}</span>
+                    <span className="admin-status-count">{count}</span>
                 </div>
             ))}
         </div>
@@ -113,38 +117,33 @@ export default function Dashboard() {
     const revenueData = dailyRevenue.map((d, i) => ({ label: d._id || `Day ${i + 1}`, value: d.revenue || 0 }));
 
     const quickActions = [
-        { to: '/admin/products', label: 'Manage Products', icon: '📦', bg: 'rgba(232, 93, 4, 0.08)' },
-        { to: '/admin/orders', label: 'View Orders', icon: '🛒', bg: 'rgba(37, 99, 235, 0.08)' },
-        { to: '/admin/customers', label: 'Customers', icon: '👥', bg: 'rgba(5, 150, 105, 0.08)' },
-        { to: '/admin/reports', label: 'Reports', icon: '📊', bg: 'rgba(124, 58, 237, 0.08)' },
-        { to: '/admin/coupons', label: 'Coupons', icon: '🏷️', bg: 'rgba(217, 119, 6, 0.08)' },
-        { to: '/admin/settings', label: 'Settings', icon: '⚙️', bg: 'rgba(100, 116, 139, 0.08)' },
+        { to: '/admin/products', label: 'Products', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>, color: 'rgba(232, 93, 4, 0.08)', iconColor: 'var(--admin-brand)' },
+        { to: '/admin/orders', label: 'Orders', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg>, color: 'rgba(37, 99, 235, 0.08)', iconColor: 'var(--admin-info)' },
+        { to: '/admin/customers', label: 'Customers', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>, color: 'rgba(5, 150, 105, 0.08)', iconColor: 'var(--admin-success)' },
+        { to: '/admin/reports', label: 'Reports', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>, color: 'rgba(124, 58, 237, 0.08)', iconColor: '#7c3aed' },
+        { to: '/admin/coupons', label: 'Coupons', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>, color: 'rgba(217, 119, 6, 0.08)', iconColor: 'var(--admin-warning)' },
+        { to: '/admin/settings', label: 'Settings', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg>, color: 'rgba(100, 116, 139, 0.08)', iconColor: '#64748b' },
+    ];
+
+    const activityItems = [
+        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg>, bg: 'var(--admin-brand-light)', color: 'var(--admin-brand)', text: 'New order received', time: '2 min ago' },
+        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>, bg: 'var(--admin-info-bg)', color: 'var(--admin-info)', text: 'New customer registered', time: '15 min ago' },
+        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>, bg: 'var(--admin-warning-bg)', color: 'var(--admin-warning)', text: 'New review submitted', time: '1 hour ago' },
+        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>, bg: 'var(--admin-success-bg)', color: 'var(--admin-success)', text: 'Coupon "WELCOME10" activated', time: '3 hours ago' },
+        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>, bg: 'rgba(124, 58, 237, 0.08)', color: '#7c3aed', text: 'Product "BBQ Bacon Burger" updated', time: '5 hours ago' },
     ];
 
     return (
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
             {/* Welcome Banner */}
-            <motion.div variants={itemVariants} className="admin-card" style={{ marginBottom: 24 }}>
-                <div style={{
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-                    borderRadius: 'inherit',
-                    padding: '32px 36px',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16,
-                    position: 'relative', overflow: 'hidden',
-                }}>
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(232,93,4,0.08) 0%, transparent 50%)', pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                        <h2 style={{ color: '#fff', fontSize: 24, fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
-                            Welcome back, {user?.username || 'Admin'} 👋
-                        </h2>
-                        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, marginTop: 8 }}>
-                            Here's what's happening with your restaurant today.
-                        </p>
-                    </div>
-                    <div style={{ position: 'relative', zIndex: 1, color: 'rgba(255,255,255,0.4)', fontSize: 13, textAlign: 'right' }}>
-                        <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.65)', fontSize: 14 }}>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</div>
-                        <div style={{ marginTop: 2 }}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
-                    </div>
+            <motion.div variants={itemVariants} className="admin-dash-welcome">
+                <div className="admin-dash-welcome-text">
+                    <h2>Welcome back, {user?.username || 'Admin'}</h2>
+                    <p>Here's what's happening with your restaurant today.</p>
+                </div>
+                <div className="admin-dash-welcome-date">
+                    <strong>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</strong>
+                    {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </div>
             </motion.div>
 
@@ -164,26 +163,13 @@ export default function Dashboard() {
             </div>
 
             {/* Charts Row */}
-            <div className="admin-grid-2" style={{ marginBottom: 24 }}>
+            <div className="admin-grid-2 admin-dash-charts">
                 <motion.div variants={itemVariants} className="admin-card">
                     <div className="admin-card-header">
                         <h3 className="admin-card-title">Revenue This Week</h3>
                     </div>
                     <div className="admin-card-body">
-                        {revenueData.length > 0 ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <MiniBarChart data={revenueData} />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--admin-text-muted)', fontWeight: 500 }}>
-                                    {revenueData.map((d, i) => (
-                                        <span key={i}>{typeof d.label === 'string' ? d.label.slice(0, 3) : d.label}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="admin-empty" style={{ padding: 32 }}>
-                                <p style={{ color: 'var(--admin-text-muted)', fontSize: 14 }}>No revenue data yet</p>
-                            </div>
-                        )}
+                        <RevenueChart data={revenueData} />
                     </div>
                 </motion.div>
 
@@ -192,19 +178,13 @@ export default function Dashboard() {
                         <h3 className="admin-card-title">Order Status Overview</h3>
                     </div>
                     <div className="admin-card-body">
-                        {Object.keys(orderStatus).length > 0 ? (
-                            <StatusChart data={orderStatus} />
-                        ) : (
-                            <div className="admin-empty" style={{ padding: 32 }}>
-                                <p style={{ color: 'var(--admin-text-muted)', fontSize: 14 }}>No orders yet</p>
-                            </div>
-                        )}
+                        <StatusChart data={orderStatus} />
                     </div>
                 </motion.div>
             </div>
 
             {/* Recent Orders + Best Sellers */}
-            <div className="admin-grid-2" style={{ gridTemplateColumns: '2fr 1fr', marginBottom: 24 }}>
+            <div className="admin-grid-2 admin-dash-main">
                 <motion.div variants={itemVariants} className="admin-card">
                     <div className="admin-card-header">
                         <h3 className="admin-card-title">Recent Orders</h3>
@@ -246,24 +226,23 @@ export default function Dashboard() {
                         <h3 className="admin-card-title">Best Sellers</h3>
                     </div>
                     <div className="admin-card-body">
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="admin-best-sellers">
                             {popularItems.length > 0 ? popularItems.slice(0, 5).map((item, i) => (
-                                <div key={item._id || i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    <div style={{
-                                        width: 40, height: 40, borderRadius: 10, overflow: 'hidden',
-                                        background: 'rgba(0,0,0,0.03)', flexShrink: 0,
-                                    }}>
+                                <div key={item._id || i} className="admin-best-seller">
+                                    <div className="admin-best-seller-img">
                                         {item.image ? (
-                                            <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={item.image} alt={item.name} />
                                         ) : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🍔</div>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                                            </svg>
                                         )}
                                     </div>
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ fontSize: 13.5, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--admin-text)' }}>{item.name}</div>
-                                        <div style={{ fontSize: 12, color: 'var(--admin-text-muted)', marginTop: 1 }}>{item.orderCount || item.orders || 0} orders</div>
+                                    <div className="admin-best-seller-info">
+                                        <div className="admin-best-seller-name">{item.name}</div>
+                                        <div className="admin-best-seller-meta">{item.orderCount || item.orders || 0} orders</div>
                                     </div>
-                                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-brand)' }}>GH₵ {Number(item.price || item.revenue || 0).toFixed(0)}</div>
+                                    <div className="admin-best-seller-price">GH₵ {Number(item.price || item.revenue || 0).toFixed(0)}</div>
                                 </div>
                             )) : (
                                 <div className="admin-empty" style={{ padding: 24 }}>
@@ -276,16 +255,16 @@ export default function Dashboard() {
             </div>
 
             {/* Quick Actions */}
-            <motion.div variants={itemVariants} style={{ marginBottom: 24 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--admin-text)' }}>Quick Actions</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+            <motion.div variants={itemVariants} className="admin-dash-quick">
+                <h3 className="admin-dash-section-title">Quick Actions</h3>
+                <div className="admin-dash-quick-grid">
                     {quickActions.map((action) => (
                         <button
                             key={action.to}
-                            className="admin-quick-action"
+                            className="admin-dash-quick-btn"
                             onClick={() => navigate(action.to)}
                         >
-                            <span className="admin-quick-action-icon" style={{ background: action.bg }}>{action.icon}</span>
+                            <span className="admin-dash-quick-icon" style={{ background: action.color, color: action.iconColor }}>{action.icon}</span>
                             {action.label}
                         </button>
                     ))}
@@ -298,17 +277,11 @@ export default function Dashboard() {
                     <div className="admin-card-header">
                         <h3 className="admin-card-title">Recent Activity</h3>
                     </div>
-                    <div className="admin-card-body no-pad" style={{ padding: '0 24px' }}>
-                        <div className="admin-activity">
-                            {[
-                                { icon: '🛒', bg: 'var(--admin-brand-light)', text: 'New order received', time: '2 min ago' },
-                                { icon: '👤', bg: 'var(--admin-info-bg)', text: 'New customer registered', time: '15 min ago' },
-                                { icon: '⭐', bg: 'var(--admin-warning-bg)', text: 'New review submitted', time: '1 hour ago' },
-                                { icon: '🏷️', bg: 'var(--admin-success-bg)', text: 'Coupon "WELCOME10" activated', time: '3 hours ago' },
-                                { icon: '📦', bg: 'rgba(124, 58, 237, 0.08)', text: 'Product "BBQ Bacon Burger" updated', time: '5 hours ago' },
-                            ].map((item, i) => (
+                    <div className="admin-card-body no-pad">
+                        <div className="admin-dash-activity">
+                            {activityItems.map((item, i) => (
                                 <div key={i} className="admin-activity-item">
-                                    <div className="admin-activity-icon" style={{ background: item.bg }}>{item.icon}</div>
+                                    <div className="admin-activity-icon" style={{ background: item.bg, color: item.color }}>{item.icon}</div>
                                     <div className="admin-activity-text">
                                         <p>{item.text}</p>
                                         <div className="admin-activity-time">{item.time}</div>
