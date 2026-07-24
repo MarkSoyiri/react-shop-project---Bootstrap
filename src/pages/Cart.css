@@ -74,24 +74,15 @@
   .cart-layout { flex-direction: column !important; }
   .cart-items-col { flex: 1 1 auto !important; width: 100%; }
   .cart-summary-col { flex: 1 1 auto !important; width: 100%; position: static !important; }
-  .cart-item-row { flex-wrap: wrap; padding: 14px; gap: 10px; }
+  .cart-item-row { flex-wrap: wrap; padding: 14px; gap: 10px; border-radius: 14px; }
   .cart-item-controls { width: 100%; justify-content: space-between; margin-top: 4px; }
   .cart-qty-controls { gap: 4px; }
   .cart-qty-btn { width: 40px; height: 40px; font-size: 16px; }
-  .cart-summary { position: static; margin-top: 12px; }
+  .cart-summary { position: static; margin-top: 12px; border-radius: 14px; }
   .cart-bottom-actions { flex-direction: column; }
-  .cart-coupon { flex-direction: column; }
-  .cart-coupon input, .cart-coupon button { width: 100%; }
-}
-
-@media (max-width: 768px) {
-  .cart-container { padding-top: 100px; }
-  .cart-item-row { flex-wrap: wrap; }
-  .cart-item-controls { width: 100%; justify-content: space-between; margin-top: 8px; }
-  .cart-summary { position: static; margin-top: 20px; }
-  .cart-bottom-actions { flex-direction: column; }
-  .cart-coupon { flex-direction: column; }
-  .cart-coupon input, .cart-coupon button { width: 100%; }
+  .cart-coupon { flex-direction: column; gap: 8px; }
+  .cart-coupon input, .cart-coupon button { width: 100%; min-height: 44px; }
+  .cart-item-img { width: 56px; height: 56px; border-radius: 10px; }
 }
 
 @media (max-width: 576px) {

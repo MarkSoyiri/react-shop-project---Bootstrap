@@ -5846,7 +5846,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================
-   50. COMPREHENSIVE RESPONSIVE OVERRIDES
+   50. COMPREHENSIVE RESPONSIVE — PREMIUM MOBILE DESIGN SYSTEM
    ========================================================== */
 
 /* ---- Prevent horizontal scroll globally ---- */
@@ -5862,31 +5862,40 @@ body.menu-open {
   width: 100%;
 }
 
-@media (max-width: 1200px) {
-  .checkout-body {
-    grid-template-columns: 1fr 320px;
-    gap: 24px;
-  }
-}
-
+/* ---- Tablet: 992px ---- */
 @media (max-width: 992px) {
   .checkout-body {
     grid-template-columns: 1fr;
   }
-
   .checkout-summary {
     position: static;
     order: -1;
   }
 }
 
+/* ==========================================================
+   MOBILE: 768px — Premium App-Like Design Foundation
+   ========================================================== */
 @media (max-width: 768px) {
-  /* ---- Global Mobile Base ---- */
+
+  /* ── Global Mobile Base ── */
   html {
     font-size: 15px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
   }
 
-  /* ---- Navbar Mobile ---- */
+  *, *::before, *::after {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Mobile spacing utility ── */
+  .container-lg {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* ── Navbar Mobile ── */
   .my-nav {
     height: var(--navbar-height-mobile);
     padding: 0 12px;
@@ -5909,7 +5918,7 @@ body.menu-open {
     padding: 6px 14px;
   }
 
-  /* ---- Food Cards Mobile ---- */
+  /* ── Food Cards Mobile ── */
   .foodBox {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -5920,7 +5929,7 @@ body.menu-open {
     gap: 12px;
   }
 
-  /* ---- Cart Mobile ---- */
+  /* ── Cart Mobile ── */
   .cart-item-row {
     flex-direction: column;
     align-items: flex-start;
@@ -5968,7 +5977,7 @@ body.menu-open {
     position: static;
   }
 
-  /* ---- Footer Mobile ---- */
+  /* ── Footer Mobile ── */
   .footerTop {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -5978,7 +5987,7 @@ body.menu-open {
     text-align: center;
   }
 
-  /* ---- Auth Mobile ---- */
+  /* ── Auth Mobile ── */
   .auth-right-panel {
     padding: 32px 20px;
   }
@@ -5991,7 +6000,7 @@ body.menu-open {
     margin-bottom: 28px;
   }
 
-  /* ---- Headings Mobile ---- */
+  /* ── Headings Mobile ── */
   .heading {
     padding: 32px 0 16px;
   }
@@ -6000,12 +6009,12 @@ body.menu-open {
     font-size: 1.4rem;
   }
 
-  /* ---- Hero Mobile ---- */
+  /* ── Hero Mobile ── */
   .hero-section {
-    height: clamp(320px, 70vw, 480px);
+    height: clamp(460px, 95vw, 600px);
   }
 
-  /* ---- CTA Mobile ---- */
+  /* ── CTA Mobile ── */
   .cta-card {
     flex-direction: column;
     text-align: center;
@@ -6016,7 +6025,7 @@ body.menu-open {
     display: none;
   }
 
-  /* ---- Newsletter Mobile ---- */
+  /* ── Newsletter Mobile ── */
   .newsletter-form {
     flex-direction: column;
   }
@@ -6026,12 +6035,12 @@ body.menu-open {
     padding: 14px;
   }
 
-  /* ---- Section Headers Mobile ---- */
+  /* ── Section Headers Mobile ── */
   .section-header {
     padding: 32px 0 8px;
   }
 
-  /* ---- Checkout Mobile ---- */
+  /* ── Checkout Mobile ── */
   .checkout-body {
     padding: 0 16px;
   }
@@ -6065,7 +6074,7 @@ body.menu-open {
     font-size: 13px;
   }
 
-  /* ---- Search Mobile ---- */
+  /* ── Search Mobile ── */
   .search-result-card {
     flex-wrap: wrap;
   }
@@ -6112,7 +6121,7 @@ body.menu-open {
     min-height: 44px;
   }
 
-  /* ---- Tracking Mobile ---- */
+  /* ── Tracking Mobile ── */
   .tracking-step-label {
     font-size: 9px;
   }
@@ -6140,7 +6149,27 @@ body.menu-open {
     gap: 8px;
   }
 
-  /* ---- Account Mobile ---- */
+  .tracking-progress-steps {
+    overflow-x: auto;
+    gap: 4px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tracking-progress-steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tracking-progress-step {
+    min-width: 56px;
+  }
+
+  .tracking-progress-step span {
+    font-size: 9px !important;
+  }
+
+  /* ── Account Mobile ── */
   .account-page {
     padding-top: 100px;
   }
@@ -6183,7 +6212,7 @@ body.menu-open {
     padding: 14px;
   }
 
-  /* ---- Product Detail Mobile ---- */
+  /* ── Product Detail Mobile ── */
   .pd-add-section {
     flex-direction: column;
     align-items: stretch;
@@ -6210,7 +6239,7 @@ body.menu-open {
     padding: 10px 14px;
   }
 
-  /* ---- Toast Mobile ---- */
+  /* ── Toast Mobile ── */
   .toast-container {
     right: 12px;
     left: 12px;
@@ -6223,7 +6252,7 @@ body.menu-open {
     padding: 12px 16px;
   }
 
-  /* ---- Pages Mobile ---- */
+  /* ── Pages Mobile ── */
   .wishlist-page,
   .order-history-page,
   .notifications-page,
@@ -6249,7 +6278,7 @@ body.menu-open {
     padding: 0 16px 14px;
   }
 
-  /* ---- Admin Tables Mobile: horizontal scroll ---- */
+  /* ── Admin Tables Mobile: horizontal scroll ── */
   .admin-table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -6260,15 +6289,59 @@ body.menu-open {
   .admin-table {
     min-width: 600px;
   }
+
+  /* ── Premium Mobile: Full-width buttons ── */
+  .zc-btn--full {
+    width: 100% !important;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  /* ── Premium Mobile: Touch-friendly form elements ── */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  /* ── Premium Mobile: Reduce animations for performance ── */
+  .glass-orb {
+    display: none;
+  }
+
+  /* ── Premium Mobile: Card spacing ── */
+  .menu-card {
+    margin-bottom: 0;
+  }
+
+  /* ── Premium Mobile: Scrollbar hide utility ── */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @media (max-width: 576px) {
-  /* ---- Stat Cards Mobile ---- */
+  /* ── Small Mobile Base ── */
+  html {
+    font-size: 14px;
+  }
+
+  /* ── Stat Cards Mobile ── */
   .stat-cards {
     grid-template-columns: 1fr;
   }
 
-  /* ---- Product Detail Mobile ---- */
+  /* ── Product Detail Mobile ── */
   .pd-options {
     flex-direction: column;
   }
@@ -6290,7 +6363,7 @@ body.menu-open {
     gap: 16px;
   }
 
-  /* ---- Cart Mobile ---- */
+  /* ── Cart Mobile ── */
   .cart-container {
     padding-top: 100px;
   }
@@ -6304,13 +6377,13 @@ body.menu-open {
     min-width: auto;
   }
 
-  /* ---- Search Mobile ---- */
+  /* ── Search Mobile ── */
   .search-result-img {
     width: 52px;
     height: 52px;
   }
 
-  /* ---- Order History Mobile ---- */
+  /* ── Order History Mobile ── */
   .order-history-card {
     padding: 16px;
   }
@@ -6318,6 +6391,26 @@ body.menu-open {
   .order-history-card .order-items-preview .item-thumb {
     width: 40px;
     height: 40px;
+  }
+
+  /* ── Tracking Mobile ── */
+  .tracking-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tracking-step-label {
+    font-size: 8px;
+  }
+
+  .tracking-step-dot {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .tracking-steps {
+    gap: 0;
   }
 }
 

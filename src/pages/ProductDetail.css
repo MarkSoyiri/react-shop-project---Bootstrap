@@ -114,16 +114,20 @@
 
 @media (max-width: 768px) {
   .pd-add-section { flex-direction: column; align-items: stretch; }
-  .pd-add-btn { max-width: none; width: 100%; }
+  .pd-add-btn { max-width: none; width: 100%; min-height: 48px; }
   .pd-quantity button { width: 44px; height: 44px; }
   .pd-columns { gap: 24px; }
+  .pd-option-btn { min-height: 44px; padding: 12px 16px; }
+  .pd-addon { min-height: 44px; padding: 10px 14px; }
 }
 
 @media (max-width: 576px) {
   .pd-options { flex-direction: column; }
-  .pd-option-btn { width: 100%; text-align: center; }
+  .pd-option-btn { width: 100%; text-align: center; min-height: 44px; }
   .pd-info h1 { font-size: 1.3rem; }
   .pd-price { font-size: 24px; }
-  .pd-nutrition-grid { gap: 16px; }
-  .pd-review-form { padding: 16px; }
+  .pd-nutrition-grid { gap: 12px; }
+  .pd-review-form { padding: 14px; }
+  .pd-quantity button { width: 44px; height: 44px; }
+  .pd-textarea { min-height: 70px; padding: 12px; font-size: 15px; }
 }

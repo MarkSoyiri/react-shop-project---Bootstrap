@@ -128,6 +128,28 @@ export function HomeNav () {
             {mobileOpen && (
                 <div className="zc-mobile-menu" style={styles.mobileMenu}>
                     <div style={styles.mobileMenuInner}>
+                        {/* Profile link at top for logged-in users */}
+                        {user && (
+                            <Link
+                                to="/userprofile"
+                                style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive('/userprofile') ? styles.mobileLinkActive : {}),
+                                    marginBottom: 8,
+                                    paddingBottom: 16,
+                                    borderBottom: '1px solid rgba(0,0,0,0.06)',
+                                }}
+                                onClick={closeMobile}
+                            >
+                                <span style={{ fontSize: 20 }}>👤</span>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15 }}>My Profile</div>
+                                    <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 400 }}>{user.email}</div>
+                                </div>
+                            </Link>
+                        )}
+
+                        {/* Primary nav links */}
                         {navLinks.map((link) => (
                             <Link
                                 key={link.to}
@@ -138,41 +160,80 @@ export function HomeNav () {
                                 }}
                                 onClick={closeMobile}
                             >
+                                {link.to === '/menu' && <span style={{ fontSize: 20 }}>🍽️</span>}
+                                {link.to === '/search' && <span style={{ fontSize: 20 }}>🔍</span>}
+                                {link.to === '/storelocation' && <span style={{ fontSize: 20 }}>📍</span>}
+                                {link.to === '/contact' && <span style={{ fontSize: 20 }}>💬</span>}
                                 {link.label}
                             </Link>
                         ))}
+
+                        {/* Divider */}
+                        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+
+                        {/* Cart */}
                         <Link to="/cart" style={{
                             ...styles.mobileLink,
                             ...(isActive('/cart') ? styles.mobileLinkActive : {})
                         }} onClick={closeMobile}>
-                            Cart {cartCount > 0 && <span style={styles.cartBadgeMobile}>{cartCount}</span>}
+                            <span style={{ fontSize: 20 }}>🛒</span>
+                            Cart
+                            {cartCount > 0 && (
+                                <span style={styles.cartBadgeMobile}>{cartCount}</span>
+                            )}
                         </Link>
+
                         {user && (
                             <>
                                 <Link to="/wishlist" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/wishlist') ? styles.mobileLinkActive : {})
-                                }} onClick={closeMobile}>Wishlist</Link>
+                                }} onClick={closeMobile}>
+                                    <span style={{ fontSize: 20 }}>❤️</span>
+                                    Wishlist
+                                </Link>
                                 <Link to="/orders" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/orders') ? styles.mobileLinkActive : {})
-                                }} onClick={closeMobile}>Orders</Link>
-                                {user?.role === 'admin' && (
-                                    <Link to="/admin" style={{
-                                        ...styles.mobileLink,
-                                        ...(isActive('/admin') ? styles.mobileLinkActive : {})
-                                    }} onClick={closeMobile}>
-                                        Admin Panel
-                                    </Link>
-                                )}
-                                <Link to="/userprofile" style={{
-                                    ...styles.mobileLink,
-                                    ...(isActive('/userprofile') ? styles.mobileLinkActive : {})
-                                }} onClick={closeMobile}>Profile</Link>
+                                }} onClick={closeMobile}>
+                                    <span style={{ fontSize: 20 }}>📦</span>
+                                    My Orders
+                                </Link>
                             </>
                         )}
+
+                        {user?.role === 'admin' && (
+                            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }}>
+                            </div>
+                        )}
+
+                        {user?.role === 'admin' && (
+                            <Link to="/admin" style={{
+                                ...styles.mobileLink,
+                                ...(isActive('/admin') ? styles.mobileLinkActive : {})
+                            }} onClick={closeMobile}>
+                                <span style={{ fontSize: 20 }}>⚙️</span>
+                                Admin Panel
+                            </Link>
+                        )}
+
+                        {/* Sign out at bottom for logged-in users */}
+                        {user && (
+                            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+                        )}
+                        {user && (
+                            <Link to="/login" style={{
+                                ...styles.mobileLink,
+                                color: '#dc2626',
+                            }} onClick={() => { closeMobile(); document.body.classList.remove('menu-open'); }}>
+                                <span style={{ fontSize: 20 }}>🚪</span>
+                                Sign Out
+                            </Link>
+                        )}
+
+                        {/* Auth buttons for guests */}
                         {!user && (
-                            <div style={{ marginTop: 8 }}>
+                            <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
                                 <IsLogout />
                             </div>
                         )}
@@ -272,18 +333,23 @@ const responsiveNavCSS = `
     .zc-nav-collapse { display: none !important; }
     .zc-mobile-menu { display: block !important; }
   }
+  @media (min-width: 993px) {
+    .zc-mobile-menu { display: none !important; }
+  }
 `;
 
 const responsiveFooterCSS = `
   .zc-footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
-  @media (max-width: 768px) { .zc-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
-  @media (max-width: 576px) { .zc-footer-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 768px) {
+  @media (max-width: 768px) { 
+    .zc-footer-grid { grid-template-columns: 1fr; gap: 24px; } 
     .zc-newsletter-form { flex-direction: column; }
     .zc-newsletter-form input { min-height: 44px; border-right: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); }
     .zc-newsletter-form button { min-height: 44px; border-radius: var(--radius-sm); }
     .zc-footer-links a { min-height: 44px; display: flex; align-items: center; }
     .zc-social-icon { min-width: 44px; min-height: 44px; }
+  }
+  @media (max-width: 576px) { 
+    .zc-footer-grid { gap: 20px; }
   }
 `;
 
@@ -417,41 +483,39 @@ const styles = {
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'var(--glass-bg-elevated)',
-        backdropFilter: 'blur(var(--glass-blur-lg)) saturate(200%)',
-        WebkitBackdropFilter: 'blur(var(--glass-blur-lg)) saturate(200%)',
-        borderBottom: '1px solid var(--glass-border)',
-        boxShadow: 'var(--glass-shadow-lg)',
+        background: 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: 'blur(20px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(200%)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
         zIndex: 999,
         animation: 'fadeDown 0.3s ease-out',
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
     },
     mobileMenuInner: {
-        padding: '16px 24px',
+        padding: '20px 20px 100px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 4,
+        gap: 6,
     },
     mobileLink: {
-        display: 'block',
-        padding: '14px 16px',
-        minHeight: 48,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        padding: '16px 18px',
+        minHeight: 52,
         fontSize: 16,
         fontWeight: 500,
         color: 'var(--color-text)',
         textDecoration: 'none',
-        borderRadius: 'var(--radius-sm)',
-        transition: 'all var(--transition)',
+        borderRadius: 14,
+        transition: 'all 0.2s ease',
         lineHeight: '20px',
     },
     mobileLinkActive: {
-        background: 'var(--glass-bg-brand)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        background: 'rgba(232, 93, 4, 0.08)',
         color: 'var(--color-brand)',
         fontWeight: 600,
-        border: '1px solid rgba(232, 93, 4, 0.12)',
     },
     cartBadgeMobile: {
         background: 'var(--color-brand)',
@@ -494,13 +558,13 @@ const styles = {
     footerInner: {
         maxWidth: 'var(--container-xl)',
         margin: '0 auto',
-        padding: '60px 24px 32px',
+        padding: '48px 20px 24px',
     },
     footerHeading: {
         color: 'white',
         fontSize: 15,
         fontWeight: 700,
-        marginBottom: 16,
+        marginBottom: 14,
     },
     footerLinks: {
         listStyle: 'none',
@@ -557,7 +621,7 @@ const styles = {
     },
     newsletterInput: {
         flex: 1,
-        padding: '8px 12px',
+        padding: '10px 14px',
         border: '1px solid rgba(255,255,255,0.15)',
         borderRight: 'none',
         borderRadius: 'var(--radius-sm) 0 0 var(--radius-sm)',
@@ -568,9 +632,10 @@ const styles = {
         fontSize: 13,
         outline: 'none',
         minWidth: 0,
+        minHeight: 44,
     },
     newsletterBtn: {
-        padding: '8px 16px',
+        padding: '10px 16px',
         border: 'none',
         borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
         background: 'linear-gradient(135deg, var(--color-brand), var(--color-brand-dark))',
@@ -582,5 +647,6 @@ const styles = {
         transition: 'all var(--transition)',
         position: 'relative',
         overflow: 'hidden',
+        minHeight: 44,
     },
 };

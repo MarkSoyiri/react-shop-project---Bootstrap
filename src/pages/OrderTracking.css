@@ -56,19 +56,20 @@
 .tracking-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
 @media (max-width: 768px) {
-  .tracking-card { padding: 16px; }
+  .tracking-card { padding: 16px; border-radius: 14px; }
   .tracking-item { flex-wrap: wrap; gap: 6px; }
   .tracking-item-info { flex: 1; }
   .tracking-timeline-item { gap: 8px; }
-  .tracking-eta { padding: 12px 16px; }
+  .tracking-eta { padding: 12px 16px; border-radius: 12px; }
 }
 
 @media (max-width: 576px) {
-  .tracking-step-label { font-size: 9px; overflow: hidden; text-overflow: ellipsis; }
+  .tracking-step-label { font-size: 8px; overflow: hidden; text-overflow: ellipsis; }
   .tracking-step-dot { width: 28px; height: 28px; font-size: 10px; }
   .tracking-steps { gap: 0; }
-  .tracking-header { flex-direction: column; align-items: flex-start; }
-  .tracking-progress-steps { overflow-x: auto; gap: 4px; padding-bottom: 8px; }
+  .tracking-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .tracking-progress-steps { overflow-x: auto; gap: 4px; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tracking-progress-steps::-webkit-scrollbar { display: none; }
   .tracking-progress-step { min-width: 56px; }
   .tracking-progress-step span { font-size: 9px !important; }
 }
