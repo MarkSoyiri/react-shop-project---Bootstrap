@@ -29,6 +29,7 @@ export function Card({ products }) {
                                 src={food.image}
                                 alt={food.name}
                                 className="zc-product-card__img"
+                                loading="lazy"
                                 onError={(e) => { e.target.style.display = 'none'; }}
                             />
                             <div className="zc-product-card__badges">
@@ -108,7 +109,7 @@ export function MiniCard() {
                         transition={{ duration: 0.3 }}
                     >
                         <div className="miniCardImgWrap">
-                            <img src={categoryImages[cat.key]} alt={cat.name} className="miniCardImg" />
+                            <img src={categoryImages[cat.key]} alt={cat.name} className="miniCardImg" loading="lazy" />
                             <div className="miniCardOverlay" />
                             <h3 className="miniCardTitle">{cat.name}</h3>
                         </div>

@@ -560,7 +560,7 @@ function ProductDetail() {
                 >
                   <div className="pd-related-card__img-wrap">
                     {ri.image ? (
-                      <img src={ri.image} alt={ri.name} className="pd-related-card__img" />
+                      <img src={ri.image} alt={ri.name} className="pd-related-card__img" loading="lazy" />
                     ) : (
                       <div className="pd-related-card__placeholder">No Image</div>
                     )}
