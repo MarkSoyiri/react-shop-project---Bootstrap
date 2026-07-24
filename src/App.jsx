@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 
 import "./App.css";
 import "./css/Pages.css";
@@ -224,7 +225,9 @@ function App() {
             {isLoading && <GlobalLoader />}
 
             <BrowserRouter>
-              <Layout />
+              <MotionConfig reducedMotion="user">
+                <Layout />
+              </MotionConfig>
             </BrowserRouter>
           </div>
         </CartProvider>

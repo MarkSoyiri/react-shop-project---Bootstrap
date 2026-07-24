@@ -232,11 +232,19 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
+  .glass-orb { animation: none !important; opacity: 0.4; }
   .hero-title {
     font-size: clamp(2.2rem, 8vw, 3.2rem);
     letter-spacing: -0.025em;
   }
-  .hero-title__glow--brand { opacity: 0.2; filter: blur(50px); }
+  .hero-title__word {
+    animation: none !important;
+    -webkit-text-fill-color: white;
+    background: none;
+  }
+  .hero-title__glow { animation: none !important; opacity: 0.2; }
+  .hero-title__glow--brand { opacity: 0.15; filter: blur(40px); }
+  .hero-title__glow--accent { opacity: 0.15; filter: blur(40px); }
   .hero-title__glow--accent { opacity: 0.15; filter: blur(40px); }
 }
 

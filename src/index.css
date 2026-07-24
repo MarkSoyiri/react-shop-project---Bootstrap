@@ -421,6 +421,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
+  :root {
+    --glass-blur-lg: 12px;
+    --glass-blur-md: 8px;
+    --glass-blur-sm: 4px;
+  }
   .section { padding-block: 48px; }
   .container, .container-sm, .container-md, .container-lg, .container-xl, .container-2xl {
     padding-inline: var(--space-4);

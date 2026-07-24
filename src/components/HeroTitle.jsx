@@ -49,6 +49,8 @@ export default function HeroTitle() {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
+    const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const springConfig = { stiffness: 60, damping: 20, mass: 1.5 };
     const smoothX = useSpring(mouseX, springConfig);
     const smoothY = useSpring(mouseY, springConfig);
@@ -59,6 +61,8 @@ export default function HeroTitle() {
     const glowY = useTransform(smoothY, [-0.5, 0.5], [-20, 20]);
 
     useEffect(() => {
+        if (isTouchDevice) return;
+
         const el = containerRef.current;
         if (!el) return;
 
@@ -72,7 +76,7 @@ export default function HeroTitle() {
 
         el.addEventListener('mousemove', handleMouseMove, { passive: true });
         return () => el.removeEventListener('mousemove', handleMouseMove);
-    }, [mouseX, mouseY]);
+    }, [mouseX, mouseY, isTouchDevice]);
 
     const wordCount = useMemo(
         () => lines.reduce((acc, line) => acc + line.length, 0),

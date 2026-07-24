@@ -2,11 +2,52 @@ import { useState, useEffect } from 'react';
 
 const Toast = ({ toasts, removeToast }) => {
   return (
-    <div style={styles.container}>
-      {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
-      ))}
-    </div>
+    <>
+      <style>{`
+        .zc-toast-container {
+          position: fixed;
+          top: 88px;
+          right: 24px;
+          z-index: 1070;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          max-width: 380px;
+          width: 100%;
+          pointer-events: none;
+        }
+        .zc-toast-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          background: white;
+          border-radius: var(--radius-xl);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+          border-left: 4px solid;
+          min-width: 300px;
+          pointer-events: all;
+          animation: toastSlideIn 0.3s ease-out;
+        }
+        @media (max-width: 576px) {
+          .zc-toast-container {
+            top: 72px;
+            right: 12px;
+            left: 12px;
+            max-width: none;
+            width: auto;
+          }
+          .zc-toast-item {
+            min-width: 0;
+          }
+        }
+      `}</style>
+      <div className="zc-toast-container">
+        {toasts.map((toast) => (
+          <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
+        ))}
+      </div>
+    </>
   );
 };
 
@@ -36,11 +77,10 @@ const ToastItem = ({ toast, onRemove }) => {
 
   return (
     <div
+      className="zc-toast-item"
       style={{
-        ...styles.toast,
         borderLeftColor: config.color,
         animation: exiting ? 'toastSlideOut 0.3s ease-in forwards' : 'toastSlideIn 0.3s ease-out',
-        pointerEvents: 'all',
       }}
       role="alert"
     >
@@ -60,31 +100,6 @@ const ToastItem = ({ toast, onRemove }) => {
 };
 
 const styles = {
-  container: {
-    position: 'fixed',
-    top: 88,
-    right: 24,
-    zIndex: 1070,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10,
-    maxWidth: 380,
-    width: '100%',
-    pointerEvents: 'none',
-  },
-  toast: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    padding: '14px 16px',
-    background: 'white',
-    borderRadius: 'var(--radius-xl)',
-    boxShadow: '0 24px 60px rgba(0, 0, 0, 0.15)',
-    borderLeft: '4px solid',
-    minWidth: 300,
-    pointerEvents: 'all',
-    animation: 'toastSlideIn 0.3s ease-out',
-  },
   iconCircle: {
     width: 32,
     height: 32,

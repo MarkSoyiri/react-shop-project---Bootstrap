@@ -40,15 +40,38 @@ export const SkeletonStat = () => (
 );
 
 export const SkeletonPage = () => (
-  <div style={styles.pageWrap}>
-    <div className="skeleton" style={{ width: 220, height: 32, borderRadius: 'var(--radius-sm)', marginBottom: 32 }} />
-    <div className="skeleton" style={{ width: 340, height: 16, borderRadius: 'var(--radius-sm)', marginBottom: 40 }} />
-    <div style={styles.pageGrid}>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <SkeletonCard key={i} />
-      ))}
+  <>
+    <style>{`
+      .zc-skeleton-page-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .zc-skeleton-page-wrap {
+        padding: 120px 24px 80px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      @media (max-width: 992px) {
+        .zc-skeleton-page-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 576px) {
+        .zc-skeleton-page-grid { grid-template-columns: 1fr; gap: 16px; }
+        .zc-skeleton-page-wrap { padding: 100px 16px 60px; }
+      }
+    `}</style>
+    <div className="zc-skeleton-page-wrap">
+      <div className="skeleton" style={{ width: 220, height: 32, borderRadius: 'var(--radius-sm)', marginBottom: 32 }} />
+      <div className="skeleton" style={{ width: 340, height: 16, borderRadius: 'var(--radius-sm)', marginBottom: 40 }} />
+      <div className="zc-skeleton-page-grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
     </div>
-  </div>
+  </>
 );
 
 const styles = {
@@ -96,17 +119,5 @@ const styles = {
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-lg)',
     padding: 24,
-  },
-  pageWrap: {
-    padding: '120px 24px 80px',
-    maxWidth: 1100,
-    margin: '0 auto',
-  },
-  pageGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 24,
-    maxWidth: 1200,
-    margin: '0 auto',
   },
 };

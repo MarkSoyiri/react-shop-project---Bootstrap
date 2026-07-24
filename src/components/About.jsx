@@ -20,7 +20,7 @@ function About() {
   return (
     <div>
       {/* Hero banner */}
-      <div style={{
+      <div className="about-hero" style={{
         background: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
         padding: '140px 24px 80px', textAlign: 'center'
       }}>
@@ -37,7 +37,7 @@ function About() {
       </div>
 
       {/* Story */}
-      <div style={{ padding: '72px 24px', maxWidth: 800, margin: '0 auto' }}>
+      <div className="about-section" style={{ padding: '72px 24px', maxWidth: 800, margin: '0 auto' }}>
         <h2 style={{
           fontSize: 28, fontWeight: 800, color: 'var(--color-text)', marginBottom: 20, textAlign: 'center'
         }}>
@@ -70,7 +70,7 @@ function About() {
       </div>
 
       {/* Values */}
-      <div style={{ padding: '72px 24px', background: 'var(--color-bg-alt)' }}>
+      <div className="about-section" style={{ padding: '72px 24px', background: 'var(--color-bg-alt)' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <h2 style={{
             fontSize: 28, fontWeight: 800, color: 'var(--color-text)',
@@ -116,6 +116,14 @@ function About() {
       <style>{`
         @media (max-width: 768px) {
           .values-grid { grid-template-columns: 1fr !important; }
+          .about-hero { padding: 110px 20px 50px !important; }
+          .about-hero h1 { font-size: 30px !important; }
+          .about-hero p { font-size: 16px !important; }
+          .about-section { padding: 48px 20px !important; }
+        }
+        @media (max-width: 480px) {
+          .about-hero { padding: 100px 16px 40px !important; }
+          .about-hero h1 { font-size: 26px !important; }
         }
       `}</style>
     </div>
