@@ -141,7 +141,6 @@ export function HomeNav () {
                                 }}
                                 onClick={closeMobile}
                             >
-                                <span style={{ fontSize: 20 }}>👤</span>
                                 <div>
                                     <div style={{ fontWeight: 600, fontSize: 15 }}>My Profile</div>
                                     <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 400 }}>{user.email}</div>
@@ -160,10 +159,6 @@ export function HomeNav () {
                                 }}
                                 onClick={closeMobile}
                             >
-                                {link.to === '/menu' && <span style={{ fontSize: 20 }}>🍽️</span>}
-                                {link.to === '/search' && <span style={{ fontSize: 20 }}>🔍</span>}
-                                {link.to === '/storelocation' && <span style={{ fontSize: 20 }}>📍</span>}
-                                {link.to === '/contact' && <span style={{ fontSize: 20 }}>💬</span>}
                                 {link.label}
                             </Link>
                         ))}
@@ -176,7 +171,6 @@ export function HomeNav () {
                             ...styles.mobileLink,
                             ...(isActive('/cart') ? styles.mobileLinkActive : {})
                         }} onClick={closeMobile}>
-                            <span style={{ fontSize: 20 }}>🛒</span>
                             Cart
                             {cartCount > 0 && (
                                 <span style={styles.cartBadgeMobile}>{cartCount}</span>
@@ -189,14 +183,12 @@ export function HomeNav () {
                                     ...styles.mobileLink,
                                     ...(isActive('/wishlist') ? styles.mobileLinkActive : {})
                                 }} onClick={closeMobile}>
-                                    <span style={{ fontSize: 20 }}>❤️</span>
                                     Wishlist
                                 </Link>
                                 <Link to="/orders" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/orders') ? styles.mobileLinkActive : {})
                                 }} onClick={closeMobile}>
-                                    <span style={{ fontSize: 20 }}>📦</span>
                                     My Orders
                                 </Link>
                             </>
@@ -212,7 +204,6 @@ export function HomeNav () {
                                 ...styles.mobileLink,
                                 ...(isActive('/admin') ? styles.mobileLinkActive : {})
                             }} onClick={closeMobile}>
-                                <span style={{ fontSize: 20 }}>⚙️</span>
                                 Admin Panel
                             </Link>
                         )}
@@ -226,7 +217,6 @@ export function HomeNav () {
                                 ...styles.mobileLink,
                                 color: '#dc2626',
                             }} onClick={() => { closeMobile(); document.body.classList.remove('menu-open'); }}>
-                                <span style={{ fontSize: 20 }}>🚪</span>
                                 Sign Out
                             </Link>
                         )}
