@@ -44,6 +44,7 @@ function Cart() {
     setOrderResult(null);
     try {
       const { data } = await axiosFetch.post('/api/orders', {
+        items: cartItems,
         address: {},
         orderType: 'delivery',
         paymentMethod: 'cash',
