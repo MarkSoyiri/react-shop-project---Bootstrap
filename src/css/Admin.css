@@ -2878,7 +2878,7 @@
 }
 
 /* ── Activity Feed (Dashboard) ────────────────────────────── */
-.admin-dash-activity { display: flex; flex-direction: column; }
+.admin-dash-activity { display: flex; flex-direction: column; padding-left: 10px; }
 
 /* ── Dashboard responsive overrides ───────────────────────── */
 @media (max-width: 1200px) {
