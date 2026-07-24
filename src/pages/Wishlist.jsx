@@ -51,7 +51,7 @@ function Wishlist() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
+    <div className="wishlist-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
       <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>My Wishlist</h1>
       <p style={{ color: 'var(--color-text-secondary)', fontSize: 14, marginBottom: 32 }}>
         {items.length} saved {items.length === 1 ? 'item' : 'items'}
@@ -114,9 +114,17 @@ function Wishlist() {
           <div style={{ fontSize: 56, marginBottom: 16, opacity: 0.25 }}>&#9825;</div>
           <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Your wishlist is empty</h3>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 24 }}>Browse our menu and save items you love!</p>
-          <button onClick={() => navigate('/menu')} style={{ padding: '12px 32px', borderRadius: 12, border: 'none', background: 'var(--color-brand)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Browse Menu</button>
+          <button onClick={() => navigate('/menu')} style={{ padding: '12px 32px', borderRadius: 12, border: 'none', background: 'var(--color-brand)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44 }}>Browse Menu</button>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .wishlist-page { padding: 80px 16px 40px !important; }
+          .wishlist-page h1 { font-size: 24px !important; }
+          .wishlist-page .foodBox { gap: 12px !important; }
+        }
+      `}</style>
     </div>
   );
 }

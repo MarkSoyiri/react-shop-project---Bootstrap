@@ -65,7 +65,7 @@ function Search() {
         </h1>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} style={{ position: 'relative', maxWidth: '640px', margin: '0 auto 28px', width: '100%' }}>
+        <form onSubmit={handleSearch} className="search-bar-wrap" style={{ position: 'relative', maxWidth: '640px', margin: '0 auto 28px', width: '100%' }}>
           <svg
             style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
             width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -187,6 +187,7 @@ function Search() {
               {results.map(item => (
                 <div
                   key={item._id}
+                  className="search-result-card"
                   style={{
                     display: 'flex', alignItems: 'center', gap: '16px',
                     background: 'var(--color-bg-card)', borderRadius: 'var(--radius-xl)',
@@ -250,6 +251,7 @@ function Search() {
 
                   {/* Add Button */}
                   <button
+                    className="search-add-btn"
                     onClick={(e) => { e.stopPropagation(); handleQuickAdd(item); }}
                     style={{
                       padding: '10px 22px', borderRadius: 'var(--radius-lg)',
@@ -266,6 +268,17 @@ function Search() {
           </>
         )}
       </div>
+
+      <style>{`
+        .search-result-card { transition: box-shadow 200ms, transform 200ms; }
+        .search-result-card:active { transform: scale(0.98); }
+        @media (max-width: 768px) {
+          .search-bar-wrap { position: sticky !important; top: var(--navbar-height) !important; z-index: 20 !important; padding: 12px 0 !important; background: var(--color-bg) !important; }
+          .search-result-card { min-height: 44px; }
+          .search-result-card img { width: 72px !important; height: 72px !important; }
+          .search-add-btn { min-height: 44px !important; padding: 10px 20px !important; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -129,7 +129,7 @@ function Checkout() {
       <Toast />
 
       {/* Progress Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40, gap: 0 }}>
+      <div className="checkout-steps-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40, gap: 0 }}>
         {steps.map((s, i) => {
           const isCompleted = step > s.number;
           const isActive = step === s.number;
@@ -521,6 +521,61 @@ function Checkout() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky CTA Bar */}
+      <div className="checkout-mobile-cta" style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: '#fff', borderTop: '1px solid var(--color-border)',
+        padding: '12px 16px', display: 'none', alignItems: 'center',
+        justifyContent: 'space-between', gap: 12, zIndex: 40,
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+      }}>
+        <div>
+          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Total</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-brand)' }}>
+            {formatCurrency(total)}
+          </div>
+        </div>
+        {step < 3 ? (
+          <button
+            onClick={() => setStep(step + 1)}
+            style={{
+              flex: 1, maxWidth: 200,
+              background: 'var(--color-brand)', color: '#fff',
+              border: 'none', borderRadius: 12, padding: '14px 20px',
+              fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            {step === 1 ? 'Continue to Payment →' : 'Review Order →'}
+          </button>
+        ) : (
+          <button
+            onClick={handleOrder}
+            disabled={loading || !agreedToTerms}
+            style={{
+              flex: 1, maxWidth: 200,
+              background: 'var(--color-brand)', color: '#fff',
+              border: 'none', borderRadius: 12, padding: '14px 20px',
+              fontSize: 15, fontWeight: 700, cursor: loading || !agreedToTerms ? 'not-allowed' : 'pointer',
+              opacity: loading || !agreedToTerms ? 0.5 : 1,
+            }}
+          >
+            {loading ? 'Placing Order...' : 'Place Order'}
+          </button>
+        )}
+      </div>
+
+      <style>{`
+        .checkout-mobile-cta { display: none !important; }
+        @media (max-width: 768px) {
+          .checkout-mobile-cta { display: flex !important; }
+          .checkout-page { padding-bottom: 90px !important; }
+          .checkout-steps-bar { margin-bottom: 24px !important; }
+          .checkout-form-col button[style*="Continue to Payment"], 
+          .checkout-form-col button[style*="Review Order"],
+          .checkout-form-col button[style*="Place Order"] { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }

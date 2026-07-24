@@ -132,6 +132,36 @@ function UserProfile() {
             <div style={{ paddingTop: 40 }}>
             <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>My Account</h1>
 
+            {/* Mobile Horizontal Tabs */}
+            <div className="account-mobile-tabs" style={{ display: 'none', gap: 6, marginBottom: 24, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4 }}>
+                {tabs.map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => handleMenuClick(tab.key)}
+                        style={{
+                            padding: '10px 18px', borderRadius: 100, border: 'none',
+                            cursor: 'pointer', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap',
+                            transition: 'all 0.2s', flexShrink: 0,
+                            background: activeMenu === tab.key ? 'var(--color-brand)' : 'var(--color-bg-card)',
+                            color: activeMenu === tab.key ? '#fff' : 'var(--color-text-secondary)',
+                        }}
+                    >
+                        <span style={{ marginRight: 6 }}>{tab.icon}</span>{tab.label}
+                    </button>
+                ))}
+                <button
+                    onClick={() => { logout(); navigate('/login'); }}
+                    style={{
+                        padding: '10px 18px', borderRadius: 100, border: 'none',
+                        cursor: 'pointer', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap',
+                        transition: 'all 0.2s', flexShrink: 0,
+                        background: '#fef2f2', color: '#dc2626',
+                    }}
+                >
+                    🚪 Sign Out
+                </button>
+            </div>
+
             <div className="account-layout" style={{ display: 'flex', gap: 32 }}>
                 {/* Sidebar */}
                 <div className="account-sidebar-col" style={{
@@ -447,6 +477,18 @@ function UserProfile() {
                 </div>
             </div>
             </div>
+
+            <style>{`
+                .account-mobile-tabs { display: none !important; }
+                @media (max-width: 768px) {
+                    .account-mobile-tabs { display: flex !important; }
+                    .account-sidebar-col { display: none !important; }
+                    .account-layout { flex-direction: column !important; gap: 16px !important; }
+                    .account-page-wrap { padding-left: 16px !important; padding-right: 16px !important; }
+                    .account-page-wrap h1 { font-size: 24px !important; }
+                    .addr-form-grid { grid-template-columns: 1fr !important; }
+                }
+            `}</style>
         </div>
     );
 }

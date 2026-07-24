@@ -327,7 +327,8 @@ function OrderTracking() {
               padding: '10px 20px',
               fontSize: 14,
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              minHeight: 44,
             }}
           >
             Cancel Order
@@ -344,7 +345,8 @@ function OrderTracking() {
               padding: '10px 20px',
               fontSize: 14,
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              minHeight: 44,
             }}
           >
             Order Again
@@ -360,12 +362,33 @@ function OrderTracking() {
             padding: '10px 20px',
             fontSize: 14,
             fontWeight: 600,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            minHeight: 44,
           }}
         >
           Browse Menu
         </button>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .tracking-progress-steps {
+            overflow-x: auto !important;
+            scrollbar-width: none !important;
+            flex-wrap: nowrap !important;
+            padding-bottom: 8px !important;
+            gap: 4px !important;
+          }
+          .tracking-progress-steps::-webkit-scrollbar { display: none !important; }
+          .tracking-progress-step {
+            min-width: 72px !important;
+            flex-shrink: 0 !important;
+          }
+          .tracking-progress-step span {
+            font-size: 10px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -535,6 +535,34 @@ function ProductDetail() {
         )}
       </div>
 
+      {/* Sticky Mobile Add to Cart Bar */}
+      <div className="pd-mobile-cta" style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: '#fff', borderTop: '1px solid var(--color-border)',
+        padding: '12px 16px', display: 'none', alignItems: 'center',
+        gap: 12, zIndex: 40,
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+      }}>
+        <div style={{ flexShrink: 0 }}>
+          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Total</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-brand)' }}>
+            GH₵ {calculatePrice().toFixed(2)}
+          </div>
+        </div>
+        <button
+          onClick={handleAddToCart}
+          style={{
+            flex: 1, maxWidth: 220,
+            background: addedToCart ? 'var(--color-accent)' : 'var(--color-brand)',
+            color: '#fff', border: 'none', borderRadius: 12, padding: '14px 20px',
+            fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            boxShadow: addedToCart ? '0 4px 16px rgba(43,147,72,0.3)' : '0 4px 16px rgba(232,93,4,0.25)',
+          }}
+        >
+          {addedToCart ? '✓ Added!' : 'Add to Cart'}
+        </button>
+      </div>
+
       <style>{`
         .pd-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         @media (max-width: 768px) { 
@@ -544,6 +572,13 @@ function ProductDetail() {
         .pd-nutrition-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
         @media (max-width: 768px) { .pd-nutrition-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 480px) { .pd-nutrition-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+        .pd-mobile-cta { display: none !important; }
+        @media (max-width: 768px) {
+          .pd-mobile-cta { display: flex !important; }
+          .product-detail-page { padding-bottom: 90px !important; }
+          .pd-columns { gap: 16px; }
+          .product-detail-page .container-lg { padding-left: 16px; padding-right: 16px; }
+        }
       `}</style>
     </div>
   );

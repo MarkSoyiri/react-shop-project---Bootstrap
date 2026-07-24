@@ -63,7 +63,7 @@ function Cart() {
   };
 
   return (
-    <div className="cart-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div className="cart-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px', paddingBottom: cartItems.length > 0 ? '60px' : '60px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Your Cart</h1>
         {cartItems.length > 0 && (
@@ -448,6 +448,49 @@ function Cart() {
           </div>
         </div>
       ) : null}
+
+      {/* Mobile Sticky CTA Bar */}
+      {cartItems.length > 0 && (
+        <div className="cart-mobile-cta" style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          background: '#fff', borderTop: '1px solid var(--color-border)',
+          padding: '12px 16px', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 12, zIndex: 40,
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+        }}>
+          <div>
+            <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Total</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-brand)' }}>
+              GH₵ {total.toFixed(2)}
+            </div>
+          </div>
+          <button
+            onClick={handleCheckout}
+            disabled={checkingOut}
+            style={{
+              flex: 1, maxWidth: 200,
+              background: 'var(--color-brand)', color: '#fff',
+              border: 'none', borderRadius: 12, padding: '14px 20px',
+              fontSize: 15, fontWeight: 700, cursor: 'pointer',
+              opacity: checkingOut ? 0.6 : 1
+            }}
+          >
+            {checkingOut ? 'Processing...' : `Place Order`}
+          </button>
+        </div>
+      )}
+
+      <style>{`
+        .cart-mobile-cta { display: none !important; }
+        @media (max-width: 768px) {
+          .cart-mobile-cta { display: flex !important; }
+          .cart-page { padding-bottom: 90px !important; }
+          .cart-summary-col .zc-btn--full, .cart-summary-col button[style*="Place Order"] { display: none !important; }
+          .cart-items-col { gap: 0 !important; }
+          .cart-item-row { min-height: 44px; }
+          .cart-qty-btn { min-width: 44px; min-height: 44px; width: 44px; height: 44px; }
+        }
+      `}</style>
     </div>
   );
 }

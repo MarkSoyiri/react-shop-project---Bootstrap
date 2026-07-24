@@ -197,6 +197,17 @@ function Menu() {
           </motion.div>
         )}
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .menu-page .container-lg { padding-left: 16px; padding-right: 16px; }
+          .menu-page h1 { font-size: 24px !important; }
+          .menu-page .foodBox { gap: 12px !important; }
+        }
+        @media (max-width: 480px) {
+          .menu-page h1 { font-size: 22px !important; }
+        }
+      `}</style>
     </div>
   );
 }
