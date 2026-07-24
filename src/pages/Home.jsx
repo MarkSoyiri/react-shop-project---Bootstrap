@@ -1,4 +1,5 @@
 import { Card } from '../components/Card';
+import HeroTitle from '../components/HeroTitle';
 import zestybanner from '../images/zestybanner.jpg';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -121,14 +122,7 @@ function Home() {
                         <span className="hero-tag">Welcome to Zesty Cave</span>
                     </motion.div>
 
-                    <motion.h1
-                        className="hero-title"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        Taste the Fire,<br />Feel the Rhythm
-                    </motion.h1>
+                    <HeroTitle />
 
                     <motion.p
                         className="hero-subtitle"

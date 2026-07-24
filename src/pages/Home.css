@@ -92,13 +92,171 @@
   backdrop-filter: blur(4px);
   border: 1px solid rgba(232,93,4,0.3);
 }
-.hero-title {
-  font-size: clamp(2.8rem, 6.5vw, 4.5rem);
-  font-weight: 800;
-  color: white;
-  line-height: 1.08;
+/* =========================================
+   HERO TITLE — Premium Animated Gradient
+   ========================================= */
+.hero-title__wrapper {
+  position: relative;
   margin-bottom: 18px;
-  letter-spacing: -0.025em;
+  isolation: isolate;
+}
+
+.hero-title {
+  font-size: clamp(2.6rem, 6.5vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title__line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28em;
+}
+
+.hero-title__word {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f5f5f5 20%,
+    var(--color-brand-light, #f48c06) 45%,
+    var(--color-brand, #e85d04) 60%,
+    #ffffff 80%,
+    var(--color-brand-light, #f48c06) 100%
+  );
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 250% 250%;
+
+  /* Floating / breathing continuous animation */
+  animation:
+    heroTitleGradient 8s ease-in-out infinite,
+    heroTitleFloat 6s ease-in-out infinite;
+  animation-delay:
+    calc(var(--word-index) * 0.3s + var(--line-index) * 0.5s),
+    calc(var(--word-index) * 0.4s);
+
+  will-change: transform;
+}
+
+@keyframes heroTitleGradient {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+}
+
+@keyframes heroTitleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Ambient glow orbs behind the title */
+.hero-title__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: -1;
+  will-change: transform, opacity;
+  animation: heroGlowPulse 5s ease-in-out infinite alternate;
+}
+
+.hero-title__glow--brand {
+  width: clamp(220px, 35vw, 420px);
+  height: clamp(100px, 18vw, 200px);
+  background: radial-gradient(ellipse, var(--color-brand, #e85d04) 0%, transparent 70%);
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+}
+
+.hero-title__glow--accent {
+  width: clamp(160px, 28vw, 340px);
+  height: clamp(80px, 14vw, 160px);
+  background: radial-gradient(ellipse, var(--color-brand-light, #f48c06) 0%, transparent 70%);
+  top: 50%;
+  right: 15%;
+  transform: translate(50%, -50%);
+  animation-delay: 2s;
+}
+
+@keyframes heroGlowPulse {
+  0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0.45; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.hero-title__glow--accent {
+  animation-name: heroGlowPulseAlt;
+}
+
+@keyframes heroGlowPulseAlt {
+  0% { opacity: 0.2; transform: translate(50%, -50%) scale(1); }
+  100% { opacity: 0.4; transform: translate(50%, -50%) scale(1.12); }
+}
+
+/* Text shine sweep */
+.hero-title__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 48%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.18) 52%,
+    transparent 70%
+  );
+  width: 60%;
+  mix-blend-mode: overlay;
+}
+
+/* Focus/hover glow */
+.hero-title__word:hover {
+  text-shadow:
+    0 0 20px rgba(232, 93, 4, 0.25),
+    0 0 60px rgba(232, 93, 4, 0.1);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(2.2rem, 8vw, 3.2rem);
+    letter-spacing: -0.025em;
+  }
+  .hero-title__glow--brand { opacity: 0.2; filter: blur(50px); }
+  .hero-title__glow--accent { opacity: 0.15; filter: blur(40px); }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(1.8rem, 9vw, 2.4rem);
+    letter-spacing: -0.02em;
+  }
+  .hero-title__shine { display: none; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-title__word {
+    animation: none !important;
+    -webkit-text-fill-color: white;
+    background: none;
+  }
+  .hero-title__shine { animation: none !important; opacity: 0; }
+  .hero-title__glow { animation: none !important; opacity: 0.3; }
 }
 .hero-subtitle {
   font-size: clamp(1rem, 2vw, 1.25rem);
