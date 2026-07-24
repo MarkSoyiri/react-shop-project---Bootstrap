@@ -48,8 +48,8 @@ function Checkout() {
     if (!form.couponCode) return;
     try {
       const res = await post('/coupons/validate', { code: form.couponCode, orderTotal: subtotal });
-      setCouponDiscount(res.data);
-      addToast(`Coupon applied! ${res.data.title}`, 'success');
+      setCouponDiscount(res);
+      addToast(`Coupon applied! ${res.code}`, 'success');
     } catch (err) {
       setCouponDiscount(null);
       addToast(err.message, 'error');
@@ -59,6 +59,7 @@ function Checkout() {
   const handleOrder = async () => {
     try {
       const res = await post('/orders', {
+        items: cartItems,
         name: form.name,
         deliveryAddress: form.deliveryAddress,
         paymentMethod: form.paymentMethod,
@@ -68,7 +69,7 @@ function Checkout() {
       });
       clearCart();
       addToast('Order placed successfully!', 'success');
-      navigate(`/order/${res.data._id}`);
+      navigate(`/order/${res._id || res.data?._id}`);
     } catch (err) {
       addToast(err.message, 'error');
     }
@@ -409,7 +410,7 @@ function Checkout() {
                     </div>
                     {couponDiscount && (
                       <div style={{ color: 'var(--color-accent)', fontSize: 13, marginTop: 6, fontWeight: 500 }}>
-                        ✓ {couponDiscount.title} — Saving {formatCurrency(couponDiscount.discount)}
+                        ✓ {couponDiscount.code} — {couponDiscount.type === 'percentage' ? `${couponDiscount.value}% off` : `${formatCurrency(couponDiscount.value)} off`}
                       </div>
                     )}
                   </div>
