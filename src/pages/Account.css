@@ -62,10 +62,15 @@
 
 @media (max-width: 768px) {
   .account-page { padding-top: 100px; }
+  .account-page-wrap { padding: 0 16px !important; }
+  .account-layout { flex-direction: column !important; gap: 20px !important; }
+  .account-sidebar-col { width: 100% !important; min-width: 0 !important; }
+  .account-avatar-wrap { display: flex; align-items: center; gap: 16px; text-align: left !important; }
   .account-sidebar { position: static; padding: 16px; }
   .account-nav { flex-direction: row; flex-wrap: wrap; gap: 6px; }
   .account-nav-btn { padding: 10px 14px; min-height: 44px; font-size: 13px; }
   .account-card { padding: 16px; }
   .account-field input { padding: 12px 14px; min-height: 48px; font-size: 16px; }
   .address-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
+  .addr-form-grid { grid-template-columns: 1fr !important; }
 }

@@ -125,7 +125,7 @@ function Checkout() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div className="checkout-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
       <Toast />
 
       {/* Progress Bar */}
@@ -176,9 +176,9 @@ function Checkout() {
         })}
       </div>
 
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <div className="checkout-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         {/* Left: Form */}
-        <div style={{ flex: '1 1 580px', minWidth: 0 }}>
+        <div className="checkout-form-col" style={{ flex: '1 1 580px', minWidth: 0 }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -471,7 +471,7 @@ function Checkout() {
         </div>
 
         {/* Right: Order Summary */}
-        <div style={{ flex: '0 0 340px', position: 'sticky', top: 100 }}>
+        <div className="checkout-summary-col" style={{ flex: '0 0 340px', position: 'sticky', top: 100 }}>
           <div style={{
             background: '#fff',
             borderRadius: 16,

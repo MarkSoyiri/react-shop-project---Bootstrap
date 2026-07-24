@@ -96,7 +96,7 @@ function OrderTracking() {
       {/* Progress Bar */}
       {order.status !== 'cancelled' && (
         <div style={cardStyle}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative' }}>
+          <div className="tracking-progress-steps" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative' }}>
             {/* Connecting line */}
             <div style={{
               position: 'absolute',
@@ -125,7 +125,7 @@ function OrderTracking() {
               const isComplete = idx <= getStatusIndex();
               const isCurrent = idx === getStatusIndex();
               return (
-                <div key={step} style={{
+                <div key={step} className="tracking-progress-step" style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

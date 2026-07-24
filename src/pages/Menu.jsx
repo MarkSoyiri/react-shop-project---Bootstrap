@@ -57,7 +57,7 @@ function Menu() {
     return (
       <div className="menu-page" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
         <div className="container-lg">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+          <div className="foodBox" style={{ gap: '24px' }}>
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}

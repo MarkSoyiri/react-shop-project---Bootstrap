@@ -70,6 +70,21 @@
 .cart-checkout-btn:hover { background: var(--color-accent-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(43,147,72,0.3); }
 
 @media (max-width: 768px) {
+  .cart-page { padding: 100px 16px 40px !important; }
+  .cart-layout { flex-direction: column !important; }
+  .cart-items-col { flex: 1 1 auto !important; width: 100%; }
+  .cart-summary-col { flex: 1 1 auto !important; width: 100%; position: static !important; }
+  .cart-item-row { flex-wrap: wrap; padding: 14px; gap: 10px; }
+  .cart-item-controls { width: 100%; justify-content: space-between; margin-top: 4px; }
+  .cart-qty-controls { gap: 4px; }
+  .cart-qty-btn { width: 40px; height: 40px; font-size: 16px; }
+  .cart-summary { position: static; margin-top: 12px; }
+  .cart-bottom-actions { flex-direction: column; }
+  .cart-coupon { flex-direction: column; }
+  .cart-coupon input, .cart-coupon button { width: 100%; }
+}
+
+@media (max-width: 768px) {
   .cart-container { padding-top: 100px; }
   .cart-item-row { flex-wrap: wrap; }
   .cart-item-controls { width: 100%; justify-content: space-between; margin-top: 8px; }

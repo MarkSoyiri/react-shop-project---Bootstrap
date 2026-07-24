@@ -128,18 +128,18 @@ function UserProfile() {
     ];
 
     return (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', paddingTop: 'var(--navbar-height)', paddingBottom: 80 }}>
+        <div className="account-page-wrap" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', paddingTop: 'var(--navbar-height)', paddingBottom: 80 }}>
             <div style={{ paddingTop: 40 }}>
             <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>My Account</h1>
 
-            <div style={{ display: 'flex', gap: 32 }}>
+            <div className="account-layout" style={{ display: 'flex', gap: 32 }}>
                 {/* Sidebar */}
-                <div style={{
+                <div className="account-sidebar-col" style={{
                     width: '25%', minWidth: 220, flexShrink: 0,
                     background: '#fff', borderRadius: 16, padding: 24,
                     border: '1px solid var(--color-border)',
                 }}>
-                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                    <div className="account-avatar-wrap" style={{ textAlign: 'center', marginBottom: 24 }}>
                         <div style={{
                             width: 80, height: 80, borderRadius: '50%',
                             background: 'var(--color-brand)', color: '#fff',
@@ -302,7 +302,7 @@ function UserProfile() {
 
                             <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
                                 <h5 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Add New Address</h5>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 560 }}>
+                                <div className="addr-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 560 }}>
                                     <div>
                                         <label style={labelStyle}>Label</label>
                                         <select

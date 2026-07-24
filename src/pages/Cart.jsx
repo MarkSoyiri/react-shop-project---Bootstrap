@@ -63,7 +63,7 @@ function Cart() {
   };
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div className="cart-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Your Cart</h1>
         {cartItems.length > 0 && (
@@ -152,9 +152,9 @@ function Cart() {
           </button>
         </div>
       ) : cartItems.length > 0 ? (
-        <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
+        <div className="cart-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
           {/* Left: Items */}
-          <div style={{ flex: '1 1 580px', minWidth: 0 }}>
+          <div className="cart-items-col" style={{ flex: '1 1 580px', minWidth: 0 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {cartItems.map((item, idx) => (
                 <div
@@ -333,7 +333,7 @@ function Cart() {
           </div>
 
           {/* Right: Summary */}
-          <div style={{ flex: '0 0 360px', position: 'sticky', top: 100 }}>
+          <div className="cart-summary-col" style={{ flex: '0 0 360px', position: 'sticky', top: 100 }}>
             <div style={{
               background: '#fff',
               borderRadius: 16,
