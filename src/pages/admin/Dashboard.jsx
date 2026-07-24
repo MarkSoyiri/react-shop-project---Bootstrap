@@ -75,11 +75,35 @@ function StatusChart({ data }) {
     );
 }
 
+function timeAgo(date) {
+    const seconds = Math.floor((Date.now() - new Date(date)) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+const activityMeta = {
+    order:          { bg: 'var(--admin-brand-light)', color: 'var(--admin-brand)',       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg> },
+    order_delivered:{ bg: 'var(--admin-success-bg)', color: 'var(--admin-success)',      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> },
+    order_cancelled:{ bg: 'var(--admin-danger-bg)',  color: 'var(--admin-danger)',       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg> },
+    user:           { bg: 'var(--admin-info-bg)',    color: 'var(--admin-info)',         icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> },
+    review:         { bg: 'var(--admin-warning-bg)', color: 'var(--admin-warning)',      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
+    coupon:         { bg: 'var(--admin-success-bg)', color: 'var(--admin-success)',      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg> },
+    menu_update:    { bg: 'rgba(124, 58, 237, 0.08)', color: '#7c3aed',                icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg> },
+    promotion:      { bg: 'rgba(124, 58, 237, 0.08)', color: '#7c3aed',                icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg> },
+};
+
 export default function Dashboard() {
     const { get, loading } = useApi();
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [dashboard, setDashboard] = useState(null);
+    const [activity, setActivity] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -92,6 +116,18 @@ export default function Dashboard() {
             }
         };
         load();
+    }, [get]);
+
+    useEffect(() => {
+        const loadActivity = async () => {
+            try {
+                const data = await get('/admin/activity?limit=15');
+                setActivity(Array.isArray(data.data) ? data.data : []);
+            } catch {
+                setActivity([]);
+            }
+        };
+        loadActivity();
     }, [get]);
 
     if (loading && !dashboard) return <SkeletonStatCards />;
@@ -123,14 +159,6 @@ export default function Dashboard() {
         { to: '/admin/reports', label: 'Reports', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>, color: 'rgba(124, 58, 237, 0.08)', iconColor: '#7c3aed' },
         { to: '/admin/coupons', label: 'Coupons', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>, color: 'rgba(217, 119, 6, 0.08)', iconColor: 'var(--admin-warning)' },
         { to: '/admin/settings', label: 'Settings', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg>, color: 'rgba(100, 116, 139, 0.08)', iconColor: '#64748b' },
-    ];
-
-    const activityItems = [
-        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg>, bg: 'var(--admin-brand-light)', color: 'var(--admin-brand)', text: 'New order received', time: '2 min ago' },
-        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>, bg: 'var(--admin-info-bg)', color: 'var(--admin-info)', text: 'New customer registered', time: '15 min ago' },
-        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>, bg: 'var(--admin-warning-bg)', color: 'var(--admin-warning)', text: 'New review submitted', time: '1 hour ago' },
-        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>, bg: 'var(--admin-success-bg)', color: 'var(--admin-success)', text: 'Coupon "WELCOME10" activated', time: '3 hours ago' },
-        { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>, bg: 'rgba(124, 58, 237, 0.08)', color: '#7c3aed', text: 'Product "BBQ Bacon Burger" updated', time: '5 hours ago' },
     ];
 
     return (
@@ -276,18 +304,30 @@ export default function Dashboard() {
                 <div className="admin-card">
                     <div className="admin-card-header">
                         <h3 className="admin-card-title">Recent Activity</h3>
+                        <span style={{ fontSize: 12, color: 'var(--admin-text-muted)', fontWeight: 500 }}>Last 7 days</span>
                     </div>
                     <div className="admin-card-body no-pad">
                         <div className="admin-dash-activity">
-                            {activityItems.map((item, i) => (
-                                <div key={i} className="admin-activity-item">
-                                    <div className="admin-activity-icon" style={{ background: item.bg, color: item.color }}>{item.icon}</div>
-                                    <div className="admin-activity-text">
-                                        <p>{item.text}</p>
-                                        <div className="admin-activity-time">{item.time}</div>
+                            {activity.length > 0 ? activity.map((item, i) => {
+                                const meta = activityMeta[item.type] || activityMeta.order;
+                                return (
+                                    <div key={i} className="admin-activity-item">
+                                        <div className="admin-activity-icon" style={{ background: meta.bg, color: meta.color }}>{meta.icon}</div>
+                                        <div className="admin-activity-text">
+                                            <p>{item.text}</p>
+                                            <div className="admin-activity-time">
+                                                {item.detail && <span style={{ color: 'var(--admin-text-secondary)', fontWeight: 500 }}>{item.detail}</span>}
+                                                {item.detail && ' · '}
+                                                {timeAgo(item.timestamp)}
+                                            </div>
+                                        </div>
                                     </div>
+                                );
+                            }) : (
+                                <div style={{ padding: 40, textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: 14 }}>
+                                    No recent activity
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </div>
                 </div>
