@@ -927,6 +927,18 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  .zc-feature-card {
+    padding: 24px 20px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .zc-feature-emoji {
+    margin-bottom: 0;
+    font-size: 32px;
+    flex-shrink: 0;
+  }
   .zc-steps-grid {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -939,8 +951,20 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  .zc-testimonial-card {
+    padding: 24px 20px;
+  }
   .zc-newsletter-form {
     flex-direction: column;
+  }
+  .zc-newsletter-form button {
+    width: 100%;
+    padding: 14px;
+    min-height: 48px;
+  }
+  .zc-newsletter-form input {
+    min-height: 48px;
+    font-size: 16px;
   }
   .zc-instagram-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -949,13 +973,50 @@
   .zc-section-header {
     padding: 40px 0 8px;
   }
+  .zc-offer-section {
+    padding: 48px 0;
+  }
+  .zc-newsletter-section {
+    padding: 48px 0;
+  }
+  .hero-actions {
+    flex-direction: column;
+  }
+  .hero-btn {
+    width: 100%;
+    text-align: center;
+    min-height: 48px;
+    padding: 14px 24px;
+  }
 }
 
 @media (max-width: 480px) {
   .zc-category-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .zc-category-card {
+    padding: 14px 10px;
   }
   .zc-instagram-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .hero-section {
+    height: clamp(320px, 80vw, 440px);
+  }
+  .hero-stat {
+    gap: 0;
+  }
+  .hero-stat-value {
+    font-size: 15px;
+  }
+  .hero-stat-label {
+    font-size: 11px;
+  }
+  .zc-section-header {
+    padding: 32px 0 8px;
+  }
+  .zc-offer-title {
+    font-size: clamp(1.4rem, 5vw, 2rem);
   }
 }

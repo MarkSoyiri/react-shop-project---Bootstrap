@@ -1,5 +1,5 @@
 .tracking-page { animation: fadeUp 0.4s ease-out; }
-.tracking-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.tracking-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
 .tracking-header h1 { font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 700; }
 .tracking-status-badge {
   padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 700; text-transform: capitalize;
@@ -16,8 +16,8 @@
 .tracking-progress { margin-bottom: 32px; }
 .tracking-progress-bar { height: 4px; background: var(--color-border); border-radius: 2px; margin-bottom: 16px; }
 .tracking-progress-fill { height: 100%; background: var(--color-brand); border-radius: 2px; transition: width 0.5s ease; }
-.tracking-steps { display: flex; justify-content: space-between; }
-.tracking-step { text-align: center; flex: 1; }
+.tracking-steps { display: flex; justify-content: space-between; gap: 2px; }
+.tracking-step { text-align: center; flex: 1; min-width: 0; }
 .tracking-step-dot {
   width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -27,7 +27,7 @@
 }
 .tracking-step.complete .tracking-step-dot { background: var(--color-brand); border-color: var(--color-brand); color: white; }
 .tracking-step.current .tracking-step-dot { box-shadow: 0 0 0 4px rgba(232,93,4,0.2); }
-.tracking-step-label { font-size: 11px; color: var(--color-text-muted); font-weight: 500; }
+.tracking-step-label { font-size: 11px; color: var(--color-text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tracking-step.complete .tracking-step-label { color: var(--color-text); }
 
 .tracking-eta {
@@ -42,9 +42,10 @@
 .tracking-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
 .tracking-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--color-border-light); }
 .tracking-item:last-of-type { border-bottom: none; }
-.tracking-item-info { display: flex; align-items: center; gap: 10px; }
+.tracking-item-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.tracking-item-info span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tracking-item-qty { font-weight: 700; color: var(--color-brand); min-width: 30px; }
-.tracking-item-price { font-weight: 600; font-size: 14px; }
+.tracking-item-price { font-weight: 600; font-size: 14px; white-space: nowrap; }
 
 .tracking-totals { border-top: 1px solid var(--color-border); padding-top: 12px; margin-top: 8px; }
 .tracking-totals div { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; color: var(--color-text-secondary); }
@@ -54,7 +55,17 @@
 .tracking-timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-brand); margin-top: 6px; flex-shrink: 0; }
 .tracking-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 
+@media (max-width: 768px) {
+  .tracking-card { padding: 16px; }
+  .tracking-item { flex-wrap: wrap; gap: 6px; }
+  .tracking-item-info { flex: 1; }
+  .tracking-timeline-item { gap: 8px; }
+  .tracking-eta { padding: 12px 16px; }
+}
+
 @media (max-width: 576px) {
-  .tracking-step-label { font-size: 9px; }
-  .tracking-step-dot { width: 26px; height: 26px; font-size: 10px; }
+  .tracking-step-label { font-size: 9px; overflow: hidden; text-overflow: ellipsis; }
+  .tracking-step-dot { width: 28px; height: 28px; font-size: 10px; }
+  .tracking-steps { gap: 0; }
+  .tracking-header { flex-direction: column; align-items: flex-start; }
 }

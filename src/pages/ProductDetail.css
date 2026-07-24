@@ -33,6 +33,7 @@
 .pd-option-btn {
   padding: 10px 20px; border: 1.5px solid var(--color-border); border-radius: var(--radius-sm);
   background: var(--color-bg); font-size: 14px; font-weight: 500; transition: all var(--transition); cursor: pointer;
+  min-height: 44px;
 }
 .pd-option-btn.active { border-color: var(--color-brand); background: rgba(232,93,4,0.06); color: var(--color-brand); }
 .pd-option-btn:hover { border-color: var(--color-brand-light); }
@@ -41,25 +42,26 @@
 .pd-addon {
   display: flex; align-items: center; gap: 6px;
   padding: 8px 14px; border: 1.5px solid var(--color-border); border-radius: var(--radius-sm);
-  font-size: 14px; cursor: pointer; transition: all var(--transition);
+  font-size: 14px; cursor: pointer; transition: all var(--transition); min-height: 44px;
 }
 .pd-addon.active { border-color: var(--color-accent); background: rgba(43,147,72,0.06); }
 .pd-addon input { display: none; }
 
 .pd-textarea {
-  width: 100%; min-height: 70px; padding: 12px; border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical;
+  width: 100%; min-height: 80px; padding: 12px; border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; resize: vertical;
   transition: border-color var(--transition); outline: none;
 }
 .pd-textarea:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(232,93,4,0.1); }
 
 .pd-quantity {
-  display: inline-flex; align-items: center; gap: 16px;
+  display: inline-flex; align-items: center; gap: 12px;
   border: 1.5px solid var(--color-border); border-radius: var(--radius-sm); padding: 4px 8px;
 }
 .pd-quantity button {
-  width: 36px; height: 36px; border: none; border-radius: var(--radius-sm);
-  background: var(--color-bg-alt); font-size: 18px; font-weight: 600; cursor: pointer; transition: background var(--transition);
+  width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
+  background: var(--color-bg-alt); font-size: 18px; font-weight: 600; cursor: pointer;
+  transition: background var(--transition); display: flex; align-items: center; justify-content: center;
 }
 .pd-quantity button:hover { background: var(--color-border); }
 .pd-quantity span { font-size: 18px; font-weight: 700; min-width: 32px; text-align: center; }
@@ -68,12 +70,13 @@
 .pd-total { font-size: 22px; font-weight: 700; color: var(--color-text); }
 .pd-add-btn {
   flex: 1; max-width: 260px; padding: 14px 32px; border: none; border-radius: var(--radius-sm);
-  background: var(--color-brand); color: white; font-size: 16px; font-weight: 600; transition: all var(--transition);
+  background: var(--color-brand); color: white; font-size: 16px; font-weight: 600;
+  transition: all var(--transition); min-height: 48px;
 }
 .pd-add-btn:hover { background: var(--color-brand-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,93,4,0.3); }
 .pd-add-btn.added { background: var(--color-accent); }
 
-.pd-meta { display: flex; gap: 16px; margin-top: 16px; font-size: 13px; color: var(--color-text-muted); }
+.pd-meta { display: flex; gap: 16px; margin-top: 16px; font-size: 13px; color: var(--color-text-muted); flex-wrap: wrap; }
 
 .pd-nutrition {
   background: var(--color-bg-alt); border-radius: var(--radius-md); padding: 24px;
@@ -100,4 +103,14 @@
 @media (max-width: 768px) {
   .pd-add-section { flex-direction: column; align-items: stretch; }
   .pd-add-btn { max-width: none; }
+  .pd-quantity button { width: 44px; height: 44px; }
+}
+
+@media (max-width: 576px) {
+  .pd-options { flex-direction: column; }
+  .pd-option-btn { width: 100%; text-align: center; }
+  .pd-info h1 { font-size: 1.3rem; }
+  .pd-price { font-size: 24px; }
+  .pd-nutrition-grid { gap: 16px; }
+  .pd-review-form { padding: 16px; }
 }

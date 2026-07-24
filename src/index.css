@@ -5849,6 +5849,19 @@ h1, h2, h3, h4, h5, h6 {
    50. COMPREHENSIVE RESPONSIVE OVERRIDES
    ========================================================== */
 
+/* ---- Prevent horizontal scroll globally ---- */
+html, body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Scroll lock when mobile menu is open ---- */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
 @media (max-width: 1200px) {
   .checkout-body {
     grid-template-columns: 1fr 320px;
@@ -5868,6 +5881,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
+  /* ---- Global Mobile Base ---- */
+  html {
+    font-size: 15px;
+  }
+
   /* ---- Navbar Mobile ---- */
   .my-nav {
     height: var(--navbar-height-mobile);
@@ -5907,6 +5925,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    padding: 14px;
   }
 
   .cart-item-controls {
@@ -5914,9 +5933,39 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
   }
 
+  .cart-qty-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .cart-remove-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
   .cart-footer {
     flex-direction: column;
     gap: 16px;
+  }
+
+  .cart-bottom-actions {
+    flex-direction: column;
+  }
+
+  .cart-coupon {
+    flex-direction: column;
+  }
+
+  .cart-coupon input,
+  .cart-coupon button {
+    width: 100%;
+    padding: 12px 14px;
+  }
+
+  .cart-summary {
+    position: static;
   }
 
   /* ---- Footer Mobile ---- */
@@ -5960,6 +6009,7 @@ h1, h2, h3, h4, h5, h6 {
   .cta-card {
     flex-direction: column;
     text-align: center;
+    padding: 28px 20px;
   }
 
   .cta-visual {
@@ -5971,15 +6021,33 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
   }
 
+  .newsletter-form button {
+    width: 100%;
+    padding: 14px;
+  }
+
   /* ---- Section Headers Mobile ---- */
   .section-header {
     padding: 32px 0 8px;
   }
 
   /* ---- Checkout Mobile ---- */
+  .checkout-body {
+    padding: 0 16px;
+  }
+
+  .checkout-form-section {
+    padding: 20px 16px;
+  }
+
+  .checkout-summary {
+    padding: 20px 16px;
+  }
+
   .checkout-steps {
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 24px;
   }
 
   .checkout-step-connector {
@@ -5991,6 +6059,12 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 
+  .checkout-step .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
   /* ---- Search Mobile ---- */
   .search-result-card {
     flex-wrap: wrap;
@@ -5999,6 +6073,43 @@ h1, h2, h3, h4, h5, h6 {
   .search-result-img {
     width: 60px;
     height: 60px;
+  }
+
+  .search-result-add {
+    padding: 10px 20px;
+    min-height: 44px;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-bar input {
+    padding: 14px 16px;
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .search-bar button {
+    width: 100%;
+    padding: 14px;
+    min-height: 48px;
+  }
+
+  .search-chip {
+    padding: 10px 16px;
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .search-sort {
+    width: 100%;
+    padding: 12px 14px;
+    min-height: 44px;
   }
 
   /* ---- Tracking Mobile ---- */
@@ -6012,14 +6123,64 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 10px;
   }
 
+  .tracking-steps {
+    gap: 4px;
+  }
+
+  .tracking-card {
+    padding: 16px;
+  }
+
+  .tracking-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tracking-timeline-item {
+    gap: 8px;
+  }
+
   /* ---- Account Mobile ---- */
+  .account-page {
+    padding-top: 100px;
+  }
+
   .account-sidebar {
     position: static;
+    padding: 16px;
   }
 
   .account-nav {
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .account-nav-btn {
+    padding: 10px 14px;
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .account-card {
+    padding: 16px;
+  }
+
+  .account-field input {
+    padding: 12px 14px;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .address-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .orders-list .order-card {
+    padding: 14px;
   }
 
   /* ---- Product Detail Mobile ---- */
@@ -6030,6 +6191,23 @@ h1, h2, h3, h4, h5, h6 {
 
   .pd-add-btn {
     max-width: none;
+    min-height: 48px;
+  }
+
+  .pd-quantity button {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .pd-option-btn {
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+
+  .pd-addon {
+    min-height: 44px;
+    padding: 10px 14px;
   }
 
   /* ---- Toast Mobile ---- */
@@ -6037,6 +6215,50 @@ h1, h2, h3, h4, h5, h6 {
     right: 12px;
     left: 12px;
     max-width: none;
+  }
+
+  .toast {
+    min-width: auto;
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  /* ---- Pages Mobile ---- */
+  .wishlist-page,
+  .order-history-page,
+  .notifications-page,
+  .legal-page {
+    padding-top: 100px;
+  }
+
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .notification-item {
+    padding: 14px;
+  }
+
+  .faq-question {
+    padding: 14px 16px;
+    min-height: 48px;
+    font-size: 14px;
+  }
+
+  .faq-answer {
+    padding: 0 16px 14px;
+  }
+
+  /* ---- Admin Tables Mobile: horizontal scroll ---- */
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .admin-table {
+    min-width: 600px;
   }
 }
 
@@ -6054,6 +6276,48 @@ h1, h2, h3, h4, h5, h6 {
   .pd-option-btn {
     width: 100%;
     text-align: center;
+  }
+
+  .pd-info h1 {
+    font-size: 1.3rem;
+  }
+
+  .pd-price {
+    font-size: 24px;
+  }
+
+  .pd-nutrition-grid {
+    gap: 16px;
+  }
+
+  /* ---- Cart Mobile ---- */
+  .cart-container {
+    padding-top: 100px;
+  }
+
+  .cart-item-img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cart-item-total {
+    min-width: auto;
+  }
+
+  /* ---- Search Mobile ---- */
+  .search-result-img {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* ---- Order History Mobile ---- */
+  .order-history-card {
+    padding: 16px;
+  }
+
+  .order-history-card .order-items-preview .item-thumb {
+    width: 40px;
+    height: 40px;
   }
 }
 

@@ -16,6 +16,7 @@
   display: flex; align-items: center; gap: 8px; padding: 10px 14px;
   border: none; border-radius: var(--radius-sm); background: transparent;
   font-size: 14px; font-weight: 500; cursor: pointer; transition: all var(--transition); text-align: left;
+  min-height: 40px;
 }
 .account-nav-btn:hover { background: var(--color-bg-alt); }
 .account-nav-btn.active { background: rgba(232,93,4,0.06); color: var(--color-brand); font-weight: 600; }
@@ -32,6 +33,7 @@
 .account-field input {
   width: 100%; padding: 10px 14px; border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm); font-size: 15px; outline: none; transition: border-color var(--transition);
+  min-height: 44px;
 }
 .account-field input:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(232,93,4,0.1); }
 .account-field input:disabled { background: var(--color-bg-alt); color: var(--color-text-muted); }
@@ -59,6 +61,11 @@
 .address-form h5 { font-size: 16px; margin-bottom: 16px; }
 
 @media (max-width: 768px) {
-  .account-sidebar { position: static; }
-  .account-nav { flex-direction: row; flex-wrap: wrap; }
+  .account-page { padding-top: 100px; }
+  .account-sidebar { position: static; padding: 16px; }
+  .account-nav { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .account-nav-btn { padding: 10px 14px; min-height: 44px; font-size: 13px; }
+  .account-card { padding: 16px; }
+  .account-field input { padding: 12px 14px; min-height: 48px; font-size: 16px; }
+  .address-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
 }

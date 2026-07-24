@@ -2,7 +2,7 @@ import zestylogo from '../images/zestylogo.png'
 import { IsLogout } from './IsAuth';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export function HomeNav () {
@@ -11,6 +11,27 @@ export function HomeNav () {
     const [mobileOpen, setMobileOpen] = useState(false);
     const location = useLocation();
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const toggleMobile = () => {
+        const next = !mobileOpen;
+        setMobileOpen(next);
+        if (next) {
+            document.body.classList.add('menu-open');
+        } else {
+            document.body.classList.remove('menu-open');
+        }
+    };
+
+    const closeMobile = () => {
+        setMobileOpen(false);
+        document.body.classList.remove('menu-open');
+    };
+
+    useEffect(() => {
+        return () => {
+            document.body.classList.remove('menu-open');
+        };
+    }, []);
 
     const isActive = (path) => location.pathname === path;
 
@@ -32,7 +53,7 @@ export function HomeNav () {
 
                     <button
                         className="zc-nav-hamburger"
-                        onClick={() => setMobileOpen(!mobileOpen)}
+                        onClick={toggleMobile}
                         style={styles.hamburger}
                         aria-label="Toggle navigation"
                     >
@@ -115,7 +136,7 @@ export function HomeNav () {
                                     ...styles.mobileLink,
                                     ...(isActive(link.to) ? styles.mobileLinkActive : {})
                                 }}
-                                onClick={() => setMobileOpen(false)}
+                                onClick={closeMobile}
                             >
                                 {link.label}
                             </Link>
@@ -123,7 +144,7 @@ export function HomeNav () {
                         <Link to="/cart" style={{
                             ...styles.mobileLink,
                             ...(isActive('/cart') ? styles.mobileLinkActive : {})
-                        }} onClick={() => setMobileOpen(false)}>
+                        }} onClick={closeMobile}>
                             Cart {cartCount > 0 && <span style={styles.cartBadgeMobile}>{cartCount}</span>}
                         </Link>
                         {user && (
@@ -131,23 +152,23 @@ export function HomeNav () {
                                 <Link to="/wishlist" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/wishlist') ? styles.mobileLinkActive : {})
-                                }} onClick={() => setMobileOpen(false)}>Wishlist</Link>
+                                }} onClick={closeMobile}>Wishlist</Link>
                                 <Link to="/orders" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/orders') ? styles.mobileLinkActive : {})
-                                }} onClick={() => setMobileOpen(false)}>Orders</Link>
+                                }} onClick={closeMobile}>Orders</Link>
                                 {user?.role === 'admin' && (
                                     <Link to="/admin" style={{
                                         ...styles.mobileLink,
                                         ...(isActive('/admin') ? styles.mobileLinkActive : {})
-                                    }} onClick={() => setMobileOpen(false)}>
+                                    }} onClick={closeMobile}>
                                         Admin Panel
                                     </Link>
                                 )}
                                 <Link to="/userprofile" style={{
                                     ...styles.mobileLink,
                                     ...(isActive('/userprofile') ? styles.mobileLinkActive : {})
-                                }} onClick={() => setMobileOpen(false)}>Profile</Link>
+                                }} onClick={closeMobile}>Profile</Link>
                             </>
                         )}
                         {!user && (
@@ -257,6 +278,13 @@ const responsiveFooterCSS = `
   .zc-footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
   @media (max-width: 768px) { .zc-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
   @media (max-width: 576px) { .zc-footer-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) {
+    .zc-newsletter-form { flex-direction: column; }
+    .zc-newsletter-form input { min-height: 44px; border-right: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); }
+    .zc-newsletter-form button { min-height: 44px; border-radius: var(--radius-sm); }
+    .zc-footer-links a { min-height: 44px; display: flex; align-items: center; }
+    .zc-social-icon { min-width: 44px; min-height: 44px; }
+  }
 `;
 
 const styles = {
@@ -294,7 +322,9 @@ const styles = {
     hamburger: {
         flexDirection: 'column',
         gap: 5,
-        padding: 8,
+        padding: '12px 10px',
+        minWidth: 48,
+        minHeight: 48,
         background: 'none',
         border: 'none',
         cursor: 'pointer',
@@ -386,6 +416,7 @@ const styles = {
         top: 'var(--navbar-height)',
         left: 0,
         right: 0,
+        bottom: 0,
         background: 'var(--glass-bg-elevated)',
         backdropFilter: 'blur(var(--glass-blur-lg)) saturate(200%)',
         WebkitBackdropFilter: 'blur(var(--glass-blur-lg)) saturate(200%)',
@@ -393,6 +424,8 @@ const styles = {
         boxShadow: 'var(--glass-shadow-lg)',
         zIndex: 999,
         animation: 'fadeDown 0.3s ease-out',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
     },
     mobileMenuInner: {
         padding: '16px 24px',
@@ -402,13 +435,15 @@ const styles = {
     },
     mobileLink: {
         display: 'block',
-        padding: '12px 16px',
-        fontSize: 15,
+        padding: '14px 16px',
+        minHeight: 48,
+        fontSize: 16,
         fontWeight: 500,
         color: 'var(--color-text)',
         textDecoration: 'none',
         borderRadius: 'var(--radius-sm)',
         transition: 'all var(--transition)',
+        lineHeight: '20px',
     },
     mobileLinkActive: {
         background: 'var(--glass-bg-brand)',
@@ -480,6 +515,8 @@ const styles = {
         fontSize: 14,
         textDecoration: 'none',
         transition: 'color var(--transition)',
+        display: 'inline-block',
+        padding: '4px 0',
     },
     footerBottom: {
         borderTop: '1px solid rgba(255,255,255,0.1)',
@@ -500,8 +537,8 @@ const styles = {
         gap: 12,
     },
     socialIcon: {
-        width: 36,
-        height: 36,
+        width: 40,
+        height: 40,
         borderRadius: 'var(--radius-full)',
         background: 'rgba(255,255,255,0.08)',
         backdropFilter: 'blur(4px)',

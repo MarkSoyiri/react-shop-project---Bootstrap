@@ -325,18 +325,26 @@
 
 /* ---------- Checkout Responsive ---------- */
 @media (max-width: 768px) {
+  .checkout-page { padding-top: 80px; }
   .checkout-body {
     grid-template-columns: 1fr;
+    padding: 0 16px;
   }
 
   .checkout-summary {
     position: static;
     order: -1;
+    padding: 20px;
+  }
+
+  .checkout-form-section {
+    padding: 20px 16px;
   }
 
   .checkout-steps {
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 24px;
   }
 
   .checkout-step-connector {
@@ -346,6 +354,22 @@
 
   .checkout-step .step-label {
     display: none;
+  }
+
+  .checkout-step .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .checkout-form-section h2 {
+    font-size: 17px;
+  }
+
+  .checkout-total-row.total {
+    font-size: 16px;
   }
 }
 
