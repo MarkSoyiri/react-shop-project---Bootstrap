@@ -903,12 +903,27 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    height: clamp(380px, 75vw, 520px);
+    height: clamp(460px, 95vw, 600px);
+  }
+  .hero-content {
+    padding: 0 20px;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 24px;
+  }
+  .hero-tag {
+    margin-bottom: 10px;
+  }
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    margin-bottom: 16px;
+    max-width: 420px;
   }
   .hero-stats {
     gap: 16px;
-    margin-top: 28px;
-    padding-top: 20px;
+    margin-top: 16px;
+    padding-top: 14px;
+    max-width: 360px;
   }
   .hero-stat-value {
     font-size: 17px;
@@ -1002,10 +1017,38 @@
     grid-template-columns: repeat(2, 1fr);
   }
   .hero-section {
-    height: clamp(320px, 80vw, 440px);
+    height: clamp(460px, 110vw, 560px);
   }
-  .hero-stat {
-    gap: 0;
+  .hero-content {
+    padding: 0 16px;
+    padding-top: 32px;
+    padding-bottom: 20px;
+  }
+  .hero-tag {
+    font-size: 11px;
+    margin-bottom: 8px;
+    padding: 5px 14px;
+  }
+  .hero-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    max-width: 340px;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    gap: 10px;
+    margin-bottom: 0;
+  }
+  .hero-btn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  .hero-stats {
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 10px;
+    max-width: 280px;
   }
   .hero-stat-value {
     font-size: 15px;
