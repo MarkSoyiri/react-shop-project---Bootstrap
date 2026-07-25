@@ -32,7 +32,7 @@ function Cart() {
         )}
       </div>
 
-      {cartItems.length === 0 && !orderResult?.success ? (
+      {cartItems.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 24px' }}>
           <div style={{ fontSize: 64, marginBottom: 16, opacity: 0.3 }}>🛒</div>
           <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Your cart is empty</h3>
@@ -55,7 +55,7 @@ function Cart() {
             Browse Menu
           </button>
         </div>
-      ) : cartItems.length > 0 ? (
+      ) : (
         <div className="cart-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
           {/* Left: Items */}
           <div className="cart-items-col" style={{ flex: '1 1 580px', minWidth: 0 }}>
@@ -307,7 +307,7 @@ function Cart() {
             </div>
           </div>
         </div>
-      ) : null}
+      )}
 
       {/* Mobile Sticky CTA Bar */}
       {cartItems.length > 0 && (
