@@ -67,9 +67,8 @@ function Checkout() {
         specialInstructions: form.specialInstructions,
         couponCode: form.couponCode || undefined,
       });
-      clearCart();
-      addToast('Order placed successfully!', 'success');
-      navigate(`/order/${res._id || res.data?._id}`);
+      const orderId = res._id || res.data?._id || res.id || res.data?.id;
+      navigate(`/order-confirmation/${orderId}`);
     } catch (err) {
       addToast(err.message, 'error');
     }

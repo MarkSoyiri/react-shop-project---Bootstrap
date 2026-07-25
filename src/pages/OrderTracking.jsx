@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosFetch from '../api/axiosFetchAPI';
+import { CartContext } from '../context/CartContext';
 import Loader from '../components/Loader';
 import './OrderTracking.css';
 
 function OrderTracking() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart, clearCart } = useContext(CartContext);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -76,7 +78,7 @@ function OrderTracking() {
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '100px 24px 60px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Order #{order._id.slice(-8)}</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Order #{order.orderNumber || order._id.slice(-8)}</h1>
         <span style={{
           background: order.status === 'delivered' ? '#ecfdf5' : order.status === 'cancelled' ? '#fef2f2' : '#fff7ed',
           color: order.status === 'delivered' ? '#065f46' : order.status === 'cancelled' ? '#991b1b' : 'var(--color-brand)',
@@ -336,7 +338,23 @@ function OrderTracking() {
         )}
         {order.status === 'delivered' && (
           <button
-            onClick={() => navigate('/menu')}
+            onClick={() => {
+              clearCart();
+              order.items.forEach(item => {
+                for (let i = 0; i < item.quantity; i++) {
+                  addToCart({
+                    _id: item.menuItem?._id || item.menuItem,
+                    name: item.name,
+                    price: item.priceAtPurchase,
+                    image: item.menuItem?.image || '',
+                    variant: item.variant || '',
+                    addOns: item.addOns || [],
+                    quantity: 1
+                  });
+                }
+              });
+              navigate('/cart');
+            }}
             style={{
               background: 'var(--color-brand)',
               color: '#fff',

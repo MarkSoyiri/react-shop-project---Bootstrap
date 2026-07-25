@@ -2,15 +2,38 @@ import zestylogo from '../images/zestylogo.png'
 import { IsLogout } from './IsAuth';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { API_BASE } from '../utils/helpers';
 
 export function HomeNav () {
     const { cartItems } = useContext(CartContext);
     const { user } = useContext(AuthContext);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const location = useLocation();
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const fetchUnreadCount = useCallback(async () => {
+        if (!user) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_BASE}/notifications/unread-count`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setUnreadCount(data.count || 0);
+            }
+        } catch {}
+    }, [user]);
+
+    useEffect(() => {
+        fetchUnreadCount();
+        if (!user) return;
+        const interval = setInterval(fetchUnreadCount, 30000);
+        return () => clearInterval(interval);
+    }, [fetchUnreadCount, user]);
 
     const toggleMobile = () => {
         const next = !mobileOpen;
@@ -93,6 +116,17 @@ export function HomeNav () {
                                         ...styles.navLink,
                                         ...(isActive('/orders') ? styles.navLinkActive : {})
                                     }}>Orders</Link></li>
+                                    <li style={{ position: 'relative' }}>
+                                        <Link to="/notifications" style={{
+                                            ...styles.navLink,
+                                            ...(isActive('/notifications') ? styles.navLinkActive : {})
+                                        }}>
+                                            Notifications
+                                            {unreadCount > 0 && (
+                                                <span style={{ ...styles.cartBadge, background: '#dc2626', fontSize: 10, minWidth: 16, height: 16, lineHeight: '16px' }}>{unreadCount > 99 ? '99+' : unreadCount}</span>
+                                            )}
+                                        </Link>
+                                    </li>
                                 </>
                             )}
                             {user?.role === 'admin' && (
@@ -190,6 +224,16 @@ export function HomeNav () {
                                     ...(isActive('/orders') ? styles.mobileLinkActive : {})
                                 }} onClick={closeMobile}>
                                     My Orders
+                                </Link>
+                                <Link to="/notifications" style={{
+                                    ...styles.mobileLink,
+                                    ...(isActive('/notifications') ? styles.mobileLinkActive : {}),
+                                    position: 'relative'
+                                }} onClick={closeMobile}>
+                                    Notifications
+                                    {unreadCount > 0 && (
+                                        <span style={{ ...styles.cartBadgeMobile, background: '#dc2626' }}>{unreadCount > 99 ? '99+' : unreadCount}</span>
+                                    )}
                                 </Link>
                             </>
                         )}

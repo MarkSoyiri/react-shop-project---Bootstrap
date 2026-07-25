@@ -74,6 +74,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Search = lazy(() => import("./pages/Search"));
 const UserProfile = lazy(() => import("./pages/Account"));
 const Cart = lazy(() => import("./pages/Cart"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
@@ -174,6 +175,7 @@ function Layout() {
           <Route path="/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
           <Route path="/order/:id" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+          <Route path="/order-confirmation/:id" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
 
           <Route element={<DontShowLoginRegister />}>
             <Route path="/login" element={<Login />} />

@@ -1,66 +1,17 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import axiosFetch from "../api/axiosFetchAPI";
+import { formatCurrency } from "../utils/helpers";
 import "./Cart.css";
 
 function Cart() {
   const { cartItems, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useContext(CartContext);
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [orderResult, setOrderResult] = useState(null);
-  const [couponCode, setCouponCode] = useState('');
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [couponError, setCouponError] = useState('');
-  const [applyingCoupon, setApplyingCoupon] = useState(false);
   const navigate = useNavigate();
 
   const subtotal = getTotalPrice();
   const tax = subtotal * 0.15;
   const deliveryFee = subtotal >= 100 ? 0 : 15;
-  const total = subtotal + tax + deliveryFee - couponDiscount;
-
-  const applyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setApplyingCoupon(true);
-    setCouponError('');
-    try {
-      const { data } = await axiosFetch.post('/api/coupons/validate', { code: couponCode });
-      if (data.type === 'percentage') {
-        const disc = Math.round(subtotal * (data.value / 100) * 100) / 100;
-        setCouponDiscount(data.maxDiscount > 0 ? Math.min(disc, data.maxDiscount) : disc);
-      } else {
-        setCouponDiscount(Math.min(data.value, subtotal));
-      }
-    } catch (err) {
-      setCouponError(err.response?.data?.message || 'Invalid coupon');
-      setCouponDiscount(0);
-    } finally {
-      setApplyingCoupon(false);
-    }
-  };
-
-  const handleCheckout = async () => {
-    setCheckingOut(true);
-    setOrderResult(null);
-    try {
-      const { data } = await axiosFetch.post('/api/orders', {
-        items: cartItems,
-        address: {},
-        orderType: 'delivery',
-        paymentMethod: 'cash',
-        couponCode: couponDiscount > 0 ? couponCode : ''
-      });
-      setOrderResult({ success: true, order: data });
-      clearCart();
-      setCouponCode('');
-      setCouponDiscount(0);
-    } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Checkout failed';
-      setOrderResult({ success: false, message: msg });
-    } finally {
-      setCheckingOut(false);
-    }
-  };
+  const total = subtotal + tax + deliveryFee;
 
   return (
     <div className="cart-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px', paddingBottom: cartItems.length > 0 ? '60px' : '60px' }}>
@@ -80,53 +31,6 @@ function Cart() {
           </span>
         )}
       </div>
-
-      {orderResult?.success && (
-        <div style={{
-          background: '#ecfdf5',
-          border: '1px solid #a7f3d0',
-          borderRadius: 12,
-          padding: '16px 20px',
-          marginBottom: 24,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 12
-        }}>
-          <span style={{ color: '#065f46', fontWeight: 500 }}>
-            Order placed successfully! ID: {orderResult.order._id.slice(-8)}
-          </span>
-          <button
-            onClick={() => navigate(`/order/${orderResult.order._id}`)}
-            style={{
-              background: '#065f46',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              padding: '8px 16px',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            Track Order
-          </button>
-        </div>
-      )}
-      {orderResult?.success === false && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #fecaca',
-          borderRadius: 12,
-          padding: '16px 20px',
-          marginBottom: 24,
-          color: '#991b1b',
-          fontWeight: 500
-        }}>
-          {orderResult.message}
-        </div>
-      )}
 
       {cartItems.length === 0 && !orderResult?.success ? (
         <div style={{ textAlign: 'center', padding: '80px 24px' }}>
@@ -344,73 +248,30 @@ function Cart() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 12, color: 'var(--color-text-secondary)' }}>
                 <span>Subtotal</span>
-                <span>GH₵ {subtotal.toFixed(2)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 12, color: 'var(--color-text-secondary)' }}>
                 <span>Delivery</span>
-                <span>{deliveryFee === 0 ? <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Free</span> : `GH₵ ${deliveryFee.toFixed(2)}`}</span>
+                <span>{deliveryFee === 0 ? <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Free</span> : formatCurrency(deliveryFee)}</span>
               </div>
-              {couponDiscount > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 12, color: 'var(--color-accent)' }}>
-                  <span>Discount</span>
-                  <span>-GH₵ {couponDiscount.toFixed(2)}</span>
-                </div>
-              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 12, color: 'var(--color-text-secondary)' }}>
+                <span>Tax (15%)</span>
+                <span>{formatCurrency(tax)}</span>
+              </div>
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 12, marginTop: 4, display: 'flex', justifyContent: 'space-between', fontSize: 18, fontWeight: 700 }}>
                 <span>Total</span>
-                <span>GH₵ {total.toFixed(2)}</span>
-              </div>
-
-              {/* Coupon */}
-              <div style={{ marginTop: 20 }}>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input
-                    type="text"
-                    placeholder="Coupon code"
-                    value={couponCode}
-                    onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      border: '1.5px solid var(--color-border)',
-                      borderRadius: 10,
-                      fontSize: 14,
-                      outline: 'none'
-                    }}
-                  />
-                  <button
-                    onClick={applyCoupon}
-                    disabled={applyingCoupon}
-                    style={{
-                      background: 'var(--color-text)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 10,
-                      padding: '10px 18px',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {applyingCoupon ? '...' : 'Apply'}
-                  </button>
-                </div>
-                {couponError && (
-                  <div style={{ color: '#dc2626', fontSize: 12, marginTop: 6 }}>{couponError}</div>
-                )}
+                <span>{formatCurrency(total)}</span>
               </div>
 
               {deliveryFee > 0 && (
                 <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 10 }}>
-                  Add GH₵ {(100 - subtotal).toFixed(2)} more for free delivery
+                  Add {formatCurrency(100 - subtotal)} more for free delivery
                 </div>
               )}
 
-              {/* Checkout */}
+              {/* Proceed to Checkout */}
               <button
-                onClick={handleCheckout}
-                disabled={checkingOut}
+                onClick={() => navigate('/checkout')}
                 style={{
                   width: '100%',
                   background: 'var(--color-brand)',
@@ -421,11 +282,10 @@ function Cart() {
                   fontSize: 16,
                   fontWeight: 700,
                   cursor: 'pointer',
-                  marginTop: 20,
-                  opacity: checkingOut ? 0.6 : 1
+                  marginTop: 20
                 }}
               >
-                {checkingOut ? 'Processing...' : 'Place Order'}
+                Proceed to Checkout
               </button>
 
               <button
@@ -461,21 +321,19 @@ function Cart() {
           <div>
             <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Total</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-brand)' }}>
-              GH₵ {total.toFixed(2)}
+              {formatCurrency(total)}
             </div>
           </div>
           <button
-            onClick={handleCheckout}
-            disabled={checkingOut}
+            onClick={() => navigate('/checkout')}
             style={{
               flex: 1, maxWidth: 200,
               background: 'var(--color-brand)', color: '#fff',
               border: 'none', borderRadius: 12, padding: '14px 20px',
               fontSize: 15, fontWeight: 700, cursor: 'pointer',
-              opacity: checkingOut ? 0.6 : 1
             }}
           >
-            {checkingOut ? 'Processing...' : `Place Order`}
+            Proceed to Checkout
           </button>
         </div>
       )}
