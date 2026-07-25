@@ -37,9 +37,17 @@ function OrderConfirmation() {
   }, [order, cartCleared, clearCart]);
 
   useEffect(() => {
-    if (!order || order.paymentStatus === 'paid') return;
+    if (!order) return;
+    if (order.paymentStatus === 'paid') return;
     if (order.paymentMethod !== 'card' && order.paymentMethod !== 'pay_online') return;
-    if (!order.paymentReference) return;
+
+    const ref = order.paymentReference;
+    if (!ref) {
+      console.log('[VERIFY] No paymentReference on order, skipping');
+      return;
+    }
+
+    console.log('[VERIFY] Starting verification for reference:', ref);
 
     let cancelled = false;
     let attempts = 0;
@@ -49,15 +57,15 @@ function OrderConfirmation() {
       if (cancelled || attempts >= maxAttempts) return;
       attempts++;
       try {
-        const res = await fetch(`${API_BASE}/payments/verify/${order.paymentReference}`);
-        const data = await res.json();
-        if (data?.data?.payment?.status === 'paid') {
+        const { data: verifyData } = await axiosFetch.get(`/api/payments/verify/${ref}`);
+        console.log('[VERIFY] Attempt', attempts, 'response:', JSON.stringify(verifyData));
+        if (verifyData?.data?.payment?.status === 'paid') {
           const refreshed = await axiosFetch.get(`/api/orders/${id}`);
           if (!cancelled) setOrder(refreshed.data);
           return;
         }
       } catch (e) {
-        console.error('Verify attempt', attempts, e);
+        console.error('[VERIFY] Attempt', attempts, 'error:', e?.response?.data || e.message);
       }
       setTimeout(verify, 2000);
     };
