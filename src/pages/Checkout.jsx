@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import useApi from '../hooks/useApi';
-import { formatCurrency, PAYMENT_METHODS, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
+import { formatCurrency, PAYMENT_METHODS, API_BASE } from '../utils/helpers';
 import { useToast } from '../components/ui/Toast';
 
 function Checkout() {
@@ -60,6 +60,47 @@ function Checkout() {
     }
   };
 
+  const openPaystackPopup = (access_code, orderId) => {
+    const doOpen = () => {
+      const handler = window.PaystackPop.resumeTransaction(access_code);
+      handler.onClosed(() => {
+        addToast('Payment cancelled. You can retry from your order.', 'info');
+        navigate(`/order-confirmation/${orderId}`);
+      });
+      handler.onSuccessful(() => {
+        clearCart();
+        addToast('Payment successful!', 'success');
+        navigate(`/order-confirmation/${orderId}`);
+      });
+    };
+
+    if (window.PaystackPop) {
+      doOpen();
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src="https://js.paystack.co/v1/inline.js"]');
+    if (existingScript) {
+      const check = setInterval(() => {
+        if (window.PaystackPop) {
+          clearInterval(check);
+          doOpen();
+        }
+      }, 100);
+      setTimeout(() => { clearInterval(check); }, 10000);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://js.paystack.co/v1/inline.js';
+    script.onload = doOpen;
+    script.onerror = () => {
+      addToast('Failed to load payment gateway. Please try again.', 'error');
+      navigate(`/order-confirmation/${orderId}`);
+    };
+    document.body.appendChild(script);
+  };
+
   const handleOrder = async () => {
     if (processingPayment) return;
     setProcessingPayment(true);
@@ -89,44 +130,12 @@ function Checkout() {
           const payData = await payRes.json();
 
           if (!payData.success) {
-            addToast(payData.error || 'Payment initialization failed', 'error');
+            addToast(payData.error || 'Payment initialization failed. Your order was placed.', 'error');
             navigate(`/order-confirmation/${orderId}`);
             return;
           }
 
-          const { access_code, reference } = payData.data;
-
-          const script = document.createElement('script');
-          script.src = 'https://js.paystack.co/v1/inline.js';
-          script.onload = () => {
-            const handler = window.PaystackPop.setup({
-              key: PAYSTACK_PUBLIC_KEY,
-              email: user?.email || '',
-              amount: Math.round(total * 100),
-              currency: 'GHS',
-              ref: reference,
-              metadata: {
-                custom_fields: [
-                  { display_name: 'Order ID', variable_name: 'order_id', value: orderId },
-                ],
-              },
-              callback: function (response) {
-                clearCart();
-                addToast('Payment successful!', 'success');
-                navigate(`/order-confirmation/${orderId}`);
-              },
-              onClose: function () {
-                addToast('Payment cancelled. You can retry from your order.', 'info');
-                navigate(`/order-confirmation/${orderId}`);
-              },
-            });
-            handler.openIframe();
-          };
-          script.onerror = () => {
-            addToast('Failed to load payment gateway. Please try again.', 'error');
-            navigate(`/order-confirmation/${orderId}`);
-          };
-          document.body.appendChild(script);
+          openPaystackPopup(payData.data.access_code, orderId);
         } catch (payErr) {
           addToast('Payment setup failed. Your order was placed.', 'info');
           navigate(`/order-confirmation/${orderId}`);
