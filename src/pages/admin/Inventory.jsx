@@ -106,21 +106,21 @@ const Inventory = () => {
   const statCards = [
     {
       label: "Total Items",
-      value: stats.totalItems ?? products.length ?? 0,
+      value: products.length,
       icon: "📦",
       color: "var(--admin-brand)",
       bg: "rgba(232,93,4,0.08)",
     },
     {
       label: "Available",
-      value: stats.available ?? products.filter((p) => p.isAvailable !== false).length ?? 0,
+      value: products.filter((p) => p.isAvailable !== false).length,
       icon: "✅",
       color: "var(--admin-success)",
       bg: "rgba(34,197,94,0.08)",
     },
     {
       label: "Unavailable",
-      value: stats.unavailable ?? products.filter((p) => p.isAvailable === false).length ?? 0,
+      value: products.filter((p) => p.isAvailable === false).length,
       icon: "⏸️",
       color: "var(--admin-danger)",
       bg: "rgba(239,68,68,0.08)",
