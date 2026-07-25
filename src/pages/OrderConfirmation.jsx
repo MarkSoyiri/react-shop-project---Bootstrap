@@ -43,20 +43,23 @@ function OrderConfirmation() {
 
     let cancelled = false;
     let attempts = 0;
-    const maxAttempts = 5;
+    const maxAttempts = 10;
 
     const verify = async () => {
       if (cancelled || attempts >= maxAttempts) return;
       attempts++;
       try {
-        await fetch(`${API_BASE}/payments/verify/${order.paymentReference}`);
-      } catch {}
-      try {
-        const { data } = await axiosFetch.get(`/api/orders/${id}`);
-        if (!cancelled) setOrder(data);
-        if (data.paymentStatus === 'paid') return;
-      } catch {}
-      setTimeout(verify, 3000);
+        const res = await fetch(`${API_BASE}/payments/verify/${order.paymentReference}`);
+        const data = await res.json();
+        if (data?.data?.payment?.status === 'paid') {
+          const refreshed = await axiosFetch.get(`/api/orders/${id}`);
+          if (!cancelled) setOrder(refreshed.data);
+          return;
+        }
+      } catch (e) {
+        console.error('Verify attempt', attempts, e);
+      }
+      setTimeout(verify, 2000);
     };
 
     verify();

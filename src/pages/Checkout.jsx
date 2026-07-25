@@ -60,19 +60,16 @@ function Checkout() {
     }
   };
 
-  const openPaystackPopup = (access_code, orderId, paymentRef) => {
+  const openPaystackPopup = (access_code, orderId) => {
     const doOpen = () => {
       const handler = window.PaystackPop.resumeTransaction(access_code);
       handler.onClosed(() => {
         addToast('Payment cancelled. You can retry from your order.', 'info');
         navigate(`/order-confirmation/${orderId}`);
       });
-      handler.onSuccessful(async () => {
-        try {
-          await fetch(`${API_BASE}/payments/verify/${paymentRef}`);
-        } catch {}
+      handler.onSuccessful(() => {
         clearCart();
-        addToast('Payment successful!', 'success');
+        addToast('Payment successful! Verifying...', 'success');
         navigate(`/order-confirmation/${orderId}`);
       });
     };
@@ -138,7 +135,7 @@ function Checkout() {
             return;
           }
 
-          openPaystackPopup(payData.data.access_code, orderId, payData.data.reference);
+          openPaystackPopup(payData.data.access_code, orderId);
         } catch (payErr) {
           addToast('Payment setup failed. Your order was placed.', 'info');
           navigate(`/order-confirmation/${orderId}`);
