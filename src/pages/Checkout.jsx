@@ -25,6 +25,9 @@ function Checkout() {
   });
   const [couponDiscount, setCouponDiscount] = useState(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const step1Valid = form.name.trim() && (form.orderType === 'pickup' || form.deliveryAddress.trim());
 
   const subtotal = cartItems.reduce((sum, item) => {
     const basePrice = item.unitPrice || item.price;
@@ -189,13 +192,16 @@ function Checkout() {
                   <span style={{ fontSize: 22 }}>📋</span> Order Details
                 </h2>
                 <div style={formGroupStyle}>
-                  <label style={labelStyle}>Full Name</label>
+                  <label style={labelStyle}>Full Name <span style={{ color: '#e53e3e' }}>*</span></label>
                   <input
                     value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    onChange={e => { setForm({ ...form, name: e.target.value }); setShowErrors(false); }}
                     placeholder="Your name"
-                    style={inputStyle}
+                    style={{ ...inputStyle, borderColor: showErrors && !form.name.trim() ? '#e53e3e' : undefined }}
                   />
+                  {showErrors && !form.name.trim() && (
+                    <div style={{ color: '#e53e3e', fontSize: 12, marginTop: 4 }}>Please enter your name</div>
+                  )}
                 </div>
                 <div style={formGroupStyle}>
                   <label style={labelStyle}>Order Type</label>
@@ -229,14 +235,17 @@ function Checkout() {
                 </div>
                 {form.orderType === 'delivery' && (
                   <div style={formGroupStyle}>
-                    <label style={labelStyle}>Delivery Address</label>
+                    <label style={labelStyle}>Delivery Address <span style={{ color: '#e53e3e' }}>*</span></label>
                     <textarea
                       value={form.deliveryAddress}
-                      onChange={e => setForm({ ...form, deliveryAddress: e.target.value })}
+                      onChange={e => { setForm({ ...form, deliveryAddress: e.target.value }); setShowErrors(false); }}
                       placeholder="Enter your delivery address"
                       rows={3}
-                      style={{ ...inputStyle, resize: 'vertical' }}
+                      style={{ ...inputStyle, resize: 'vertical', borderColor: showErrors && !form.deliveryAddress.trim() ? '#e53e3e' : undefined }}
                     />
+                    {showErrors && !form.deliveryAddress.trim() && (
+                      <div style={{ color: '#e53e3e', fontSize: 12, marginTop: 4 }}>Please enter a delivery address</div>
+                    )}
                   </div>
                 )}
                 <div style={formGroupStyle}>
@@ -250,7 +259,10 @@ function Checkout() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
                   <button
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      if (!step1Valid) { setShowErrors(true); return; }
+                      setStep(2);
+                    }}
                     style={{
                       background: 'var(--color-brand)',
                       color: '#fff',
@@ -537,7 +549,10 @@ function Checkout() {
         </div>
         {step < 3 ? (
           <button
-            onClick={() => setStep(step + 1)}
+            onClick={() => {
+              if (step === 1 && !step1Valid) { setShowErrors(true); return; }
+              setStep(step + 1);
+            }}
             style={{
               flex: 1, maxWidth: 200,
               background: 'var(--color-brand)', color: '#fff',
