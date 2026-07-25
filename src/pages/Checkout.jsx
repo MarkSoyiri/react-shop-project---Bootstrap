@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import useApi from '../hooks/useApi';
-import { formatCurrency, PAYMENT_METHODS } from '../utils/helpers';
+import { formatCurrency, PAYMENT_METHODS, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
 import { useToast } from '../components/ui/Toast';
 
 function Checkout() {
   const { cartItems, clearCart } = useContext(CartContext);
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const { post, loading } = useApi();
   const { addToast, Toast } = useToast();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function Checkout() {
   const [form, setForm] = useState({
     name: user?.name || '',
     deliveryAddress: '',
-    paymentMethod: 'cash',
+    paymentMethod: 'pay_online',
     orderType: 'delivery',
     specialInstructions: '',
     couponCode: '',
@@ -26,6 +26,7 @@ function Checkout() {
   const [couponDiscount, setCouponDiscount] = useState(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const step1Valid = form.name.trim() && (form.orderType === 'pickup' || form.deliveryAddress.trim());
 
@@ -60,20 +61,84 @@ function Checkout() {
   };
 
   const handleOrder = async () => {
+    if (processingPayment) return;
+    setProcessingPayment(true);
+
     try {
       const res = await post('/orders', {
         items: cartItems,
         name: form.name,
         deliveryAddress: form.deliveryAddress,
-        paymentMethod: form.paymentMethod,
+        paymentMethod: form.paymentMethod === 'pay_online' ? 'card' : form.paymentMethod,
         orderType: form.orderType,
         specialInstructions: form.specialInstructions,
         couponCode: form.couponCode || undefined,
       });
       const orderId = res._id || res.data?._id || res.id || res.data?.id;
-      navigate(`/order-confirmation/${orderId}`);
+
+      if (form.paymentMethod === 'pay_online') {
+        try {
+          const payRes = await fetch(`${API_BASE}/payments/initialize`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ orderId }),
+          });
+          const payData = await payRes.json();
+
+          if (!payData.success) {
+            addToast(payData.error || 'Payment initialization failed', 'error');
+            navigate(`/order-confirmation/${orderId}`);
+            return;
+          }
+
+          const { access_code, reference } = payData.data;
+
+          const script = document.createElement('script');
+          script.src = 'https://js.paystack.co/v1/inline.js';
+          script.onload = () => {
+            const handler = window.PaystackPop.setup({
+              key: PAYSTACK_PUBLIC_KEY,
+              email: user?.email || '',
+              amount: Math.round(total * 100),
+              currency: 'GHS',
+              ref: reference,
+              metadata: {
+                custom_fields: [
+                  { display_name: 'Order ID', variable_name: 'order_id', value: orderId },
+                ],
+              },
+              callback: function (response) {
+                clearCart();
+                addToast('Payment successful!', 'success');
+                navigate(`/order-confirmation/${orderId}`);
+              },
+              onClose: function () {
+                addToast('Payment cancelled. You can retry from your order.', 'info');
+                navigate(`/order-confirmation/${orderId}`);
+              },
+            });
+            handler.openIframe();
+          };
+          script.onerror = () => {
+            addToast('Failed to load payment gateway. Please try again.', 'error');
+            navigate(`/order-confirmation/${orderId}`);
+          };
+          document.body.appendChild(script);
+        } catch (payErr) {
+          addToast('Payment setup failed. Your order was placed.', 'info');
+          navigate(`/order-confirmation/${orderId}`);
+        }
+      } else {
+        clearCart();
+        navigate(`/order-confirmation/${orderId}`);
+      }
     } catch (err) {
       addToast(err.message, 'error');
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
@@ -319,6 +384,9 @@ function Checkout() {
                       }} />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-text)' }}>{method.label}</div>
+                        {method.description && (
+                          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 2 }}>{method.description}</div>
+                        )}
                       </div>
                       <span style={{ fontSize: 24 }}>{method.icon}</span>
                     </label>
@@ -458,7 +526,7 @@ function Checkout() {
                   </button>
                   <button
                     onClick={handleOrder}
-                    disabled={loading || !agreedToTerms}
+                    disabled={loading || processingPayment || !agreedToTerms}
                     style={{
                       width: '100%',
                       maxWidth: 260,
@@ -469,11 +537,11 @@ function Checkout() {
                       padding: '14px 24px',
                       fontSize: 16,
                       fontWeight: 700,
-                      cursor: loading || !agreedToTerms ? 'not-allowed' : 'pointer',
-                      opacity: loading || !agreedToTerms ? 0.5 : 1
+                      cursor: loading || processingPayment || !agreedToTerms ? 'not-allowed' : 'pointer',
+                      opacity: loading || processingPayment || !agreedToTerms ? 0.5 : 1
                     }}
                   >
-                    {loading ? 'Placing Order...' : `Place Order — ${formatCurrency(total)}`}
+                    {processingPayment ? 'Processing Payment...' : loading ? 'Placing Order...' : form.paymentMethod === 'pay_online' ? `Pay ${formatCurrency(total)}` : `Place Order — ${formatCurrency(total)}`}
                   </button>
                 </div>
               </div>

@@ -1,4 +1,6 @@
 export const API_BASE = import.meta.env.VITE_API_URL || 'https://express-js-on-vercel-liart-chi.vercel.app/api';
+export const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_your_public_key_here';
+export const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'https://react-shop-project-bootstrap.vercel.app';
 
 export const CATEGORIES = [
   { value: 'burgers', label: 'Burgers', icon: '🍔' },
@@ -22,9 +24,17 @@ export const ORDER_STATUSES = [
 ];
 
 export const PAYMENT_METHODS = [
-  { value: 'cash', label: 'Cash on Delivery', icon: '💵' },
-  { value: 'card', label: 'Credit/Debit Card', icon: '💳' },
-  { value: 'mobile_money', label: 'Mobile Money', icon: '📱' },
+  { value: 'pay_online', label: 'Pay Online (Paystack)', icon: '💳', description: 'Pay securely with card, mobile money, or bank transfer' },
+  { value: 'cash', label: 'Cash on Delivery', icon: '💵', description: 'Pay when your order arrives' },
+];
+
+export const PAYMENT_STATUSES = [
+  { value: 'pending', label: 'Pending', color: '#f59e0b', icon: '⏳', bgColor: '#fef3c7' },
+  { value: 'paid', label: 'Paid', color: '#22c55e', icon: '✓', bgColor: '#dcfce7' },
+  { value: 'failed', label: 'Failed', color: '#ef4444', icon: '✕', bgColor: '#fef2f2' },
+  { value: 'cancelled', label: 'Cancelled', color: '#6b7280', icon: '✕', bgColor: '#f3f4f6' },
+  { value: 'refunded', label: 'Refunded', color: '#8b5cf6', icon: '↩', bgColor: '#ede9fe' },
+  { value: 'partially_refunded', label: 'Partially Refunded', color: '#a855f7', icon: '↩', bgColor: '#f3e8ff' },
 ];
 
 export const formatCurrency = (amount) => {
@@ -51,6 +61,23 @@ export const formatDateTime = (date) => {
 
 export const getStatusInfo = (status) => {
   return ORDER_STATUSES.find(s => s.value === status) || ORDER_STATUSES[0];
+};
+
+export const getPaymentStatusInfo = (status) => {
+  return PAYMENT_STATUSES.find(s => s.value === status) || PAYMENT_STATUSES[0];
+};
+
+export const getPaymentMethodLabel = (method) => {
+  const methodMap = {
+    cash: 'Cash on Delivery',
+    card: 'Credit/Debit Card',
+    mobile_money: 'Mobile Money',
+    pay_online: 'Online Payment',
+    bank_transfer: 'Bank Transfer',
+    ussd: 'USSD',
+    card_no: 'Card',
+  };
+  return methodMap[method] || method;
 };
 
 export const debounce = (fn, ms) => {

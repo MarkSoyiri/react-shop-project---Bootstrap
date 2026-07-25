@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useApi from '../../hooks/useApi';
+import { getPaymentStatusInfo, getPaymentMethodLabel } from '../../utils/helpers';
 import { PageHeader } from './components/PageHeader';
 import { Pagination } from './components/Pagination';
 import { SkeletonTable } from './components/Skeletons';
@@ -126,6 +127,7 @@ export default function Orders() {
                                         <th>Items</th>
                                         <th>Total</th>
                                         <th>Status</th>
+                                        <th>Payment</th>
                                         <th>Type</th>
                                         <th>Date</th>
                                         <th>Actions</th>
@@ -134,7 +136,7 @@ export default function Orders() {
                                 <tbody>
                                     {filtered.map(order => (
                                         <tr key={order._id}>
-                                            <td className="fw-semibold">#{order._id?.slice(-8)}</td>
+                                            <td className="fw-semibold">#{order.orderNumber || order._id?.slice(-8)}</td>
                                             <td>
                                                 <div className="name">{order.user?.username || 'Guest'}</div>
                                                 <div className="sub">{order.user?.email || ''}</div>
@@ -147,7 +149,27 @@ export default function Orders() {
                                                     {STATUS_LABELS[order.status] || order.status}
                                                 </span>
                                             </td>
-                                            <td className="text-capitalize">{order.deliveryType || 'delivery'}</td>
+                                            <td>
+                                                {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') ? (
+                                                    <span style={{
+                                                        fontSize: 12,
+                                                        fontWeight: 600,
+                                                        padding: '4px 10px',
+                                                        borderRadius: 999,
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: 4,
+                                                        background: getPaymentStatusInfo(order.paymentStatus || 'pending').bgColor,
+                                                        color: getPaymentStatusInfo(order.paymentStatus || 'pending').color,
+                                                        border: `1px solid ${getPaymentStatusInfo(order.paymentStatus || 'pending').color}30`
+                                                    }}>
+                                                        {getPaymentStatusInfo(order.paymentStatus || 'pending').icon} {getPaymentStatusInfo(order.paymentStatus || 'pending').label}
+                                                    </span>
+                                                ) : (
+                                                    <span className="admin-badge confirmed" style={{ fontSize: 12 }}>COD</span>
+                                                )}
+                                            </td>
+                                            <td className="text-capitalize">{order.orderType || order.deliveryType || 'delivery'}</td>
                                             <td className="admin-date-text">{new Date(order.createdAt).toLocaleDateString()}</td>
                                             <td>
                                                 <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => openDetail(order)}>View</button>
@@ -269,11 +291,38 @@ export default function Orders() {
 
                                         <div style={{ marginBottom: 24 }}>
                                             <div className="admin-reports-label" style={{ marginBottom: 8 }}>Payment</div>
-                                            <div className="d-flex gap-2">
-                                                <span className="admin-badge confirmed">{selectedOrder.paymentMethod || 'Cash'}</span>
-                                                <span className={`admin-badge ${selectedOrder.paymentStatus === 'paid' ? 'delivered' : 'pending'}`}>
-                                                    {selectedOrder.paymentStatus || 'pending'}
-                                                </span>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                                <div className="d-flex gap-2">
+                                                    <span className="admin-badge confirmed" style={{ fontSize: 12 }}>
+                                                        {getPaymentMethodLabel(selectedOrder.paymentMethod || 'cash')}
+                                                    </span>
+                                                    {(selectedOrder.paymentMethod === 'card' || selectedOrder.paymentMethod === 'pay_online') && (
+                                                        <span style={{
+                                                            fontSize: 12,
+                                                            fontWeight: 600,
+                                                            padding: '4px 12px',
+                                                            borderRadius: 999,
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: 4,
+                                                            background: getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').bgColor,
+                                                            color: getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').color,
+                                                            border: `1px solid ${getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').color}30`
+                                                        }}>
+                                                            {getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').icon} {getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').label}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {selectedOrder.paymentReference && (
+                                                    <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+                                                        Ref: {selectedOrder.paymentReference}
+                                                    </div>
+                                                )}
+                                                {selectedOrder.paidAt && (
+                                                    <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
+                                                        Paid: {new Date(selectedOrder.paidAt).toLocaleString()}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 

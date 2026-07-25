@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosFetch from '../api/axiosFetchAPI';
 import { CartContext } from '../context/CartContext';
+import { getPaymentStatusInfo, getPaymentMethodLabel } from '../utils/helpers';
 import Loader from '../components/Loader';
 import './OrderTracking.css';
 
@@ -186,6 +187,41 @@ function OrderTracking() {
           <strong style={{ fontSize: 14 }}>
             {new Date(order.estimatedDelivery).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </strong>
+        </div>
+      )}
+
+      {/* Payment Status */}
+      {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') && (
+        <div style={cardStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 4 }}>Payment</div>
+              <div style={{ fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '4px 12px',
+                  borderRadius: 999,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  background: getPaymentStatusInfo(order.paymentStatus || 'pending').bgColor,
+                  color: getPaymentStatusInfo(order.paymentStatus || 'pending').color,
+                  border: `1px solid ${getPaymentStatusInfo(order.paymentStatus || 'pending').color}30`
+                }}>
+                  {getPaymentStatusInfo(order.paymentStatus || 'pending').icon} {getPaymentStatusInfo(order.paymentStatus || 'pending').label}
+                </span>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{getPaymentMethodLabel(order.paymentMethod)}</div>
+              {order.paymentReference && (
+                <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', fontFamily: 'monospace', marginTop: 2 }}>
+                  {order.paymentReference}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

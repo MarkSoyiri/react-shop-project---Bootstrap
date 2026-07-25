@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axiosFetch from '../api/axiosFetchAPI';
 import { CartContext } from '../context/CartContext';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, getPaymentStatusInfo, getPaymentMethodLabel } from '../utils/helpers';
 import Loader from '../components/Loader';
 
 function OrderConfirmation() {
@@ -143,9 +143,9 @@ function OrderConfirmation() {
               <div style={{ fontSize: 14, fontWeight: 600 }}>⏱️ {estimatedTime}</div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 4 }}>Payment</div>
-              <div style={{ fontSize: 14, fontWeight: 600, textTransform: 'capitalize' }}>
-                {order.paymentMethod === 'cash' ? '💵 Cash on Delivery' : order.paymentMethod === 'card' ? '💳 Card' : '📱 Mobile Money'}
+              <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 4 }}>Payment Method</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>
+                {getPaymentMethodLabel(order.paymentMethod)}
               </div>
             </div>
             <div>
@@ -153,6 +153,41 @@ function OrderConfirmation() {
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-brand)' }}>{formatCurrency(order.total)}</div>
             </div>
           </div>
+
+          {/* Payment Status Card */}
+          {order.paymentMethod === 'card' || order.paymentMethod === 'pay_online' ? (
+            <div style={{
+              marginTop: 12,
+              padding: 16,
+              borderRadius: 12,
+              background: getPaymentStatusInfo(order.paymentStatus || 'pending').bgColor,
+              border: `1px solid ${getPaymentStatusInfo(order.paymentStatus || 'pending').color}30`
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-secondary)' }}>Payment Status</span>
+                <span style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: getPaymentStatusInfo(order.paymentStatus || 'pending').color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}>
+                  {getPaymentStatusInfo(order.paymentStatus || 'pending').icon} {getPaymentStatusInfo(order.paymentStatus || 'pending').label}
+                </span>
+              </div>
+              {order.paymentReference && (
+                <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+                  Reference: {order.paymentReference}
+                </div>
+              )}
+              {order.paidAt && (
+                <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 4 }}>
+                  Paid: {new Date(order.paidAt).toLocaleString()}
+                </div>
+              )}
+            </div>
+          ) : null}
         </motion.div>
 
         {/* Order Summary */}

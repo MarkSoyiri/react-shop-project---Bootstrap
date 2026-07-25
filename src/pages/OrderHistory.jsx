@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import useApi from '../hooks/useApi';
-import { formatCurrency, formatDateTime, getStatusInfo } from '../utils/helpers';
+import { formatCurrency, formatDateTime, getStatusInfo, getPaymentStatusInfo, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
 
 function OrderHistory() {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const { get, loading } = useApi();
   const [orders, setOrders] = useState([]);
+  const [retryingOrderId, setRetryingOrderId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +67,61 @@ function OrderHistory() {
       out_for_delivery: { background: '#fff7ed', color: 'var(--color-brand-dark)', border: '1px solid #fed7aa' },
     };
     return { ...base, ...(map[status] || { background: '#fff7ed', color: 'var(--color-brand)', border: '1px solid #fed7aa' }) };
+  };
+
+  const retryPayment = async (order, e) => {
+    e.stopPropagation();
+    if (retryingOrderId) return;
+    setRetryingOrderId(order._id);
+
+    try {
+      const payRes = await fetch(`${API_BASE}/payments/initialize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ orderId: order._id }),
+      });
+      const payData = await payRes.json();
+
+      if (!payData.success) {
+        alert(payData.error || 'Payment initialization failed');
+        setRetryingOrderId(null);
+        return;
+      }
+
+      const { reference } = payData.data;
+
+      const script = document.createElement('script');
+      script.src = 'https://js.paystack.co/v1/inline.js';
+      script.onload = () => {
+        const handler = window.PaystackPop.setup({
+          key: PAYSTACK_PUBLIC_KEY,
+          email: user?.email || '',
+          amount: Math.round(order.total * 100),
+          currency: 'GHS',
+          ref: reference,
+          callback: function () {
+            alert('Payment successful!');
+            loadOrders();
+            setRetryingOrderId(null);
+          },
+          onClose: function () {
+            setRetryingOrderId(null);
+          },
+        });
+        handler.openIframe();
+      };
+      script.onerror = () => {
+        alert('Failed to load payment gateway. Please try again.');
+        setRetryingOrderId(null);
+      };
+      document.body.appendChild(script);
+    } catch {
+      alert('Payment retry failed. Please try again.');
+      setRetryingOrderId(null);
+    }
   };
 
   return (
@@ -126,15 +182,33 @@ function OrderHistory() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 12 }}>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 15 }}>
-                    Order #{order._id.slice(-6).toUpperCase()}
+                    #{order.orderNumber || order._id.slice(-6).toUpperCase()}
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginTop: 2 }}>
                     {formatDateTime(order.createdAt)}
                   </div>
                 </div>
-                <span style={statusBadgeStyle(order.status)}>
-                  {statusInfo.icon} {statusInfo.label}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                  <span style={statusBadgeStyle(order.status)}>
+                    {statusInfo.icon} {statusInfo.label}
+                  </span>
+                  {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') && (
+                    <span style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                      background: getPaymentStatusInfo(order.paymentStatus || 'pending').bgColor,
+                      color: getPaymentStatusInfo(order.paymentStatus || 'pending').color,
+                      border: `1px solid ${getPaymentStatusInfo(order.paymentStatus || 'pending').color}30`,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}>
+                      {getPaymentStatusInfo(order.paymentStatus || 'pending').icon} {getPaymentStatusInfo(order.paymentStatus || 'pending').label}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Items preview */}
@@ -165,18 +239,40 @@ function OrderHistory() {
                 <span style={{ fontWeight: 700, fontSize: 16 }}>
                   {formatCurrency(order.total)}
                 </span>
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: 'var(--color-brand)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4
-                  }}
-                >
-                  View Details →
-                </span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') &&
+                    ['pending', 'failed'].includes(order.paymentStatus) && (
+                    <button
+                      onClick={(e) => retryPayment(order, e)}
+                      disabled={retryingOrderId === order._id}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#fff',
+                        background: retryingOrderId === order._id ? '#94a3b8' : 'var(--color-brand)',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 12px',
+                        cursor: retryingOrderId === order._id ? 'not-allowed' : 'pointer',
+                        minHeight: 32
+                      }}
+                    >
+                      {retryingOrderId === order._id ? 'Processing...' : 'Retry Payment'}
+                    </button>
+                  )}
+                  <span
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: 'var(--color-brand)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    View →
+                  </span>
+                </div>
               </div>
             </motion.div>
           );
