@@ -38,14 +38,32 @@ function OrderConfirmation() {
 
   useEffect(() => {
     if (!order || order.paymentStatus === 'paid') return;
-    const timer = setTimeout(async () => {
+    if (order.paymentMethod !== 'card' && order.paymentMethod !== 'pay_online') return;
+    if (!order.paymentReference) return;
+
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 5;
+
+    const verify = async () => {
+      if (cancelled || attempts >= maxAttempts) return;
+      attempts++;
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL || 'https://express-js-on-vercel-liart-chi.vercel.app/api'}/payments/verify/${order.paymentReference}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+      } catch {}
       try {
         const { data } = await axiosFetch.get(`/api/orders/${id}`);
-        setOrder(data);
+        if (!cancelled) setOrder(data);
+        if (data.paymentStatus === 'paid') return;
       } catch {}
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [id, order?.paymentStatus]);
+      setTimeout(verify, 3000);
+    };
+
+    verify();
+    return () => { cancelled = true; };
+  }, [id, order?.paymentStatus, order?.paymentMethod, order?.paymentReference]);
 
   if (loading) return <div style={{ marginTop: 100, paddingTop: 80 }}><Loader /></div>;
   if (error) return (
