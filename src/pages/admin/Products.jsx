@@ -431,7 +431,7 @@ export default function Products() {
                         <span className="admin-products__toggle-track" />
                       </label>
                     </td>
-                    <td>
+                    <td className="admin-products__td-actions">
                       <div className="admin-products__actions">
                         <button
                           className="admin-products__action-btn admin-products__action-btn--edit"

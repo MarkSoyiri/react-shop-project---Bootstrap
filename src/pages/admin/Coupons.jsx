@@ -287,7 +287,7 @@ export default function Coupons() {
                       {coupon.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td>
+                  <td className="admin-coupons__td-actions">
                     <div className="admin-coupons__actions">
                       <button
                         className="admin-coupons__action-btn admin-coupons__action-btn--edit"
