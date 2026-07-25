@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import useApi from '../../hooks/useApi';
 import { PageHeader } from './components/PageHeader';
@@ -270,6 +270,21 @@ export default function Products() {
     return isNaN(num) ? 'GH₵0.00' : `GH₵${num.toFixed(2)}`;
   };
 
+  const stats = useMemo(() => {
+    const total = products.length;
+    const active = products.filter(p => p.isAvailable ?? p.available ?? true).length;
+    const inactive = total - active;
+    const cats = new Set(products.map(p => p.category || p.categoryId).filter(Boolean)).size;
+    return { total, active, inactive, cats };
+  }, [products]);
+
+  const statCards = [
+    { label: 'Total Products', value: stats.total, icon: '📦', color: 'var(--admin-brand)', bg: 'rgba(232,93,4,0.08)' },
+    { label: 'Active', value: stats.active, icon: '✅', color: 'var(--admin-success)', bg: 'rgba(34,197,94,0.08)' },
+    { label: 'Inactive', value: stats.inactive, icon: '⏸️', color: 'var(--admin-danger)', bg: 'rgba(239,68,68,0.08)' },
+    { label: 'Categories', value: stats.cats, icon: '🏷️', color: 'var(--admin-info, #3b82f6)', bg: 'rgba(59,130,246,0.08)' },
+  ];
+
   return (
     <motion.div
       className="admin-products"
@@ -284,11 +299,33 @@ export default function Products() {
         onAction={openCreate}
       />
 
-      <div className="admin-toolbar">
+      {/* ── Stats Cards ── */}
+      <div className="admin-products__stats">
+        {statCards.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="admin-products__stat-card"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.06 }}
+          >
+            <div className="admin-products__stat-icon" style={{ background: s.bg, color: s.color }}>
+              {s.icon}
+            </div>
+            <div className="admin-products__stat-info">
+              <span className="admin-products__stat-value">{s.value}</span>
+              <span className="admin-products__stat-label">{s.label}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* ── Toolbar ── */}
+      <div className="admin-products__toolbar">
         <div className="admin-products__search">
-          <span className="admin-products__search-icon">
-            <i className="fas fa-search" />
-          </span>
+          <svg className="admin-products__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
           <input
             type="text"
             className="admin-products__search-input"
@@ -297,26 +334,23 @@ export default function Products() {
             onChange={(e) => setSearch(e.target.value)}
           />
           {search && (
-            <button
-              className="admin-products__search-clear"
-              onClick={() => setSearch('')}
-              aria-label="Clear search"
-            >
-              <i className="fas fa-times" />
+            <button className="admin-products__search-clear" onClick={() => setSearch('')} aria-label="Clear search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
             </button>
           )}
         </div>
-        <div className="admin-products__category-filter">
+        <div className="admin-products__filter">
+          <svg className="admin-products__filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
           <select
-            className="admin-form-select"
+            className="admin-products__filter-select"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
             <option value="">All Categories</option>
             {categoryOptions.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
-              </option>
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
             ))}
           </select>
         </div>
@@ -326,7 +360,7 @@ export default function Products() {
         <SkeletonTable columns={5} rows={8} />
       ) : products.length === 0 ? (
         <EmptyState
-          icon="fa-box-open"
+          icon="📦"
           title="No products found"
           description={
             search || categoryFilter
@@ -338,85 +372,92 @@ export default function Products() {
         />
       ) : (
         <>
-          <div className="admin-products__table-wrapper">
+          <div className="admin-products__table-wrap">
             <table className="admin-products__table">
               <thead>
                 <tr>
-                  <th className="admin-products__th">Product</th>
-                  <th className="admin-products__th">Category</th>
-                  <th className="admin-products__th">Price</th>
-                  <th className="admin-products__th">Status</th>
-                  <th className="admin-products__th admin-products__th--actions">Actions</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th className="admin-products__th-actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => (
-                  <tr key={product.id || product._id} className="admin-products__row">
-                    <td className="admin-products__cell admin-products__cell--product">
-                      <div className="admin-products__product-info">
-                        <div className="admin-products__product-image-wrapper">
+                {products.map((product, idx) => (
+                  <motion.tr
+                    key={product.id || product._id}
+                    className="admin-products__row"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: idx * 0.03 }}
+                  >
+                    <td>
+                      <div className="admin-products__cell-product">
+                        <div className="admin-products__cell-img">
                           {product.image || product.imageUrl ? (
-                            <img
-                              src={product.image || product.imageUrl}
-                              alt={product.name}
-                              className="admin-products__product-image"
-                            />
+                            <img src={product.image || product.imageUrl} alt={product.name} />
                           ) : (
-                            <div className="admin-products__product-image-placeholder">
-                              <i className="fas fa-image" />
+                            <div className="admin-products__cell-img-placeholder">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
+                              </svg>
                             </div>
                           )}
                         </div>
-                        <div className="admin-products__product-details">
-                          <span className="admin-products__product-name">{product.name}</span>
+                        <div className="admin-products__cell-info">
+                          <span className="admin-products__cell-name">{product.name}</span>
                           {product.featured && (
-                            <span className="admin-products__badge admin-products__badge--featured">
-                              Featured
-                            </span>
+                            <span className="admin-products__badge admin-products__badge--featured">Featured</span>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="admin-products__cell">
+                    <td>
                       <span className="admin-products__category-tag">
                         {categoryOptions.find(c => c.value === (product.category || product.categoryId))?.label || product.category}
                       </span>
                     </td>
-                    <td className="admin-products__cell admin-products__cell--price">
+                    <td className="admin-products__cell-price">
                       {formatPrice(product.price)}
                     </td>
-                    <td className="admin-products__cell admin-products__cell--status">
+                    <td>
                       <label className="admin-products__toggle">
                         <input
                           type="checkbox"
                           checked={product.isAvailable ?? product.available ?? true}
                           onChange={() => handleToggleStatus(product)}
-                          className="admin-products__toggle-input"
                         />
-                        <span className="admin-products__toggle-slider" />
+                        <span className="admin-products__toggle-track" />
                       </label>
                     </td>
-                    <td className="admin-products__cell admin-products__cell--actions">
+                    <td>
                       <div className="admin-products__actions">
                         <button
                           className="admin-products__action-btn admin-products__action-btn--edit"
                           onClick={() => openEdit(product)}
-                          title="Edit product"
+                          title="Edit"
                           aria-label={`Edit ${product.name}`}
                         >
-                          <i className="fas fa-pen" />
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
                         </button>
                         <button
                           className="admin-products__action-btn admin-products__action-btn--delete"
                           onClick={() => openDeleteConfirm(product)}
-                          title="Delete product"
+                          title="Delete"
                           aria-label={`Delete ${product.name}`}
                         >
-                          <i className="fas fa-trash" />
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                          </svg>
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
@@ -551,7 +592,11 @@ export default function Products() {
                     className="admin-products__file-input"
                     style={{ display: 'none' }}
                   />
-                  <i className="fas fa-cloud-upload-alt" style={{ fontSize: 24, color: 'var(--admin-text-muted)' }} />
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--admin-text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
                   <span className="admin-form-text">Click to upload an image</span>
                   <span className="admin-form-hint">PNG, JPG up to 5MB</span>
                 </label>
