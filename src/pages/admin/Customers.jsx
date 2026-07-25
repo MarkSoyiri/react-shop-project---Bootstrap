@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useApi } from '../../hooks/useApi';
+import useApi from '../../hooks/useApi';
 import { PageHeader } from './components/PageHeader';
 import { Pagination } from './components/Pagination';
 import { Modal } from './components/Modal';
@@ -89,12 +89,64 @@ export default function Customers() {
     })}`;
   };
 
-  return (
-    <div className="admin-customers">
-      <PageHeader title="Customers" subtitle="Manage your customer base" />
+  const stats = useMemo(() => {
+    const total = customers.length;
+    const active = customers.filter(c => c.status === 'active' || c.active).length;
+    const inactive = total - active;
+    const now = new Date();
+    const thisMonth = customers.filter(c => {
+      const d = new Date(c.createdAt || c.joined);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+    return { total, active, inactive, thisMonth };
+  }, [customers]);
 
-      <div className="admin-customers__actions">
+  const statCards = [
+    { label: 'Total Customers', value: stats.total, icon: '👥', color: 'var(--admin-brand)', bg: 'rgba(232,93,4,0.08)' },
+    { label: 'Active', value: stats.active, icon: '✅', color: 'var(--admin-success)', bg: 'rgba(34,197,94,0.08)' },
+    { label: 'Inactive', value: stats.inactive, icon: '⏸️', color: 'var(--admin-danger)', bg: 'rgba(239,68,68,0.08)' },
+    { label: 'New This Month', value: stats.thisMonth, icon: '🆕', color: 'var(--admin-info, #3b82f6)', bg: 'rgba(59,130,246,0.08)' },
+  ];
+
+  return (
+    <motion.div
+      className="admin-customers-page"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <PageHeader
+        title="Customers"
+        subtitle="Manage your customer base"
+      />
+
+      {/* ── Stats Cards ── */}
+      <div className="admin-customers__stats">
+        {statCards.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="admin-customers__stat-card"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.06 }}
+          >
+            <div className="admin-customers__stat-icon" style={{ background: s.bg, color: s.color }}>
+              {s.icon}
+            </div>
+            <div className="admin-customers__stat-info">
+              <span className="admin-customers__stat-value">{s.value}</span>
+              <span className="admin-customers__stat-label">{s.label}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* ── Toolbar ── */}
+      <div className="admin-customers__toolbar">
         <form className="admin-customers__search" onSubmit={handleSearchSubmit}>
+          <svg className="admin-customers__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
           <input
             type="text"
             className="admin-customers__search-input"
@@ -102,27 +154,34 @@ export default function Customers() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
-          <button type="submit" className="admin-customers__search-btn">
-            Search
-          </button>
+          {searchInput && (
+            <button
+              type="button"
+              className="admin-customers__search-clear"
+              onClick={() => { setSearchInput(''); setSearch(''); setPage(1); }}
+              aria-label="Clear search"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+            </button>
+          )}
         </form>
       </div>
 
       {loading ? (
-        <SkeletonTable rows={5} columns={6} />
+        <SkeletonTable columns={6} rows={8} />
       ) : customers.length === 0 ? (
         <EmptyState
+          icon="👥"
           title="No customers found"
-          description={search ? 'Try adjusting your search terms.' : 'No customers have registered yet.'}
+          description={
+            search
+              ? 'Try adjusting your search terms.'
+              : 'No customers have registered yet.'
+          }
         />
       ) : (
         <>
-          <motion.div
-            className="admin-customers__table-wrapper"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+          <div className="admin-customers__table-wrap">
             <table className="admin-customers__table">
               <thead>
                 <tr>
@@ -131,19 +190,20 @@ export default function Customers() {
                   <th>Phone</th>
                   <th>Joined</th>
                   <th>Status</th>
-                  <th>Actions</th>
+                  <th className="admin-customers__th-actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {customers.map((customer, index) => (
                   <motion.tr
                     key={customer._id || customer.id || index}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    className="admin-customers__row"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: index * 0.03 }}
                   >
                     <td>
-                      <div className="admin-customers__customer-info">
+                      <div className="admin-customers__cell-product">
                         <div className="admin-customers__avatar">
                           {getInitial(customer.username || customer.name)}
                         </div>
@@ -163,10 +223,13 @@ export default function Customers() {
                     </td>
                     <td>
                       <span
-                        className={`admin-customers__badge admin-customers__badge--${
-                          customer.status === 'active' || customer.active ? 'active' : 'inactive'
+                        className={`admin-badge ${
+                          customer.status === 'active' || customer.active
+                            ? 'admin-badge--success'
+                            : 'admin-badge--secondary'
                         }`}
                       >
+                        <span className="admin-badge-dot" />
                         {customer.status === 'active' || customer.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
@@ -174,15 +237,19 @@ export default function Customers() {
                       <button
                         className="admin-customers__view-btn"
                         onClick={() => handleViewCustomer(customer)}
+                        aria-label={`View ${customer.username || customer.name}`}
                       >
-                        View
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
                       </button>
                     </td>
                   </motion.tr>
                 ))}
               </tbody>
             </table>
-          </motion.div>
+          </div>
 
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>
@@ -245,7 +312,11 @@ export default function Customers() {
                         {formatCurrency(order.total || order.totalAmount)}
                       </span>
                       <span
-                        className={`admin-customers__badge admin-customers__badge--${order.status === 'delivered' ? 'active' : 'inactive'}`}
+                        className={`admin-badge ${
+                          order.status === 'delivered'
+                            ? 'admin-badge--success'
+                            : 'admin-badge--secondary'
+                        }`}
                       >
                         {order.status || 'Pending'}
                       </span>
@@ -257,6 +328,6 @@ export default function Customers() {
           </div>
         ) : null}
       </Modal>
-    </div>
+    </motion.div>
   );
 }
