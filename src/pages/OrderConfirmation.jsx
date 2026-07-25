@@ -36,6 +36,17 @@ function OrderConfirmation() {
     }
   }, [order, cartCleared, clearCart]);
 
+  useEffect(() => {
+    if (!order || order.paymentStatus === 'paid') return;
+    const timer = setTimeout(async () => {
+      try {
+        const { data } = await axiosFetch.get(`/api/orders/${id}`);
+        setOrder(data);
+      } catch {}
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [id, order?.paymentStatus]);
+
   if (loading) return <div style={{ marginTop: 100, paddingTop: 80 }}><Loader /></div>;
   if (error) return (
     <div style={{ textAlign: 'center', padding: '120px 24px' }}>

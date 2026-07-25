@@ -41,6 +41,17 @@ function OrderTracking() {
     }
   };
 
+  useEffect(() => {
+    if (!order || order.paymentStatus === 'paid') return;
+    const timer = setTimeout(async () => {
+      try {
+        const { data } = await axiosFetch.get(`/api/orders/${id}`);
+        setOrder(data);
+      } catch {}
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [id, order?.paymentStatus]);
+
   const getStatusIndex = () => statusSteps.indexOf(order?.status);
 
   const cardStyle = {

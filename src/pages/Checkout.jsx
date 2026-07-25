@@ -67,7 +67,12 @@ function Checkout() {
         addToast('Payment cancelled. You can retry from your order.', 'info');
         navigate(`/order-confirmation/${orderId}`);
       });
-      handler.onSuccessful(() => {
+      handler.onSuccessful(async (response) => {
+        try {
+          await fetch(`${API_BASE}/payments/verify/${response.reference}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        } catch {}
         clearCart();
         addToast('Payment successful!', 'success');
         navigate(`/order-confirmation/${orderId}`);
