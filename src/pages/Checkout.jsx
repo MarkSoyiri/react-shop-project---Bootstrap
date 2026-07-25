@@ -69,9 +69,7 @@ function Checkout() {
       });
       handler.onSuccessful(async () => {
         try {
-          await fetch(`${API_BASE}/payments/verify/${paymentRef}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await fetch(`${API_BASE}/payments/verify/${paymentRef}`);
         } catch {}
         clearCart();
         addToast('Payment successful!', 'success');

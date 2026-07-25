@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axiosFetch from '../api/axiosFetchAPI';
 import { CartContext } from '../context/CartContext';
-import { formatCurrency, getPaymentStatusInfo, getPaymentMethodLabel } from '../utils/helpers';
+import { formatCurrency, getPaymentStatusInfo, getPaymentMethodLabel, API_BASE } from '../utils/helpers';
 import Loader from '../components/Loader';
 
 function OrderConfirmation() {
@@ -49,9 +49,7 @@ function OrderConfirmation() {
       if (cancelled || attempts >= maxAttempts) return;
       attempts++;
       try {
-        await fetch(`${import.meta.env.VITE_API_URL || 'https://express-js-on-vercel-liart-chi.vercel.app/api'}/payments/verify/${order.paymentReference}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
+        await fetch(`${API_BASE}/payments/verify/${order.paymentReference}`);
       } catch {}
       try {
         const { data } = await axiosFetch.get(`/api/orders/${id}`);
