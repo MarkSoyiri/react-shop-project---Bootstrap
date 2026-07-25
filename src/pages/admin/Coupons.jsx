@@ -23,6 +23,35 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
+function mapToFrontend(c) {
+  return {
+    ...c,
+    _id: c._id || c.id,
+    code: c.code || '',
+    type: c.type || 'percentage',
+    value: c.value ?? '',
+    minimum_order: c.minOrder ?? c.minimum_order ?? '',
+    start_date: (c.validFrom || c.start_date || '').slice(0, 10),
+    end_date: (c.validUntil || c.end_date || '').slice(0, 10),
+    usage_limit: c.usageLimit ?? c.usage_limit ?? '',
+    usage_count: c.usedCount ?? c.usage_count ?? 0,
+    is_active: c.isActive ?? c.is_active ?? true,
+  };
+}
+
+function mapToBackend(form) {
+  return {
+    code: form.code.toUpperCase(),
+    type: form.type,
+    value: form.type === 'free_delivery' ? 0 : Number(form.value),
+    minOrder: Number(form.minimum_order) || 0,
+    usageLimit: Number(form.usage_limit) || 0,
+    validFrom: form.start_date || undefined,
+    validUntil: form.end_date || undefined,
+    isActive: form.is_active,
+  };
+}
+
 const emptyForm = {
   code: '',
   type: 'percentage',
@@ -49,7 +78,8 @@ export default function Coupons() {
     try {
       const result = await get('/coupons');
       const couponData = result.data || result;
-      setCoupons(Array.isArray(couponData) ? couponData : couponData?.coupons || []);
+      const raw = Array.isArray(couponData) ? couponData : couponData?.coupons || [];
+      setCoupons(raw.map(mapToFrontend));
     } catch (err) {
       console.error(err);
     }
@@ -109,13 +139,7 @@ export default function Coupons() {
     e.preventDefault();
     if (!validateForm()) return;
     setSaving(true);
-    const payload = {
-      ...form,
-      code: form.code.toUpperCase(),
-      value: form.type === 'free_delivery' ? 0 : Number(form.value),
-      minimum_order: Number(form.minimum_order) || 0,
-      usage_limit: Number(form.usage_limit) || 0,
-    };
+    const payload = mapToBackend(form);
     try {
       if (editing) {
         await put(`/coupons/${editing._id || editing.id}`, payload);
