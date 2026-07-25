@@ -108,6 +108,25 @@ function ProductDetail() {
     <div className="product-detail-page">
       <div className="container-lg" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
 
+        {/* ── Breadcrumb ── */}
+        <nav className="pd-breadcrumb" style={{ marginBottom: '32px', fontSize: '14px', color: 'var(--color-text-muted)' }}>
+          <span
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer', color: 'var(--color-text-muted)', transition: 'color 200ms' }}
+            onMouseEnter={e => e.target.style.color = 'var(--color-brand)'}
+            onMouseLeave={e => e.target.style.color = 'var(--color-text-muted)'}
+          >Home</span>
+          <span style={{ margin: '0 10px' }}>/</span>
+          <span
+            onClick={() => navigate('/menu')}
+            style={{ cursor: 'pointer', color: 'var(--color-text-muted)', transition: 'color 200ms' }}
+            onMouseEnter={e => e.target.style.color = 'var(--color-brand)'}
+            onMouseLeave={e => e.target.style.color = 'var(--color-text-muted)'}
+          >Menu</span>
+          <span style={{ margin: '0 10px' }}>/</span>
+          <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{item.name}</span>
+        </nav>
+
         {/* ── Mobile Hero Image (hidden on desktop via CSS) ── */}
         <div className="pd-hero-image">
           {item.image ? (
@@ -138,25 +157,6 @@ function ProductDetail() {
             )}
           </div>
         </div>
-
-        {/* ── Breadcrumb ── */}
-        <nav className="pd-breadcrumb" style={{ marginBottom: '32px', fontSize: '14px', color: 'var(--color-text-muted)' }}>
-          <span
-            onClick={() => navigate('/')}
-            style={{ cursor: 'pointer', color: 'var(--color-text-muted)', transition: 'color 200ms' }}
-            onMouseEnter={e => e.target.style.color = 'var(--color-brand)'}
-            onMouseLeave={e => e.target.style.color = 'var(--color-text-muted)'}
-          >Home</span>
-          <span style={{ margin: '0 10px' }}>/</span>
-          <span
-            onClick={() => navigate('/menu')}
-            style={{ cursor: 'pointer', color: 'var(--color-text-muted)', transition: 'color 200ms' }}
-            onMouseEnter={e => e.target.style.color = 'var(--color-brand)'}
-            onMouseLeave={e => e.target.style.color = 'var(--color-text-muted)'}
-          >Menu</span>
-          <span style={{ margin: '0 10px' }}>/</span>
-          <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{item.name}</span>
-        </nav>
 
         {/* ── Two Column Layout (Desktop: side-by-side, Mobile: stacked) ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px' }} className="pd-columns">
