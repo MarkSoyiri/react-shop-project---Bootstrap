@@ -158,7 +158,7 @@ export const useToast = () => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  return { toasts, addToast, removeToast, Toast };
+  return { toasts, addToast, removeToast, Toast: () => <Toast toasts={toasts} removeToast={removeToast} /> };
 };
 
 export default Toast;
