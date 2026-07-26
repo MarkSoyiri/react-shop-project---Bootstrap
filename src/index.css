@@ -634,9 +634,9 @@ h1, h2, h3, h4, h5, h6 {
 .signIn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  font-size: 14px;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
   font-weight: var(--font-semibold);
   color: var(--color-text);
   background: var(--glass-bg-subtle);
@@ -658,8 +658,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .acc-img {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-full);
   object-fit: cover;
 }
