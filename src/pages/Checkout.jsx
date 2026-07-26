@@ -61,19 +61,20 @@ function Checkout() {
   };
 
   const openPaystackPopup = (access_code, orderId, authorization_url) => {
-    const redirectFallback = () => {
-      if (authorization_url) {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      || (navigator.maxTouchPoints > 0 && window.innerWidth < 768);
+
+    if (isMobile || !authorization_url) {
+      if (isMobile && authorization_url) {
         window.location.href = authorization_url;
-      } else {
-        addToast('Payment gateway unavailable. Redirecting...', 'info');
-        navigate(`/order-confirmation/${orderId}`);
+        return;
       }
-    };
+    }
 
     const doOpen = () => {
       try {
         if (!window.PaystackPop || typeof window.PaystackPop.resumeTransaction !== 'function') {
-          redirectFallback();
+          window.location.href = authorization_url;
           return;
         }
 
@@ -88,16 +89,11 @@ function Checkout() {
           navigate(`/order-confirmation/${orderId}`);
         };
       } catch (err) {
-        redirectFallback();
+        window.location.href = authorization_url;
       }
     };
 
     if (window.PaystackPop && typeof window.PaystackPop.resumeTransaction === 'function') {
-      doOpen();
-      return;
-    }
-
-    if (window.PaystackPop) {
       doOpen();
       return;
     }
@@ -114,7 +110,7 @@ function Checkout() {
       }, 100);
       setTimeout(() => {
         clearInterval(check);
-        if (!opened) redirectFallback();
+        if (!opened) window.location.href = authorization_url;
       }, 8000);
       return;
     }
@@ -123,7 +119,7 @@ function Checkout() {
     script.src = 'https://js.paystack.co/v1/inline.js';
     script.onload = doOpen;
     script.onerror = () => {
-      redirectFallback();
+      window.location.href = authorization_url;
     };
     document.body.appendChild(script);
   };
