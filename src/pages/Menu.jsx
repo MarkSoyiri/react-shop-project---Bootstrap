@@ -126,25 +126,14 @@ function Menu() {
           </div>
 
           {/* Category Chips */}
-          <div style={{
-            display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '8px',
-            WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
-          }}>
+          <div className="menu-chips-scroll">
             {categories.map(cat => {
               const active = activeCategory === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  style={{
-                    padding: '8px 22px', borderRadius: '100px',
-                    border: '1.5px solid', borderColor: active ? 'var(--color-brand)' : 'var(--color-border)',
-                    background: active ? 'var(--color-brand)' : 'var(--color-bg-card)',
-                    color: active ? '#fff' : 'var(--color-text-secondary)',
-                    fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap',
-                    cursor: 'pointer', transition: 'all 200ms',
-                    flexShrink: 0
-                  }}
+                  className={`menu-chip${active ? ' menu-chip--active' : ''}`}
                 >
                   {cat.name}
                 </button>

@@ -4939,6 +4939,42 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeUp 0.4s ease-out;
 }
 
+/* ---- Category Chips Scroll ---- */
+.menu-chips-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.menu-chips-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-chip {
+  padding: 8px 22px;
+  border-radius: 100px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 200ms;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-chip--active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: #fff;
+}
+
 /* ==========================================================
    43. ADMIN DASHBOARD (Additional Classes)
    ========================================================== */
