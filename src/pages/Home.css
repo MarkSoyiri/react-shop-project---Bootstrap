@@ -52,7 +52,6 @@
 /* ---------- Hero Section ---------- */
 .hero-section {
   position: relative;
-  margin-top: var(--navbar-height);
   width: 100%;
   height: clamp(480px, 65vw, 680px);
   overflow: hidden;
