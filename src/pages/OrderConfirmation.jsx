@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axiosFetch from '../api/axiosFetchAPI';
 import { CartContext } from '../context/CartContext';
-import { formatCurrency, getPaymentStatusInfo, getPaymentMethodLabel, API_BASE } from '../utils/helpers';
+import { AuthContext } from '../context/AuthContext';
+import { formatCurrency, getPaymentStatusInfo, getPaymentMethodLabel, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
 import Loader from '../components/Loader';
 import './OrderConfirmation.css';
 
@@ -11,10 +12,12 @@ function OrderConfirmation() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { clearCart } = useContext(CartContext);
+  const { user, token } = useContext(AuthContext);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cartCleared, setCartCleared] = useState(false);
+  const [retrying, setRetrying] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -246,6 +249,46 @@ function OrderConfirmation() {
           transition={{ delay: 0.7 }}
           className="oc-actions"
         >
+          {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') && ['pending', 'failed'].includes(order.paymentStatus) && (
+            <button
+              className="oc-btn-primary"
+              disabled={retrying}
+              onClick={async () => {
+                setRetrying(true);
+                try {
+                  const payRes = await fetch(`${API_BASE}/payments/initialize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ orderId: order._id }),
+                  });
+                  const payData = await payRes.json();
+                  if (!payData.success) { alert(payData.error || 'Payment init failed'); setRetrying(false); return; }
+                  const { reference } = payData.data;
+                  const script = document.createElement('script');
+                  script.src = 'https://js.paystack.co/v1/inline.js';
+                  script.onload = () => {
+                    const handler = window.PaystackPop.setup({
+                      key: PAYSTACK_PUBLIC_KEY,
+                      email: user?.email || '',
+                      amount: Math.round(order.total * 100),
+                      currency: 'GHS',
+                      ref: reference,
+                      callback: function () {
+                        axiosFetch.get(`/api/orders/${id}`).then(({ data }) => setOrder(data));
+                        setRetrying(false);
+                      },
+                      onClose: function () { setRetrying(false); },
+                    });
+                    handler.openIframe();
+                  };
+                  script.onerror = () => { alert('Failed to load payment gateway.'); setRetrying(false); };
+                  document.body.appendChild(script);
+                } catch { alert('Payment retry failed.'); setRetrying(false); }
+              }}
+            >
+              {retrying ? 'Processing...' : 'Pay Now'}
+            </button>
+          )}
           <Link to={`/order/${order._id}`} className="oc-btn-primary">
             Track Order →
           </Link>

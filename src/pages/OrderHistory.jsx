@@ -2,11 +2,13 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
+import { CartContext } from '../context/CartContext';
 import useApi from '../hooks/useApi';
-import { formatCurrency, formatDateTime, getStatusInfo, getPaymentStatusInfo, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
+import { formatCurrency, formatDateTime, getStatusInfo, getPaymentStatusInfo, getOrderActions, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
 
 function OrderHistory() {
   const { user, token } = useContext(AuthContext);
+  const { addToCart, clearCart } = useContext(CartContext);
   const { get, post, loading } = useApi();
   const [orders, setOrders] = useState([]);
   const [retryingOrderId, setRetryingOrderId] = useState(null);
@@ -14,6 +16,8 @@ function OrderHistory() {
   const [reviewItems, setReviewItems] = useState([]);
   const [submittingReviews, setSubmittingReviews] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [receiptOrder, setReceiptOrder] = useState(null);
+  const [cancellingId, setCancellingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,6 +115,57 @@ function OrderHistory() {
     }
   };
 
+  const cancelOrder = async (order, e) => {
+    e.stopPropagation();
+    if (!window.confirm(`Cancel order #${order.orderNumber}?`)) return;
+    setCancellingId(order._id);
+    try {
+      await post(`/orders/${order._id}/cancel`);
+      loadOrders();
+    } catch (err) {
+      alert(err?.message || 'Failed to cancel order');
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
+  const handleReorder = (order, e) => {
+    e.stopPropagation();
+    clearCart();
+    order.items.forEach(item => {
+      for (let i = 0; i < item.quantity; i++) {
+        addToCart({
+          _id: item.menuItem?._id || item.menuItem,
+          name: item.name,
+          price: item.priceAtPurchase,
+          image: item.menuItem?.image || '',
+          variant: item.variant || '',
+          addOns: item.addOns || [],
+          quantity: 1
+        });
+      }
+    });
+    navigate('/cart');
+  };
+
+  const handleReceipt = async (order, e) => {
+    e.stopPropagation();
+    try {
+      const res = await get(`/orders/${order._id}/receipt`);
+      setReceiptOrder(res.receipt || order);
+    } catch {
+      setReceiptOrder(order);
+    }
+  };
+
+  const handleRefundStatus = (order, e) => {
+    e.stopPropagation();
+    alert(order.paymentStatus === 'refunded'
+      ? `Refund confirmed for order #${order.orderNumber}. The amount has been refunded to your original payment method.`
+      : `Refund is being processed for order #${order.orderNumber}. Please allow 5-10 business days for the refund to appear.`
+    );
+  };
+
   const openReviewModal = (order, e) => {
     e.stopPropagation();
     setReviewOrder(order);
@@ -140,13 +195,38 @@ function OrderHistory() {
         setReviewSubmitted(true);
         setTimeout(() => { setReviewOrder(null); }, 2000);
       } else {
-        alert('Failed to submit reviews. Please try again.');
+        alert('Failed to submit reviews. You can only review items from completed, paid orders.');
       }
     } catch {
       alert('Failed to submit reviews. Please try again.');
     } finally {
       setSubmittingReviews(false);
     }
+  };
+
+  const handleAction = (key, order, e) => {
+    switch (key) {
+      case 'retry-payment': retryPayment(order, e); break;
+      case 'cancel': cancelOrder(order, e); break;
+      case 'reorder': handleReorder(order, e); break;
+      case 'receipt': handleReceipt(order, e); break;
+      case 'review': openReviewModal(order, e); break;
+      case 'track': navigate(`/order/${order._id}`); break;
+      case 'refund-status': handleRefundStatus(order, e); break;
+      case 'view': navigate(`/order/${order._id}`); break;
+      default: break;
+    }
+  };
+
+  const getActionBtnClass = (variant) => {
+    const map = {
+      primary: 'oh-btn oh-btn-primary-action',
+      danger: 'oh-btn oh-btn-danger',
+      outline: 'oh-btn oh-btn-outline',
+      secondary: 'oh-btn oh-btn-secondary',
+      ghost: 'oh-btn oh-btn-ghost',
+    };
+    return map[variant] || 'oh-btn oh-btn-outline';
   };
 
   return (
@@ -170,6 +250,10 @@ function OrderHistory() {
           const statusInfo = getStatusInfo(order.status);
           const payInfo = getPaymentStatusInfo(order.paymentStatus || 'pending');
           const isCard = order.paymentMethod === 'card' || order.paymentMethod === 'pay_online';
+          const actions = getOrderActions(order);
+          const visibleActions = actions.filter(a => a.key !== 'view').slice(0, 3);
+          const hasMore = actions.filter(a => a.key !== 'view').length > 3;
+
           return (
             <motion.div
               key={order._id}
@@ -203,7 +287,7 @@ function OrderHistory() {
               <div className="oh-items">
                 {order.items?.slice(0, 5).map((item, j) => (
                   <span key={j} className="oh-item-tag">
-                    {item.name} × {item.quantity}
+                    {item.name} x{item.quantity}
                   </span>
                 ))}
                 {order.items?.length > 5 && (
@@ -214,23 +298,21 @@ function OrderHistory() {
               <div className="oh-card-footer">
                 <span className="oh-total">{formatCurrency(order.total)}</span>
                 <div className="oh-card-actions" onClick={e => e.stopPropagation()}>
-                  {['delivered', 'completed'].includes(order.status) && (
-                    <button className="oh-btn oh-btn-rate" onClick={(e) => openReviewModal(order, e)}>
-                      ★ Rate
-                    </button>
-                  )}
-                  {isCard && ['pending', 'failed'].includes(order.paymentStatus) && (
+                  {visibleActions.map(action => (
                     <button
-                      className={`oh-btn oh-btn-retry ${retryingOrderId === order._id ? 'oh-btn-retry--disabled' : ''}`}
-                      disabled={retryingOrderId === order._id}
-                      onClick={(e) => retryPayment(order, e)}
+                      key={action.key}
+                      className={`${getActionBtnClass(action.variant)} ${action.key === 'retry-payment' && retryingOrderId === order._id ? 'oh-btn--loading' : ''} ${action.key === 'cancel' && cancellingId === order._id ? 'oh-btn--loading' : ''}`}
+                      disabled={(action.key === 'retry-payment' && retryingOrderId === order._id) || (action.key === 'cancel' && cancellingId === order._id)}
+                      onClick={(e) => handleAction(action.key, order, e)}
                     >
-                      {retryingOrderId === order._id ? 'Processing...' : 'Retry Payment'}
+                      {action.key === 'retry-payment' && retryingOrderId === order._id ? 'Processing...' : action.key === 'cancel' && cancellingId === order._id ? 'Cancelling...' : `${action.icon} ${action.label}`}
+                    </button>
+                  ))}
+                  {hasMore && (
+                    <button className="oh-btn oh-btn-ghost" onClick={() => navigate(`/order/${order._id}`)}>
+                      More →
                     </button>
                   )}
-                  <button className="oh-btn oh-btn-view" onClick={() => navigate(`/order/${order._id}`)}>
-                    View →
-                  </button>
                 </div>
               </div>
             </motion.div>
@@ -238,6 +320,7 @@ function OrderHistory() {
         })}
       </div>
 
+      {/* Review Modal */}
       <AnimatePresence>
         {reviewOrder && (
           <motion.div
@@ -313,6 +396,107 @@ function OrderHistory() {
                   </button>
                 </>
               )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Receipt Modal */}
+      <AnimatePresence>
+        {receiptOrder && (
+          <motion.div
+            className="oh-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setReceiptOrder(null)}
+          >
+            <motion.div
+              className="oh-modal oh-receipt-modal"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="oh-modal-header">
+                <h3>Order Receipt</h3>
+                <button className="oh-modal-close" onClick={() => setReceiptOrder(null)}>✕</button>
+              </div>
+
+              <div className="oh-receipt">
+                <div className="oh-receipt-brand">
+                  <div className="oh-receipt-brand-name">ZESTY CAVE</div>
+                  <div className="oh-receipt-brand-sub">Official Receipt</div>
+                </div>
+
+                <div className="oh-receipt-divider" />
+
+                <div className="oh-receipt-info-row">
+                  <span>Order #{receiptOrder.orderNumber}</span>
+                  <span>{new Date(receiptOrder.date || receiptOrder.createdAt).toLocaleDateString()}</span>
+                </div>
+                {receiptOrder.paidAt && (
+                  <div className="oh-receipt-info-row">
+                    <span>Paid</span>
+                    <span>{new Date(receiptOrder.paidAt).toLocaleString()}</span>
+                  </div>
+                )}
+
+                <div className="oh-receipt-divider" />
+
+                <div className="oh-receipt-items">
+                  {(receiptOrder.items || []).map((item, idx) => (
+                    <div key={idx} className="oh-receipt-item">
+                      <div className="oh-receipt-item-left">
+                        <span className="oh-receipt-item-qty">{item.quantity}x</span>
+                        <div>
+                          <span className="oh-receipt-item-name">{item.name}</span>
+                          {item.variant && <span className="oh-receipt-item-variant"> ({item.variant})</span>}
+                        </div>
+                      </div>
+                      <span className="oh-receipt-item-price">{formatCurrency(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="oh-receipt-divider" />
+
+                <div className="oh-receipt-totals">
+                  <div className="oh-receipt-total-row">
+                    <span>Subtotal</span>
+                    <span>{formatCurrency(receiptOrder.subtotal)}</span>
+                  </div>
+                  {receiptOrder.tax > 0 && (
+                    <div className="oh-receipt-total-row">
+                      <span>Tax (15%)</span>
+                      <span>{formatCurrency(receiptOrder.tax)}</span>
+                    </div>
+                  )}
+                  {receiptOrder.deliveryFee > 0 && (
+                    <div className="oh-receipt-total-row">
+                      <span>Delivery</span>
+                      <span>{formatCurrency(receiptOrder.deliveryFee)}</span>
+                    </div>
+                  )}
+                  {receiptOrder.discount > 0 && (
+                    <div className="oh-receipt-total-row oh-receipt-discount">
+                      <span>Discount</span>
+                      <span>-{formatCurrency(receiptOrder.discount)}</span>
+                    </div>
+                  )}
+                  <div className="oh-receipt-total-row oh-receipt-grand">
+                    <span>Total</span>
+                    <span>{formatCurrency(receiptOrder.total)}</span>
+                  </div>
+                </div>
+
+                <div className="oh-receipt-divider" />
+
+                <div className="oh-receipt-footer">
+                  <div>Thank you for your order!</div>
+                  <div className="oh-receipt-footer-sub">Zesty Cave — Eat Happy</div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}

@@ -92,3 +92,42 @@ export const debounce = (fn, ms) => {
     timer = setTimeout(() => fn(...args), ms);
   };
 };
+
+export const getOrderActions = (order) => {
+  const actions = [];
+  const ps = order.paymentStatus || 'pending';
+  const os = order.status;
+  const isCard = order.paymentMethod === 'card' || order.paymentMethod === 'pay_online';
+
+  if (['pending', 'placed', 'accepted', 'confirmed'].includes(os)) {
+    actions.push({ key: 'cancel', label: 'Cancel', icon: '✕', variant: 'danger' });
+  }
+
+  if (isCard && ['pending', 'failed'].includes(ps) && !['cancelled', 'rejected', 'completed'].includes(os)) {
+    actions.push({ key: 'retry-payment', label: 'Pay Now', icon: '💳', variant: 'primary' });
+  }
+
+  if (ps === 'paid' && ['pending', 'accepted', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'picked_up', 'delivered'].includes(os)) {
+    actions.push({ key: 'track', label: 'Track', icon: '📍', variant: 'outline' });
+  }
+
+  if (ps === 'paid' && ['delivered', 'completed'].includes(os)) {
+    actions.push({ key: 'review', label: 'Rate', icon: '★', variant: 'primary' });
+  }
+
+  if (['delivered', 'completed', 'cancelled', 'rejected'].includes(os)) {
+    actions.push({ key: 'reorder', label: 'Reorder', icon: '↻', variant: 'outline' });
+  }
+
+  if (ps === 'paid' && ['delivered', 'completed'].includes(os)) {
+    actions.push({ key: 'receipt', label: 'Receipt', icon: '🧾', variant: 'secondary' });
+  }
+
+  if (ps === 'refunded' || (os === 'rejected' && ps === 'paid')) {
+    actions.push({ key: 'refund-status', label: 'Refund', icon: '↩', variant: 'outline' });
+  }
+
+  actions.push({ key: 'view', label: 'Details', icon: '→', variant: 'ghost' });
+
+  return actions;
+};
