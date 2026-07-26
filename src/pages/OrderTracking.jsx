@@ -14,15 +14,19 @@ function OrderTracking() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const statusSteps = ['placed', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
+  const statusSteps = ['pending', 'accepted', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'completed'];
+  const statusStepsPickup = ['pending', 'accepted', 'preparing', 'ready', 'picked_up', 'completed'];
+
   const statusLabels = {
-    placed: 'Order Placed', confirmed: 'Confirmed', preparing: 'Preparing',
-    ready: 'Ready', out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled'
+    pending: 'Pending', placed: 'Pending', accepted: 'Accepted', confirmed: 'Accepted',
+    preparing: 'Preparing', ready: 'Ready', out_for_delivery: 'Out for Delivery',
+    picked_up: 'Picked Up', delivered: 'Delivered', completed: 'Completed',
+    cancelled: 'Cancelled', rejected: 'Rejected'
   };
 
   const statusIcons = {
-    placed: '📝', confirmed: '✅', preparing: '👨‍🍳',
-    ready: '📦', out_for_delivery: '🚗', delivered: '🎉', cancelled: '❌'
+    pending: '⏳', placed: '⏳', accepted: '✅', confirmed: '✅', preparing: '👨‍🍳',
+    ready: '📦', out_for_delivery: '🚗', picked_up: '📦', delivered: '🎉', completed: '🎉', cancelled: '❌', rejected: '❌'
   };
 
   useEffect(() => {
@@ -52,7 +56,22 @@ function OrderTracking() {
     return () => clearTimeout(timer);
   }, [id, order?.paymentStatus]);
 
-  const getStatusIndex = () => statusSteps.indexOf(order?.status);
+  const getActiveSteps = () => {
+    if (order?.orderType === 'pickup') return statusStepsPickup;
+    return statusSteps;
+  };
+
+  const getNormalizedStatus = (status) => {
+    if (status === 'placed') return 'pending';
+    if (status === 'confirmed') return 'accepted';
+    return status;
+  };
+
+  const getStatusIndex = () => {
+    const steps = getActiveSteps();
+    const normalized = getNormalizedStatus(order?.status);
+    return steps.indexOf(normalized);
+  };
 
   const cardStyle = {
     background: '#fff',
@@ -92,13 +111,13 @@ function OrderTracking() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Order #{order.orderNumber || order._id.slice(-8)}</h1>
         <span style={{
-          background: order.status === 'delivered' ? '#ecfdf5' : order.status === 'cancelled' ? '#fef2f2' : '#fff7ed',
-          color: order.status === 'delivered' ? '#065f46' : order.status === 'cancelled' ? '#991b1b' : 'var(--color-brand)',
+          background: order.status === 'delivered' || order.status === 'completed' ? '#ecfdf5' : order.status === 'cancelled' || order.status === 'rejected' ? '#fef2f2' : '#fff7ed',
+          color: order.status === 'delivered' || order.status === 'completed' ? '#065f46' : order.status === 'cancelled' || order.status === 'rejected' ? '#991b1b' : 'var(--color-brand)',
           fontWeight: 600,
           fontSize: 13,
           padding: '4px 14px',
           borderRadius: 999,
-          border: `1px solid ${order.status === 'delivered' ? '#a7f3d0' : order.status === 'cancelled' ? '#fecaca' : '#fed7aa'}`
+          border: `1px solid ${order.status === 'delivered' || order.status === 'completed' ? '#a7f3d0' : order.status === 'cancelled' || order.status === 'rejected' ? '#fecaca' : '#fed7aa'}`
         }}>
           {statusLabels[order.status] || order.status}
         </span>
@@ -108,7 +127,7 @@ function OrderTracking() {
       </p>
 
       {/* Progress Bar */}
-      {order.status !== 'cancelled' && (
+      {order.status !== 'cancelled' && order.status !== 'rejected' && (
         <div style={cardStyle}>
           <div className="tracking-progress-steps" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative' }}>
             {/* Connecting line */}
@@ -126,7 +145,7 @@ function OrderTracking() {
               position: 'absolute',
               top: 20,
               left: 20,
-              width: `${Math.max(0, (getStatusIndex() / (statusSteps.length - 1)) * (100 - (40 / 7)) )}%`,
+              width: `${Math.max(0, (getStatusIndex() / (getActiveSteps().length - 1)) * (100 - (40 / getActiveSteps().length)) )}%`,
               maxWidth: 'calc(100% - 40px)',
               height: 3,
               background: 'var(--color-accent)',
@@ -135,7 +154,7 @@ function OrderTracking() {
               transition: 'width 0.4s'
             }} />
 
-            {statusSteps.map((step, idx) => {
+            {getActiveSteps().map((step, idx) => {
               const isComplete = idx <= getStatusIndex();
               const isCurrent = idx === getStatusIndex();
               return (
@@ -358,7 +377,7 @@ function OrderTracking() {
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 8 }}>
-        {!['cancelled', 'delivered'].includes(order.status) && (
+        {!['cancelled', 'delivered', 'completed', 'rejected'].includes(order.status) && (
           <button
             onClick={async () => {
               if (window.confirm('Cancel this order?')) {
@@ -383,7 +402,7 @@ function OrderTracking() {
             Cancel Order
           </button>
         )}
-        {order.status === 'delivered' && (
+        {['delivered', 'completed'].includes(order.status) && (
           <button
             onClick={() => {
               clearCart();

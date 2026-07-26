@@ -58,18 +58,18 @@ function Notifications() {
 
   const getNotifIcon = (type) => {
     const icons = {
-      order_confirmed: '✓', order_preparing: '👨‍🍳', order_ready: '✅',
-      order_delivered: '🎉', order_cancelled: '✕', promo_new: '🔥',
-      promo_reminder: '📢', account_update: '👤', system: 'ℹ',
+      order_placed: '📝', order_confirmed: '✓', order_accepted: '✓', order_preparing: '👨‍🍳', order_ready: '✅',
+      order_delivered: '🎉', order_cancelled: '✕', order_rejected: '✕', order_completed: '🎉', order_picked_up: '📦',
+      promo_new: '🔥', promo_reminder: '📢', account_update: '👤', system: 'ℹ',
     };
     return icons[type] || 'ℹ';
   };
 
   const getNotifColor = (type) => {
     const colors = {
-      order_confirmed: '#dbeafe', order_preparing: '#ede9fe', order_ready: '#d1fae5',
-      order_delivered: '#dcfce7', order_cancelled: '#fee2e2', promo_new: '#fef3c7',
-      promo_reminder: '#fef3c7', account_update: '#e0e7ff', system: '#f1f5f9',
+      order_placed: '#fff7ed', order_confirmed: '#dbeafe', order_accepted: '#dbeafe', order_preparing: '#ede9fe', order_ready: '#d1fae5',
+      order_delivered: '#dcfce7', order_cancelled: '#fee2e2', order_rejected: '#fee2e2', order_completed: '#dcfce7', order_picked_up: '#d1fae5',
+      promo_new: '#fef3c7', promo_reminder: '#fef3c7', account_update: '#e0e7ff', system: '#f1f5f9',
     };
     return colors[type] || '#f1f5f9';
   };

@@ -17,12 +17,16 @@ const itemVariants = {
 };
 
 const statusColors = {
-    pending: '#f59e0b', confirmed: '#3b82f6', preparing: '#f59e0b',
-    ready: '#06b6d4', out_for_delivery: '#6366f1', delivered: '#059669', cancelled: '#dc2626',
+    pending: '#f59e0b', placed: '#f59e0b', accepted: '#3b82f6', confirmed: '#3b82f6',
+    preparing: '#d97706', ready: '#06b6d4', out_for_delivery: '#6366f1',
+    picked_up: '#0891b2', delivered: '#059669', completed: '#059669',
+    cancelled: '#dc2626', rejected: '#dc2626',
 };
 const statusLabels = {
-    pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing',
-    ready: 'Ready', out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+    pending: 'Pending', placed: 'Pending', accepted: 'Accepted', confirmed: 'Accepted',
+    preparing: 'Preparing', ready: 'Ready', out_for_delivery: 'Out for Delivery',
+    picked_up: 'Picked Up', delivered: 'Delivered', completed: 'Completed',
+    cancelled: 'Cancelled', rejected: 'Rejected',
 };
 
 function RevenueChart({ data }) {
@@ -149,7 +153,7 @@ export default function Dashboard() {
 
     if (!dashboard) return null;
 
-    const { stats = {}, recentOrders = [], popularItems = [], orderStatus = {}, dailyRevenue = [] } = dashboard;
+    const { stats = {}, recentOrders = [], popularItems = [], statusBreakdown = {}, dailyRevenue = [] } = dashboard;
     const revenueData = dailyRevenue.map((d, i) => ({ label: d._id || `Day ${i + 1}`, value: d.revenue || 0 }));
 
     const quickActions = [
@@ -206,7 +210,7 @@ export default function Dashboard() {
                         <h3 className="admin-card-title">Order Status Overview</h3>
                     </div>
                     <div className="admin-card-body">
-                        <StatusChart data={orderStatus} />
+                        <StatusChart data={statusBreakdown} />
                     </div>
                 </motion.div>
             </div>
@@ -235,10 +239,10 @@ export default function Dashboard() {
                                 <tbody>
                                     {recentOrders.length > 0 ? recentOrders.slice(0, 6).map((order) => (
                                         <tr key={order._id} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/orders')}>
-                                            <td><span style={{ fontWeight: 600 }}>#{order._id?.slice(-8)}</span></td>
+                                            <td><span style={{ fontWeight: 600 }}>#{order.orderNumber || order._id?.slice(-8)}</span></td>
                                             <td>{order.user?.email || order.user?.username || 'Guest'}</td>
                                             <td><span style={{ fontWeight: 700 }}>GH₵ {Number(order.total || 0).toFixed(2)}</span></td>
-                                            <td><span className={`admin-badge ${order.status}`}><span className="admin-badge-dot" />{order.status?.replace(/_/g, ' ')}</span></td>
+                                            <td><span className={`admin-badge ${order.status}`}><span className="admin-badge-dot" />{statusLabels[order.status] || order.status?.replace(/_/g, ' ')}</span></td>
                                         </tr>
                                     )) : (
                                         <tr><td colSpan={4} style={{ textAlign: 'center', padding: 40, color: 'var(--admin-text-muted)' }}>No orders yet</td></tr>

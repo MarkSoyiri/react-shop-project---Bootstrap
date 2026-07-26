@@ -15,12 +15,17 @@ export const CATEGORIES = [
 
 export const ORDER_STATUSES = [
   { value: 'pending', label: 'Pending', color: '#f59e0b', icon: '⏳' },
-  { value: 'confirmed', label: 'Confirmed', color: '#3b82f6', icon: '✓' },
+  { value: 'placed', label: 'Pending', color: '#f59e0b', icon: '⏳' },
+  { value: 'accepted', label: 'Accepted', color: '#3b82f6', icon: '✓' },
+  { value: 'confirmed', label: 'Accepted', color: '#3b82f6', icon: '✓' },
   { value: 'preparing', label: 'Preparing', color: '#8b5cf6', icon: '👨‍🍳' },
   { value: 'ready', label: 'Ready', color: '#10b981', icon: '✅' },
   { value: 'out_for_delivery', label: 'Out for Delivery', color: '#06b6d4', icon: '🚗' },
+  { value: 'picked_up', label: 'Picked Up', color: '#06b6d4', icon: '📦' },
   { value: 'delivered', label: 'Delivered', color: '#22c55e', icon: '🎉' },
+  { value: 'completed', label: 'Completed', color: '#059669', icon: '🎉' },
   { value: 'cancelled', label: 'Cancelled', color: '#ef4444', icon: '✕' },
+  { value: 'rejected', label: 'Rejected', color: '#ef4444', icon: '✕' },
 ];
 
 export const PAYMENT_METHODS = [

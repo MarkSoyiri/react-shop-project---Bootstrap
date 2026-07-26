@@ -64,11 +64,18 @@ function OrderHistory() {
       flexShrink: 0
     };
     const map = {
-      delivered: { background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' },
-      cancelled: { background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca' },
+      pending: { background: '#fff7ed', color: 'var(--color-brand)', border: '1px solid #fed7aa' },
+      placed: { background: '#fff7ed', color: 'var(--color-brand)', border: '1px solid #fed7aa' },
+      accepted: { background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe' },
+      confirmed: { background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe' },
       preparing: { background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe' },
       ready: { background: '#f5f3ff', color: '#5b21b6', border: '1px solid #ddd6fe' },
       out_for_delivery: { background: '#fff7ed', color: 'var(--color-brand-dark)', border: '1px solid #fed7aa' },
+      picked_up: { background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' },
+      delivered: { background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' },
+      completed: { background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' },
+      cancelled: { background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca' },
+      rejected: { background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca' },
     };
     return { ...base, ...(map[status] || { background: '#fff7ed', color: 'var(--color-brand)', border: '1px solid #fed7aa' }) };
   };
@@ -302,7 +309,7 @@ function OrderHistory() {
                   {formatCurrency(order.total)}
                 </span>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  {order.status === 'delivered' && (
+                  {['delivered', 'completed'].includes(order.status) && (
                     <button
                       onClick={(e) => openReviewModal(order, e)}
                       style={{

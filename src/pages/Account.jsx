@@ -90,13 +90,18 @@ function UserProfile() {
 
     const statusBadge = (status) => {
         const map = {
-            delivered: { bg: '#dcfce7', text: '#16a34a' },
-            cancelled: { bg: '#fee2e2', text: '#dc2626' },
-            placed: { bg: '#dbeafe', text: '#2563eb' },
+            pending: { bg: '#fef3c7', text: '#d97706' },
+            placed: { bg: '#fef3c7', text: '#d97706' },
+            accepted: { bg: '#dbeafe', text: '#2563eb' },
             confirmed: { bg: '#dbeafe', text: '#2563eb' },
             preparing: { bg: '#fef3c7', text: '#d97706' },
             ready: { bg: '#e0f2fe', text: '#0284c7' },
             out_for_delivery: { bg: '#e0f2fe', text: '#0284c7' },
+            picked_up: { bg: '#dcfce7', text: '#16a34a' },
+            delivered: { bg: '#dcfce7', text: '#16a34a' },
+            completed: { bg: '#dcfce7', text: '#16a34a' },
+            cancelled: { bg: '#fee2e2', text: '#dc2626' },
+            rejected: { bg: '#fee2e2', text: '#dc2626' },
         };
         return map[status] || { bg: '#f3f4f6', text: '#6b7280' };
     };
