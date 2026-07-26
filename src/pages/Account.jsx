@@ -128,8 +128,8 @@ function UserProfile() {
     ];
 
     return (
-        <div className="account-page-wrap" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', paddingTop: 'var(--navbar-height)', paddingBottom: 80 }}>
-            <div style={{ paddingTop: 40 }}>
+        <div className="account-page-wrap" style={{ maxWidth: 1100, margin: '0 auto', padding: '84px 24px 80px' }}>
+            <div>
             <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>My Account</h1>
 
             {/* Mobile Horizontal Tabs */}

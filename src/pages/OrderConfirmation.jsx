@@ -67,9 +67,9 @@ function OrderConfirmation() {
     return () => { cancelled = true; };
   }, [id, order?.paymentStatus, order?.paymentMethod, order?.paymentReference]);
 
-  if (loading) return <div style={{ marginTop: 100, paddingTop: 80 }}><Loader /></div>;
+  if (loading) return <div style={{ paddingTop: 84 }}><Loader /></div>;
   if (error) return (
-    <div style={{ textAlign: 'center', padding: '120px 24px' }}>
+    <div style={{ textAlign: 'center', padding: '84px 24px' }}>
       <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🔍</div>
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Order Not Found</h2>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 20 }}>{error}</p>
@@ -83,7 +83,7 @@ function OrderConfirmation() {
   const estimatedTime = order.orderType === 'delivery' ? '45 min' : '25 min';
 
   return (
-    <div style={{ maxWidth: 700, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div style={{ maxWidth: 700, margin: '0 auto', padding: '84px 24px 60px' }}>
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

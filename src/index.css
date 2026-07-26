@@ -1845,7 +1845,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .cart-container {
   min-height: 60vh;
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -3624,7 +3624,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .checkout-page {
   min-height: 100vh;
-  padding-top: 100px;
+  padding-top: 84px;
   padding-bottom: 80px;
   background: var(--color-bg-alt);
 }
@@ -4311,7 +4311,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .order-history-page {
   min-height: 100vh;
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -4380,7 +4380,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .wishlist-page {
   min-height: 100vh;
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -4418,7 +4418,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .notifications-page {
   min-height: 100vh;
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -4490,7 +4490,7 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================== */
 
 .account-page {
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -4736,7 +4736,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .legal-page {
   min-height: 100vh;
-  padding-top: 120px;
+  padding-top: 84px;
   padding-bottom: 80px;
 }
 
@@ -6176,7 +6176,7 @@ body.menu-open {
 
   /* ── Account Mobile ── */
   .account-page {
-    padding-top: 100px;
+    padding-top: 76px;
   }
 
   .account-sidebar {
@@ -6262,7 +6262,7 @@ body.menu-open {
   .order-history-page,
   .notifications-page,
   .legal-page {
-    padding-top: 100px;
+    padding-top: 76px;
   }
 
   .wishlist-grid {
@@ -6370,7 +6370,7 @@ body.menu-open {
 
   /* ── Cart Mobile ── */
   .cart-container {
-    padding-top: 100px;
+    padding-top: 76px;
   }
 
   .cart-item-img {

@@ -62,9 +62,9 @@ function OrderTracking() {
     marginBottom: 20
   };
 
-  if (loading) return <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 80 }}><Loader /></div>;
+  if (loading) return <div style={{ paddingTop: 84 }}><Loader /></div>;
   if (error) return (
-    <div style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, textAlign: 'center', padding: '0 24px' }}>
+    <div style={{ paddingTop: 84, textAlign: 'center', padding: '0 24px' }}>
       <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🔍</div>
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Order Not Found</h2>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 20 }}>{error}</p>
@@ -87,7 +87,7 @@ function OrderTracking() {
   );
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '84px 24px 60px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Order #{order.orderNumber || order._id.slice(-8)}</h1>

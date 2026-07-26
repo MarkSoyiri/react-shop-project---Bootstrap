@@ -1,4 +1,4 @@
-.cart-container { padding-top: 120px; padding-bottom: 80px; }
+.cart-container { padding-top: 84px; padding-bottom: 80px; }
 .cart-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin-bottom: 24px; }
 
 .cart-empty { text-align: center; padding: 80px 24px; }

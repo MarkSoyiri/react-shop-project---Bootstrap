@@ -1,4 +1,4 @@
-.account-page { padding-top: 120px; padding-bottom: 80px; }
+.account-page { padding-top: 84px; padding-bottom: 80px; }
 
 .account-sidebar {
   background: var(--color-bg-card); border: 1px solid var(--color-border);
@@ -61,7 +61,7 @@
 .address-form h5 { font-size: 16px; margin-bottom: 16px; }
 
 @media (max-width: 768px) {
-  .account-page { padding-top: 100px; }
+  .account-page { padding-top: 76px; }
   .account-page-wrap { padding: 0 16px !important; }
   .account-layout { flex-direction: column !important; gap: 16px !important; }
   .account-sidebar-col { width: 100% !important; min-width: 0 !important; border-radius: 14px !important; padding: 20px !important; }

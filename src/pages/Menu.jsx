@@ -55,7 +55,7 @@ function Menu() {
 
   if (loading) {
     return (
-      <div className="menu-page" style={{ paddingTop: 'var(--navbar-height)', paddingBottom: '80px' }}>
+      <div className="menu-page" style={{ paddingTop: 84, paddingBottom: '80px' }}>
         <div className="container-lg">
           <div className="foodBox" style={{ gap: '24px' }}>
             {Array.from({ length: 6 }).map((_, i) => (
@@ -69,7 +69,7 @@ function Menu() {
 
   if (error) {
     return (
-      <div className="container-lg" style={{ marginTop: 'var(--navbar-height)', paddingTop: 48, textAlign: 'center' }}>
+      <div className="container-lg" style={{ paddingTop: 84, textAlign: 'center' }}>
         <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text)' }}>Unable to load menu</h2>
         <p style={{ color: 'var(--color-text-secondary)', marginTop: '8px' }}>{error}</p>
         <button
@@ -86,7 +86,7 @@ function Menu() {
 
   return (
     <div className="menu-page">
-      <div style={{ marginTop: 'var(--navbar-height)', padding: '48px 0 24px' }}>
+      <div style={{ padding: '84px 0 24px' }}>
         <div className="container-lg">
           {/* Page Header */}
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
