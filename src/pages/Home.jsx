@@ -1,6 +1,5 @@
 import { Card } from '../components/Card';
 import HeroTitle from '../components/HeroTitle';
-import zestybanner from '../images/zestybanner.jpg';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
@@ -112,7 +111,7 @@ function Home() {
             {/* ===== HERO SECTION ===== */}
             <section className="hero-section">
                 <div className="hero-overlay" />
-                <img className="hero-banner" src={zestybanner} alt="Zesty Cave" />
+                <img className="hero-banner" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&q=80" alt="Zesty Cave" />
                 <div className="hero-content">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
