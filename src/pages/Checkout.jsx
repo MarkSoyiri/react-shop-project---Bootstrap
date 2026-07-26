@@ -37,7 +37,7 @@ function Checkout() {
     return sum + (basePrice + variantPrice + addOnsPrice) * item.quantity;
   }, 0);
 
-  const deliveryFee = form.orderType === 'delivery' ? (subtotal >= 50 ? 0 : 5) : 0;
+  const deliveryFee = form.orderType === 'delivery' ? (subtotal >= 100 ? 0 : 15) : 0;
   const tax = subtotal * 0.15;
   const discount = couponDiscount?.discount || 0;
   const total = Math.max(0, subtotal + deliveryFee + tax - discount);

@@ -1,15 +1,19 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import useApi from '../hooks/useApi';
 import { formatCurrency, formatDateTime, getStatusInfo, getPaymentStatusInfo, PAYSTACK_PUBLIC_KEY, API_BASE } from '../utils/helpers';
 
 function OrderHistory() {
   const { user, token } = useContext(AuthContext);
-  const { get, loading } = useApi();
+  const { get, post, loading } = useApi();
   const [orders, setOrders] = useState([]);
   const [retryingOrderId, setRetryingOrderId] = useState(null);
+  const [reviewOrder, setReviewOrder] = useState(null);
+  const [reviewItems, setReviewItems] = useState([]);
+  const [submittingReviews, setSubmittingReviews] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,6 +127,63 @@ function OrderHistory() {
       setRetryingOrderId(null);
     }
   };
+
+  const openReviewModal = (order, e) => {
+    e.stopPropagation();
+    setReviewOrder(order);
+    setReviewItems(order.items.map(item => ({
+      menuItemId: item.menuItem?._id || item.menuItem,
+      name: item.name,
+      rating: 5,
+      comment: '',
+    })));
+    setReviewSubmitted(false);
+  };
+
+  const updateReviewItem = (index, field, value) => {
+    setReviewItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+  };
+
+  const submitReviews = async () => {
+    setSubmittingReviews(true);
+    try {
+      const results = await Promise.allSettled(
+        reviewItems.map(item =>
+          post(`/menu/${item.menuItemId}/reviews`, { rating: item.rating, comment: item.comment })
+        )
+      );
+      const succeeded = results.filter(r => r.status === 'fulfilled').length;
+      if (succeeded > 0) {
+        setReviewSubmitted(true);
+        setTimeout(() => { setReviewOrder(null); }, 2000);
+      } else {
+        alert('Failed to submit reviews. Please try again.');
+      }
+    } catch {
+      alert('Failed to submit reviews. Please try again.');
+    } finally {
+      setSubmittingReviews(false);
+    }
+  };
+
+  const StarRating = ({ rating, onChange, size = 28 }) => (
+    <div style={{ display: 'flex', gap: 4 }}>
+      {[1, 2, 3, 4, 5].map(star => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          style={{
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            fontSize: size, lineHeight: 1, color: star <= rating ? '#f59e0b' : '#d1d5db',
+            transition: 'color 0.15s'
+          }}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '100px 24px 60px' }}>
@@ -240,6 +301,24 @@ function OrderHistory() {
                   {formatCurrency(order.total)}
                 </span>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  {order.status === 'delivered' && (
+                    <button
+                      onClick={(e) => openReviewModal(order, e)}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#fff',
+                        background: '#f59e0b',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 12px',
+                        cursor: 'pointer',
+                        minHeight: 32
+                      }}
+                    >
+                      ★ Rate
+                    </button>
+                  )}
                   {(order.paymentMethod === 'card' || order.paymentMethod === 'pay_online') &&
                     ['pending', 'failed'].includes(order.paymentStatus) && (
                     <button
@@ -278,6 +357,97 @@ function OrderHistory() {
           );
         })}
       </div>
+
+      {/* Review Modal */}
+      <AnimatePresence>
+        {reviewOrder && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => !submittingReviews && setReviewOrder(null)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              zIndex: 1000, padding: 24, backdropFilter: 'blur(4px)'
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff', borderRadius: 20, padding: 28,
+                width: '100%', maxWidth: 480, maxHeight: '85vh',
+                overflow: 'auto', border: '1px solid var(--color-border)'
+              }}
+            >
+              {reviewSubmitted ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <div style={{ fontSize: 48, marginBottom: 12 }}>✨</div>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Thank You!</h3>
+                  <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>Your reviews have been submitted.</p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Rate Your Order</h3>
+                    <button
+                      onClick={() => setReviewOrder(null)}
+                      disabled={submittingReviews}
+                      style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--color-text-secondary)', padding: 4 }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
+                    #{reviewOrder.orderNumber} — How was your meal?
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {reviewItems.map((item, idx) => (
+                      <div key={idx} style={{ padding: 16, background: 'var(--color-bg-alt)', borderRadius: 12 }}>
+                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{item.name}</div>
+                        <div style={{ marginBottom: 10 }}>
+                          <StarRating
+                            rating={item.rating}
+                            onChange={(val) => updateReviewItem(idx, 'rating', val)}
+                          />
+                        </div>
+                        <textarea
+                          value={item.comment}
+                          onChange={e => updateReviewItem(idx, 'comment', e.target.value)}
+                          placeholder="Tell us about your experience (optional)"
+                          rows={2}
+                          style={{
+                            width: '100%', padding: '10px 12px', border: '1.5px solid var(--color-border)',
+                            borderRadius: 8, fontSize: 13, resize: 'vertical', outline: 'none',
+                            background: '#fff', color: 'var(--color-text)', boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={submitReviews}
+                    disabled={submittingReviews}
+                    style={{
+                      width: '100%', marginTop: 20, padding: '14px',
+                      background: submittingReviews ? '#94a3b8' : 'var(--color-brand)',
+                      color: '#fff', border: 'none', borderRadius: 12,
+                      fontSize: 15, fontWeight: 700, cursor: submittingReviews ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {submittingReviews ? 'Submitting...' : 'Submit Reviews'}
+                  </button>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
