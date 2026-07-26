@@ -157,7 +157,7 @@ export default function Orders() {
 
             if (prevCountRef.current > 0 && orderList.length > prevCountRef.current) {
                 const newest = orderList[0];
-                if (newest && newest.status === 'pending' || newest?.status === 'placed') {
+                if (newest && (newest.status === 'pending' || newest.status === 'placed')) {
                     showToast(`🔔 New order #${newest.orderNumber || newest._id?.slice(-6)} received!`, 'info');
                 }
             }
