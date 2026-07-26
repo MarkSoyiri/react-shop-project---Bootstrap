@@ -74,16 +74,28 @@ export function HomeNav () {
                         <img style={styles.logo} src={zestylogo} alt="Zesty Cave" />
                     </Link>
 
-                    <button
-                        className="zc-nav-hamburger"
-                        onClick={toggleMobile}
-                        style={styles.hamburger}
-                        aria-label="Toggle navigation"
-                    >
-                        <span style={{ ...styles.hamburgerLine, transform: mobileOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
-                        <span style={{ ...styles.hamburgerLine, opacity: mobileOpen ? 0 : 1 }} />
-                        <span style={{ ...styles.hamburgerLine, transform: mobileOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
-                    </button>
+                    <div className="zc-nav-mobile-actions">
+                        <Link to="/cart" className="zc-nav-cart-btn" aria-label="Cart">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <path d="M16 10a4 4 0 01-8 0" />
+                            </svg>
+                            {cartCount > 0 && (
+                                <span className="zc-nav-cart-badge">{cartCount}</span>
+                            )}
+                        </Link>
+                        <button
+                            className="zc-nav-hamburger"
+                            onClick={toggleMobile}
+                            style={styles.hamburger}
+                            aria-label="Toggle navigation"
+                        >
+                            <span style={{ ...styles.hamburgerLine, transform: mobileOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
+                            <span style={{ ...styles.hamburgerLine, opacity: mobileOpen ? 0 : 1 }} />
+                            <span style={{ ...styles.hamburgerLine, transform: mobileOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
+                        </button>
+                    </div>
 
                     <div className="zc-nav-collapse" style={styles.navCollapse}>
                         <ul style={styles.navList}>
@@ -362,8 +374,43 @@ export function Footer () {
 const responsiveNavCSS = `
   .zc-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
   .zc-nav-hamburger { display: none; }
+  .zc-nav-mobile-actions { display: none; }
+  .zc-nav-cart-btn { display: none; }
+  .zc-nav-cart-badge { display: none; }
   @media (max-width: 992px) {
+    .zc-nav-mobile-actions { display: flex; align-items: center; gap: 2px; }
     .zc-nav-hamburger { display: flex; }
+    .zc-nav-cart-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      color: var(--color-text);
+      text-decoration: none;
+      position: relative;
+      transition: background 200ms;
+    }
+    .zc-nav-cart-btn:active { background: rgba(0,0,0,0.06); }
+    .zc-nav-cart-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--color-brand);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      padding: 0 4px;
+      line-height: 1;
+      pointer-events: none;
+    }
     .zc-nav-collapse { display: none !important; }
     .zc-mobile-menu { display: block !important; }
   }

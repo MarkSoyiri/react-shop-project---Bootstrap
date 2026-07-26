@@ -5,6 +5,7 @@ import {
   useEffect,
   lazy,
   Suspense,
+  useCallback,
 } from "react";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -101,6 +102,51 @@ const AdminProfile = lazy(() => import("./pages/admin/Profile"));
 
 export const ThemeContext = createContext();
 
+function CartToast() {
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      const { name } = e.detail;
+      setToast({ id: Date.now(), name });
+      setTimeout(() => setToast(null), 2500);
+    };
+    window.addEventListener('cart:added', handler);
+    return () => window.removeEventListener('cart:added', handler);
+  }, []);
+
+  if (!toast) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: 90,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 1100,
+      background: 'var(--color-text)',
+      color: '#fff',
+      padding: '12px 22px',
+      borderRadius: 14,
+      fontSize: 14,
+      fontWeight: 600,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+      animation: 'cartToastIn 0.3s ease-out',
+      maxWidth: '90vw',
+    }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {toast.name} added to cart
+      </span>
+    </div>
+  );
+}
+
 function Layout() {
   const location = useLocation();
   const { pageLoading } = useContext(PageLoaderContext);
@@ -117,6 +163,7 @@ function Layout() {
   return (
     <>
       {!hideNav && <HomeNav />}
+      <CartToast />
 
       {!isAdmin && (
         <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
@@ -218,6 +265,12 @@ function App() {
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <PageLoaderProvider>
         <CartProvider>
+          <style>{`
+            @keyframes cartToastIn {
+              from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+              to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+          `}</style>
           <div
             style={{
               backgroundColor: theme === "Light" ? "#fff" : "#000",

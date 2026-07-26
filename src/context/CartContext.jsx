@@ -20,6 +20,7 @@ export function CartProvider({ children }) {
       );
 
       if (existingItem) {
+        window.dispatchEvent(new CustomEvent('cart:added', { detail: { name: product.name, qty: existingItem.quantity + 1 } }));
         return prevItems.map((item) =>
           item._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
@@ -27,6 +28,7 @@ export function CartProvider({ children }) {
         );
       }
 
+      window.dispatchEvent(new CustomEvent('cart:added', { detail: { name: product.name, qty: 1 } }));
       return [...prevItems, { ...product, quantity: 1 }];
     });
   };
