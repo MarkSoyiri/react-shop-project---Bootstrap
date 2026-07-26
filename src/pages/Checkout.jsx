@@ -60,19 +60,42 @@ function Checkout() {
     }
   };
 
-  const openPaystackPopup = (access_code, orderId) => {
-    const doOpen = () => {
-      const handler = window.PaystackPop.resumeTransaction(access_code);
-      handler.onClosed(() => {
-        addToast('Payment cancelled. You can retry from your order.', 'info');
+  const openPaystackPopup = (access_code, orderId, authorization_url) => {
+    const redirectFallback = () => {
+      if (authorization_url) {
+        window.location.href = authorization_url;
+      } else {
+        addToast('Payment gateway unavailable. Redirecting...', 'info');
         navigate(`/order-confirmation/${orderId}`);
-      });
-      handler.onSuccessful(() => {
-        clearCart();
-        addToast('Payment successful! Verifying...', 'success');
-        navigate(`/order-confirmation/${orderId}`);
-      });
+      }
     };
+
+    const doOpen = () => {
+      try {
+        if (!window.PaystackPop || typeof window.PaystackPop.resumeTransaction !== 'function') {
+          redirectFallback();
+          return;
+        }
+
+        const handler = window.PaystackPop.resumeTransaction(access_code);
+        handler.onClose = () => {
+          addToast('Payment was not completed. You can retry from your orders.', 'info');
+          navigate(`/order-confirmation/${orderId}`);
+        };
+        handler.onAuthorizationSuccess = () => {
+          clearCart();
+          addToast('Payment successful! Verifying...', 'success');
+          navigate(`/order-confirmation/${orderId}`);
+        };
+      } catch (err) {
+        redirectFallback();
+      }
+    };
+
+    if (window.PaystackPop && typeof window.PaystackPop.resumeTransaction === 'function') {
+      doOpen();
+      return;
+    }
 
     if (window.PaystackPop) {
       doOpen();
@@ -81,13 +104,18 @@ function Checkout() {
 
     const existingScript = document.querySelector('script[src="https://js.paystack.co/v1/inline.js"]');
     if (existingScript) {
+      let opened = false;
       const check = setInterval(() => {
-        if (window.PaystackPop) {
+        if (window.PaystackPop && !opened) {
+          opened = true;
           clearInterval(check);
           doOpen();
         }
       }, 100);
-      setTimeout(() => { clearInterval(check); }, 10000);
+      setTimeout(() => {
+        clearInterval(check);
+        if (!opened) redirectFallback();
+      }, 8000);
       return;
     }
 
@@ -95,8 +123,7 @@ function Checkout() {
     script.src = 'https://js.paystack.co/v1/inline.js';
     script.onload = doOpen;
     script.onerror = () => {
-      addToast('Failed to load payment gateway. Please try again.', 'error');
-      navigate(`/order-confirmation/${orderId}`);
+      redirectFallback();
     };
     document.body.appendChild(script);
   };
@@ -135,7 +162,7 @@ function Checkout() {
             return;
           }
 
-          openPaystackPopup(payData.data.access_code, orderId);
+          openPaystackPopup(payData.data.access_code, orderId, payData.data.authorization_url);
         } catch (payErr) {
           addToast('Payment setup failed. Your order was placed.', 'info');
           navigate(`/order-confirmation/${orderId}`);
