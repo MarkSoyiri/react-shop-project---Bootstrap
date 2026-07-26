@@ -64,7 +64,7 @@ function OrderTracking() {
 
   if (loading) return <div style={{ paddingTop: 84 }}><Loader /></div>;
   if (error) return (
-    <div style={{ paddingTop: 84, textAlign: 'center', padding: '0 24px' }}>
+    <div style={{ paddingTop: 84, textAlign: 'center', paddingLeft: 24, paddingRight: 24 }}>
       <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🔍</div>
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Order Not Found</h2>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 20 }}>{error}</p>

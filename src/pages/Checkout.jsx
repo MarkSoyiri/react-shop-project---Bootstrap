@@ -207,14 +207,14 @@ function Checkout() {
         <button
           onClick={() => navigate('/menu')}
           style={{
-            background: 'var(--color-brand)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 12,
-            padding: '12px 28px',
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: 'pointer'
+                      background: 'var(--color-brand)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '14px 24px',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: 'pointer'
           }}
         >
           Browse Menu
@@ -224,17 +224,17 @@ function Checkout() {
   }
 
   return (
-    <div className="checkout-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div className="checkout-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '84px 24px 60px' }}>
       <Toast />
 
       {/* Progress Bar */}
-      <div className="checkout-steps-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40, gap: 0 }}>
+      <div className="checkout-steps-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40, gap: 0, maxWidth: '100%' }}>
         {steps.map((s, i) => {
           const isCompleted = step > s.number;
           const isActive = step === s.number;
           return (
-            <div key={s.number} style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <div key={s.number} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 0, maxWidth: i < steps.length - 1 ? 120 : 'none' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                 <div style={{
                   width: 40,
                   height: 40,
@@ -254,20 +254,23 @@ function Checkout() {
                 <span style={{
                   fontSize: 12,
                   fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'var(--color-brand)' : isCompleted ? 'var(--color-accent)' : 'var(--color-text-secondary)'
+                  color: isActive ? 'var(--color-brand)' : isCompleted ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'center'
                 }}>
                   {s.label}
                 </span>
               </div>
               {i < steps.length - 1 && (
                 <div style={{
-                  width: 80,
+                  flex: 1,
                   height: 2,
                   background: step > s.number ? 'var(--color-accent)' : 'var(--color-border)',
-                  margin: '0 8px',
+                  margin: '0 6px',
                   marginBottom: 20,
                   borderRadius: 1,
-                  transition: 'background 0.2s'
+                  transition: 'background 0.2s',
+                  minWidth: 20
                 }} />
               )}
             </div>
@@ -432,7 +435,7 @@ function Checkout() {
                       color: 'var(--color-text)',
                       border: '1.5px solid var(--color-border)',
                       borderRadius: 10,
-                      padding: '12px 24px',
+                      padding: '14px 24px',
                       fontSize: 14,
                       fontWeight: 600,
                       cursor: 'pointer'
@@ -447,7 +450,7 @@ function Checkout() {
                       color: '#fff',
                       border: 'none',
                       borderRadius: 10,
-                      padding: '12px 24px',
+                      padding: '14px 24px',
                       fontSize: 14,
                       fontWeight: 600,
                       cursor: 'pointer'
@@ -505,15 +508,16 @@ function Checkout() {
                       <button
                         onClick={validateCoupon}
                         style={{
-                          background: '#fff',
-                          color: 'var(--color-text)',
-                          border: '1.5px solid var(--color-border)',
-                          borderRadius: 10,
-                          padding: '10px 20px',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          whiteSpace: 'nowrap'
+                      background: '#fff',
+                      color: 'var(--color-text)',
+                      border: '1.5px solid var(--color-border)',
+                      borderRadius: 10,
+                      padding: '14px 20px',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      minHeight: 44
                         }}
                       >
                         Apply
@@ -548,7 +552,7 @@ function Checkout() {
                       color: 'var(--color-text)',
                       border: '1.5px solid var(--color-border)',
                       borderRadius: 10,
-                      padding: '12px 24px',
+                      padding: '14px 24px',
                       fontSize: 14,
                       fontWeight: 600,
                       cursor: 'pointer'

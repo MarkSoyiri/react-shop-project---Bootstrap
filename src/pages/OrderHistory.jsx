@@ -167,16 +167,17 @@ function OrderHistory() {
   };
 
   const StarRating = ({ rating, onChange, size = 28 }) => (
-    <div style={{ display: 'flex', gap: 4 }}>
+    <div style={{ display: 'flex', gap: 2 }}>
       {[1, 2, 3, 4, 5].map(star => (
         <button
           key={star}
           type="button"
           onClick={() => onChange(star)}
           style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            background: 'none', border: 'none', cursor: 'pointer', padding: 6,
             fontSize: size, lineHeight: 1, color: star <= rating ? '#f59e0b' : '#d1d5db',
-            transition: 'color 0.15s'
+            transition: 'color 0.15s', minWidth: 40, minHeight: 40,
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
           ★
@@ -186,7 +187,7 @@ function OrderHistory() {
   );
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '84px 24px 60px' }}>
       <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Order History</h2>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 32, fontSize: 14 }}>
         {orders.length} {orders.length === 1 ? 'order' : 'orders'} placed
@@ -311,9 +312,9 @@ function OrderHistory() {
                         background: '#f59e0b',
                         border: 'none',
                         borderRadius: 8,
-                        padding: '6px 12px',
+                        padding: '10px 14px',
                         cursor: 'pointer',
-                        minHeight: 32
+                        minHeight: 40
                       }}
                     >
                       ★ Rate
@@ -331,22 +332,27 @@ function OrderHistory() {
                         background: retryingOrderId === order._id ? '#94a3b8' : 'var(--color-brand)',
                         border: 'none',
                         borderRadius: 8,
-                        padding: '6px 12px',
+                        padding: '10px 14px',
                         cursor: retryingOrderId === order._id ? 'not-allowed' : 'pointer',
-                        minHeight: 32
+                        minHeight: 40
                       }}
                     >
                       {retryingOrderId === order._id ? 'Processing...' : 'Retry Payment'}
                     </button>
                   )}
                   <span
+                    onClick={() => navigate(`/order/${order._id}`)}
                     style={{
                       fontSize: 13,
                       fontWeight: 600,
                       color: 'var(--color-brand)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 4
+                      gap: 4,
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      minHeight: 40,
+                      borderRadius: 8
                     }}
                   >
                     View →
@@ -396,7 +402,7 @@ function OrderHistory() {
                     <button
                       onClick={() => setReviewOrder(null)}
                       disabled={submittingReviews}
-                      style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--color-text-secondary)', padding: 4 }}
+                      style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--color-text-secondary)', padding: 10, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       ✕
                     </button>

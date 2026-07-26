@@ -412,16 +412,9 @@ function ProductDetail() {
 
         {/* ── Nutrition ── */}
         {item.nutrition && (item.nutrition.calories || item.nutrition.protein) && (
-          <div className="pd-nutrition" style={{
-            marginTop: '48px', padding: '32px', borderRadius: 'var(--radius-xl)',
-            background: 'var(--color-bg-card)', boxShadow: 'var(--shadow-sm)'
-          }}>
-            <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 20px' }}>
-              Nutrition Information
-            </h4>
-            <div className="pd-nutrition-grid" style={{
-              display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px'
-            }}>
+          <div className="pd-nutrition">
+            <h4 className="pd-nutrition-title">Nutrition Information</h4>
+            <div className="pd-nutrition-grid">
               {[
                 { value: item.nutrition.calories, label: 'Calories', unit: '' },
                 { value: item.nutrition.protein, label: 'Protein', unit: 'g' },
@@ -429,16 +422,9 @@ function ProductDetail() {
                 { value: item.nutrition.fat, label: 'Fat', unit: 'g' },
                 { value: item.nutrition.fiber, label: 'Fiber', unit: 'g' }
               ].filter(n => n.value).map(n => (
-                <div key={n.label} style={{
-                  textAlign: 'center', padding: '16px 8px', borderRadius: 'var(--radius-lg)',
-                  background: 'var(--color-bg-alt)'
-                }}>
-                  <strong style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-brand)', display: 'block' }}>
-                    {n.value}{n.unit}
-                  </strong>
-                  <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 500, marginTop: '4px', display: 'block' }}>
-                    {n.label}
-                  </span>
+                <div key={n.label} className="pd-nutrition-cell">
+                  <strong className="pd-nutrition-value">{n.value}{n.unit}</strong>
+                  <span className="pd-nutrition-label">{n.label}</span>
                 </div>
               ))}
             </div>

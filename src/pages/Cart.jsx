@@ -121,12 +121,13 @@ function Cart() {
                   }}>
                     <button
                       onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                      className="cart-qty-btn"
                       style={{
-                        width: 34,
-                        height: 34,
+                        width: 44,
+                        height: 44,
                         border: 'none',
                         background: 'transparent',
-                        fontSize: 14,
+                        fontSize: 16,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -144,18 +145,19 @@ function Cart() {
                       fontWeight: 600,
                       borderLeft: '1px solid var(--color-border)',
                       borderRight: '1px solid var(--color-border)',
-                      lineHeight: '34px'
+                      lineHeight: '44px'
                     }}>
                       {item.quantity}
                     </span>
                     <button
                       onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                      className="cart-qty-btn"
                       style={{
-                        width: 34,
-                        height: 34,
+                        width: 44,
+                        height: 44,
                         border: 'none',
                         background: 'transparent',
-                        fontSize: 14,
+                        fontSize: 16,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -183,18 +185,18 @@ function Cart() {
                     <button
                       onClick={() => removeFromCart(item._id)}
                       title="Remove"
+                      className="cart-remove-btn"
                       style={{
                         background: 'transparent',
                         border: 'none',
                         color: 'var(--color-text-secondary)',
                         fontSize: 13,
                         cursor: 'pointer',
-                        padding: '2px 6px',
+                        padding: '8px 12px',
                         borderRadius: 6,
-                        fontWeight: 500
+                        fontWeight: 500,
+                        minHeight: 36
                       }}
-                      onMouseEnter={e => e.target.style.color = '#dc2626'}
-                      onMouseLeave={e => e.target.style.color = 'var(--color-text-secondary)'}
                     >
                       Remove
                     </button>

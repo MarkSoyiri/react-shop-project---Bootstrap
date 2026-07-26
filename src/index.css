@@ -3438,34 +3438,46 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .pd-nutrition {
-  background: var(--color-bg-alt);
-  border-radius: var(--radius-md);
+  margin-top: 32px;
   padding: 24px;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-sm);
 }
 
-.pd-nutrition h4 {
-  margin-bottom: 16px;
+.pd-nutrition-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 16px;
 }
 
 .pd-nutrition-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
 }
 
-.pd-nutrition-grid div {
+.pd-nutrition-cell {
   text-align: center;
+  padding: 14px 8px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-alt);
 }
 
-.pd-nutrition-grid strong {
+.pd-nutrition-value {
   display: block;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--color-brand);
 }
 
-.pd-nutrition-grid span {
-  font-size: 13px;
-  color: var(--color-text-secondary);
+.pd-nutrition-label {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-top: 4px;
 }
 
 .pd-reviews h3 {
@@ -6365,7 +6377,17 @@ body.menu-open {
   }
 
   .pd-nutrition-grid {
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .pd-nutrition { padding: 20px; }
+  .pd-nutrition-value { font-size: 16px; }
+  .pd-nutrition-label { font-size: 10px; }
+
+  .pd-nutrition-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   /* ── Cart Mobile ── */
