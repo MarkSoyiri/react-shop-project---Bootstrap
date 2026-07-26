@@ -183,7 +183,7 @@ function Home() {
                         <motion.div
                             key={cat.key}
                             className="zc-category-card"
-                            onClick={() => navigate('/menu')}
+                            onClick={() => navigate('/menu?category=' + cat.key)}
                             initial={{ opacity: 0, y: 24 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-40px' }}

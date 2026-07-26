@@ -1,5 +1,6 @@
 import { Card } from '../components/Card';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axiosFetch from '../api/axiosFetchAPI';
 import { motion } from 'framer-motion';
 import { SkeletonCard } from '../components/ui/Skeleton';
@@ -15,10 +16,11 @@ const itemVariants = {
 };
 
 function Menu() {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || 'all');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
