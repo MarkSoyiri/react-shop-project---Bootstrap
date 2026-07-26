@@ -23,7 +23,7 @@ function OrderHistory() {
   const loadOrders = async () => {
     try {
       const res = await get('/orders');
-      setOrders(res.data || []);
+      setOrders(res.orders || res.data || []);
     } catch (err) { console.error(err); }
   };
 
