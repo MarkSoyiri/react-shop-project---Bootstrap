@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import useApi from '../../hooks/useApi';
 import { getPaymentStatusInfo, getPaymentMethodLabel, formatCurrency } from '../../utils/helpers';
 import { PageHeader } from './components/PageHeader';
@@ -31,36 +31,36 @@ const STATUS_LABELS = {
 
 const STATUS_ACTIONS = {
     pending: [
-        { status: 'accepted', label: 'Accept Order', color: 'admin-btn-success', icon: '✓' },
-        { status: 'rejected', label: 'Reject', color: 'admin-btn-danger', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to reject this order?' },
+        { status: 'accepted', label: 'Accept', title: 'Accept Order', color: 'accept', icon: '✓' },
+        { status: 'rejected', label: 'Reject', title: 'Reject', color: 'reject', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to reject this order?' },
     ],
     placed: [
-        { status: 'accepted', label: 'Accept Order', color: 'admin-btn-success', icon: '✓' },
-        { status: 'rejected', label: 'Reject', color: 'admin-btn-danger', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to reject this order?' },
+        { status: 'accepted', label: 'Accept', title: 'Accept Order', color: 'accept', icon: '✓' },
+        { status: 'rejected', label: 'Reject', title: 'Reject', color: 'reject', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to reject this order?' },
     ],
     accepted: [
-        { status: 'preparing', label: 'Start Preparing', color: 'admin-btn-primary', icon: '👨‍🍳' },
-        { status: 'cancelled', label: 'Cancel', color: 'admin-btn-danger', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to cancel this accepted order?' },
+        { status: 'preparing', label: 'Prepare', title: 'Start Preparing', color: 'advance', icon: '🍳' },
+        { status: 'cancelled', label: 'Cancel', title: 'Cancel Order', color: 'cancel', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to cancel this accepted order?' },
     ],
     confirmed: [
-        { status: 'preparing', label: 'Start Preparing', color: 'admin-btn-primary', icon: '👨‍🍳' },
-        { status: 'cancelled', label: 'Cancel', color: 'admin-btn-danger', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to cancel this accepted order?' },
+        { status: 'preparing', label: 'Prepare', title: 'Start Preparing', color: 'advance', icon: '🍳' },
+        { status: 'cancelled', label: 'Cancel', title: 'Cancel Order', color: 'cancel', icon: '✕', confirm: true, confirmMessage: 'Are you sure you want to cancel this accepted order?' },
     ],
     preparing: [
-        { status: 'ready', label: 'Mark as Ready', color: 'admin-btn-success', icon: '✓' },
+        { status: 'ready', label: 'Ready', title: 'Mark as Ready', color: 'accept', icon: '✓' },
     ],
     ready: [
-        { status: 'out_for_delivery', label: 'Out for Delivery', color: 'admin-btn-primary', icon: '🚗', deliveryOnly: true },
-        { status: 'picked_up', label: 'Mark Picked Up', color: 'admin-btn-success', icon: '📦', pickupOnly: true },
+        { status: 'out_for_delivery', label: 'Deliver', title: 'Out for Delivery', color: 'advance', icon: '🚗', deliveryOnly: true },
+        { status: 'picked_up', label: 'Pickup', title: 'Mark Picked Up', color: 'accept', icon: '📦', pickupOnly: true },
     ],
     out_for_delivery: [
-        { status: 'delivered', label: 'Mark Delivered', color: 'admin-btn-success', icon: '✓' },
+        { status: 'delivered', label: 'Delivered', title: 'Mark Delivered', color: 'accept', icon: '✓' },
     ],
     picked_up: [
-        { status: 'completed', label: 'Complete Order', color: 'admin-btn-success', icon: '✓', confirm: true, confirmMessage: 'Mark this order as completed?' },
+        { status: 'completed', label: 'Complete', title: 'Complete Order', color: 'accept', icon: '✓', confirm: true, confirmMessage: 'Mark this order as completed?' },
     ],
     delivered: [
-        { status: 'completed', label: 'Complete Order', color: 'admin-btn-success', icon: '✓', confirm: true, confirmMessage: 'Mark this order as completed?' },
+        { status: 'completed', label: 'Complete', title: 'Complete Order', color: 'accept', icon: '✓', confirm: true, confirmMessage: 'Mark this order as completed?' },
     ],
 };
 
@@ -93,27 +93,23 @@ function ConfirmModal({ message, onConfirm, onCancel }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
             onClick={onCancel}
         >
             <motion.div
+                className="admin-modal"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={e => e.stopPropagation()}
-                style={{
-                    background: '#fff', borderRadius: 20, padding: 32, maxWidth: 420, width: '90%',
-                    boxShadow: 'var(--admin-shadow-xl)', textAlign: 'center'
-                }}
             >
-                <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--admin-warning-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 24 }}>
-                    ⚠️
+                <div style={{ textAlign: 'center' }}>
+                    <div className="admin-confirm-icon warning">⚠️</div>
+                    <h3 className="admin-modal-title">Confirm Action</h3>
+                    <p className="admin-modal-subtitle">{message}</p>
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: 'var(--admin-text)' }}>Confirm Action</h3>
-                <p style={{ fontSize: 14, color: 'var(--admin-text-secondary)', marginBottom: 24 }}>{message}</p>
-                <div style={{ display: 'flex', gap: 10 }}>
-                    <button className="admin-btn admin-btn-ghost" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
-                    <button className="admin-btn admin-btn-danger" onClick={onConfirm} style={{ flex: 1 }}>Confirm</button>
+                <div className="admin-modal-footer" style={{ justifyContent: 'center' }}>
+                    <button className="admin-btn admin-btn-ghost" onClick={onCancel}>Cancel</button>
+                    <button className="admin-btn admin-btn-danger" onClick={onConfirm}>Confirm</button>
                 </div>
             </motion.div>
         </motion.div>
@@ -232,8 +228,28 @@ export default function Orders() {
 
     const getTimelineLabel = (status) => STATUS_LABELS[status] || status;
 
+    const stats = useMemo(() => {
+        const active = orders.filter(o => !['cancelled', 'rejected', 'completed'].includes(o.status)).length;
+        const pending = orders.filter(o => ['pending', 'placed'].includes(o.status)).length;
+        const completed = orders.filter(o => o.status === 'completed').length;
+        const revenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+        return { total: total, active, pending, completed, revenue };
+    }, [orders, total]);
+
+    const statCards = [
+        { label: 'Total Orders', value: stats.total, icon: '📋', color: 'var(--admin-brand)', bg: 'rgba(232,93,4,0.08)' },
+        { label: 'Pending', value: stats.pending, icon: '⏳', color: '#d97706', bg: 'rgba(245,158,11,0.08)' },
+        { label: 'Active', value: stats.active, icon: '🔄', color: 'var(--admin-info, #3b82f6)', bg: 'rgba(59,130,246,0.08)' },
+        { label: 'Completed', value: stats.completed, icon: '✅', color: 'var(--admin-success)', bg: 'rgba(34,197,94,0.08)' },
+    ];
+
     return (
-        <div className="admin-page">
+        <motion.div
+            className="admin-page"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+        >
             <PageHeader
                 title="Orders"
                 subtitle="Manage and fulfill customer orders"
@@ -244,16 +260,51 @@ export default function Orders() {
                 </div>
             </PageHeader>
 
-            <div className="admin-toolbar">
-                <div className="admin-search">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-                    <input placeholder="Search by order number, customer name, or email..." value={search} onChange={e => setSearch(e.target.value)} />
+            {/* ── Stats ── */}
+            <div className="admin-orders__stats">
+                {statCards.map((s, i) => (
+                    <motion.div
+                        key={s.label}
+                        className="admin-orders__stat-card"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: i * 0.06 }}
+                    >
+                        <div className="admin-orders__stat-icon" style={{ background: s.bg, color: s.color }}>
+                            {s.icon}
+                        </div>
+                        <div className="admin-orders__stat-info">
+                            <span className="admin-orders__stat-value">{s.value}</span>
+                            <span className="admin-orders__stat-label">{s.label}</span>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* ── Toolbar ── */}
+            <div className="admin-orders__toolbar">
+                <div className="admin-orders__search">
+                    <svg className="admin-orders__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input
+                        className="admin-orders__search-input"
+                        placeholder="Search orders..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                    {search && (
+                        <button className="admin-orders__search-clear" onClick={() => setSearch('')} aria-label="Clear search">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                    )}
                 </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-                <div className="admin-filter-pills">
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-muted)', marginRight: 4, alignSelf: 'center' }}>Status:</span>
+            {/* ── Filters ── */}
+            <div className="admin-orders__filters">
+                <div className="admin-orders__filter-group">
+                    <span className="admin-orders__filter-label">Status:</span>
                     {STATUS_FILTERS.map(f => (
                         <button key={f.key} className={`admin-filter-pill ${statusFilter === f.key ? 'active' : ''}`}
                             onClick={() => { setStatusFilter(f.key); setPage(1); }}>
@@ -261,8 +312,9 @@ export default function Orders() {
                         </button>
                     ))}
                 </div>
-                <div className="admin-filter-pills">
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--admin-text-muted)', marginRight: 4, alignSelf: 'center' }}>Payment:</span>
+                <div className="admin-orders__filter-divider" />
+                <div className="admin-orders__filter-group">
+                    <span className="admin-orders__filter-label">Payment:</span>
                     {PAYMENT_FILTERS.map(f => (
                         <button key={f.key} className={`admin-filter-pill ${paymentFilter === f.key ? 'active' : ''}`}
                             onClick={() => { setPaymentFilter(f.key); setPage(1); }}>
@@ -272,19 +324,20 @@ export default function Orders() {
                 </div>
             </div>
 
+            {/* ── Table ── */}
             {loading && !orders.length ? (
                 <SkeletonTable rows={8} cols={9} />
             ) : orders.length === 0 ? (
                 <EmptyState
-                    icon="fa-clipboard-list"
+                    icon="📋"
                     title="No orders found"
                     description="Orders will appear here when customers place them."
                 />
             ) : (
                 <motion.div className="admin-card" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                     <div className="admin-card-body no-pad">
-                        <div className="admin-table-wrapper">
-                            <table className="admin-table">
+                        <div className="admin-orders__table-wrap">
+                            <table className="admin-orders__table">
                                 <thead>
                                     <tr>
                                         <th>Order</th>
@@ -292,62 +345,79 @@ export default function Orders() {
                                         <th>Contact</th>
                                         <th>Items</th>
                                         <th>Total</th>
-                                        <th>Order Status</th>
+                                        <th>Status</th>
                                         <th>Payment</th>
                                         <th>Type</th>
-                                        <th>Date</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orders.map(order => (
-                                        <tr key={order._id} style={{ cursor: 'pointer' }} onClick={() => openDetail(order)}>
-                                            <td className="fw-semibold">#{order.orderNumber || order._id?.slice(-8)}</td>
-                                            <td>
-                                                <div className="name">{order.user?.username || 'Guest'}</div>
-                                                <div className="sub">{order.user?.email || ''}</div>
-                                            </td>
-                                            <td>
-                                                <div style={{ fontSize: 13 }}>{order.user?.phone || order.address?.phone || '—'}</div>
-                                            </td>
-                                            <td>{order.items?.length || 0}</td>
-                                            <td className="fw-semibold">{formatCurrency(order.total)}</td>
-                                            <td>
-                                                <span className={`admin-badge ${order.status}`}>
-                                                    <span className="admin-badge-dot" />
-                                                    {STATUS_LABELS[order.status] || order.status}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span style={{
-                                                    fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
-                                                    display: 'inline-flex', alignItems: 'center', gap: 4,
-                                                    background: getPaymentStatusInfo(order.paymentStatus || 'pending').bgColor,
-                                                    color: getPaymentStatusInfo(order.paymentStatus || 'pending').color,
-                                                    border: `1px solid ${getPaymentStatusInfo(order.paymentStatus || 'pending').color}30`
-                                                }}>
-                                                    {getPaymentStatusInfo(order.paymentStatus || 'pending').icon} {getPaymentStatusInfo(order.paymentStatus || 'pending').label}
-                                                </span>
-                                            </td>
-                                            <td style={{ textTransform: 'capitalize' }}>{order.orderType || 'delivery'}</td>
-                                            <td className="admin-date-text">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                            <td onClick={e => e.stopPropagation()}>
-                                                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                                                    {getActionsForOrder(order).slice(0, 2).map(action => (
-                                                        <button
-                                                            key={action.status}
-                                                            className={`admin-btn ${action.color} admin-btn-sm`}
-                                                            disabled={updating}
-                                                            onClick={() => handleAction(action, order)}
-                                                            title={action.label}
-                                                        >
-                                                            {action.label}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {orders.map((order, idx) => {
+                                        const payInfo = getPaymentStatusInfo(order.paymentStatus || 'pending');
+                                        return (
+                                            <motion.tr
+                                                key={order._id}
+                                                onClick={() => openDetail(order)}
+                                                initial={{ opacity: 0, y: 8 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.25, delay: idx * 0.03 }}
+                                            >
+                                                <td>
+                                                    <div className="admin-orders__cell-order">
+                                                        <span className="admin-orders__cell-order-num">#{order.orderNumber || order._id?.slice(-6)}</span>
+                                                        <span className="admin-orders__cell-order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="admin-orders__cell-customer">
+                                                        <span className="admin-orders__cell-customer-name">{order.user?.username || 'Guest'}</span>
+                                                        <span className="admin-orders__cell-customer-email">{order.user?.email || ''}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className="admin-orders__cell-phone">{order.user?.phone || order.address?.phone || '—'}</span>
+                                                </td>
+                                                <td>
+                                                    <span className="admin-orders__cell-items">{order.items?.length || 0}</span>
+                                                </td>
+                                                <td>
+                                                    <span className="admin-orders__cell-total">{formatCurrency(order.total)}</span>
+                                                </td>
+                                                <td>
+                                                    <span className={`admin-badge ${order.status}`}>
+                                                        <span className="admin-badge-dot" />
+                                                        {STATUS_LABELS[order.status] || order.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className={`admin-badge`} style={{
+                                                        background: payInfo.bgColor,
+                                                        color: payInfo.color,
+                                                    }}>
+                                                        {payInfo.icon} {payInfo.label}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className="admin-orders__cell-type">{order.orderType || 'delivery'}</span>
+                                                </td>
+                                                <td className="admin-orders__cell-actions">
+                                                    <div className="admin-orders__actions" onClick={e => e.stopPropagation()}>
+                                                        {getActionsForOrder(order).slice(0, 2).map(action => (
+                                                            <button
+                                                                key={action.status}
+                                                                className={`admin-orders__action-btn admin-orders__action-btn--${action.color}`}
+                                                                disabled={updating}
+                                                                onClick={() => handleAction(action, order)}
+                                                                title={action.title}
+                                                            >
+                                                                {action.icon}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                            </motion.tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
@@ -356,6 +426,7 @@ export default function Orders() {
                 </motion.div>
             )}
 
+            {/* ── Side Panel ── */}
             <AnimatePresence>
                 {selectedOrder && (
                     <>
@@ -387,29 +458,25 @@ export default function Orders() {
 
                             <div className="admin-side-panel-body">
                                 {detailLoading ? (
-                                    <div className="admin-customers__detail-loading">
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16 }}>
-                                            {[1, 2, 3, 4].map(i => (
-                                                <div key={i} style={{ height: 20, background: 'var(--admin-border-light)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' }} />
-                                            ))}
-                                        </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16 }}>
+                                        {[1, 2, 3, 4].map(i => (
+                                            <div key={i} style={{ height: 20, background: 'var(--admin-border-light)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                                        ))}
                                     </div>
                                 ) : (
                                     <>
                                         {/* Status & Actions */}
-                                        <div style={{ marginBottom: 24 }}>
-                                            <div className="admin-reports-label" style={{ marginBottom: 8 }}>Status</div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__section-label">Status</div>
+                                            <div className="admin-orders__status-row">
                                                 <span className={`admin-badge ${selectedOrder.status}`} style={{ fontSize: 13, padding: '5px 14px' }}>
                                                     <span className="admin-badge-dot" />
                                                     {STATUS_LABELS[selectedOrder.status] || selectedOrder.status}
                                                 </span>
-                                                <span style={{
-                                                    fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
-                                                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                                                <span className={`admin-badge`} style={{
+                                                    fontSize: 12, padding: '4px 10px',
                                                     background: getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').bgColor,
                                                     color: getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').color,
-                                                    border: `1px solid ${getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').color}30`
                                                 }}>
                                                     {getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').icon} {getPaymentStatusInfo(selectedOrder.paymentStatus || 'pending').label}
                                                 </span>
@@ -418,65 +485,66 @@ export default function Orders() {
 
                                         {/* Action Buttons */}
                                         {getActionsForOrder(selectedOrder).length > 0 && (
-                                            <div style={{ marginBottom: 24, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                                {getActionsForOrder(selectedOrder).map(action => (
-                                                    <button
-                                                        key={action.status}
-                                                        className={`admin-btn ${action.color}`}
-                                                        disabled={updating}
-                                                        onClick={() => handleAction(action, selectedOrder)}
-                                                        style={{ flex: '1 1 auto', minWidth: 120 }}
-                                                    >
-                                                        {updating ? 'Updating...' : `${action.icon} ${action.label}`}
-                                                    </button>
-                                                ))}
+                                            <div className="admin-orders__section">
+                                                <div className="admin-orders__detail-actions">
+                                                    {getActionsForOrder(selectedOrder).map(action => (
+                                                        <button
+                                                            key={action.status}
+                                                            className={`admin-btn ${action.color === 'accept' ? 'admin-btn-success' : action.color === 'advance' ? 'admin-btn-primary' : 'admin-btn-danger'}`}
+                                                            disabled={updating}
+                                                            onClick={() => handleAction(action, selectedOrder)}
+                                                        >
+                                                            {updating ? 'Updating...' : `${action.icon} ${action.title}`}
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
 
                                         {/* Customer Info */}
-                                        <div style={{ marginBottom: 24 }}>
-                                            <div className="admin-reports-label" style={{ marginBottom: 8 }}>Customer</div>
-                                            <div className="admin-customers__name">{selectedOrder.user?.username || 'Guest'}</div>
-                                            <div className="admin-customers__email">{selectedOrder.user?.email || ''}</div>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__section-label">Customer</div>
+                                            <div className="admin-orders__customer-name">{selectedOrder.user?.username || 'Guest'}</div>
+                                            <div className="admin-orders__customer-email">{selectedOrder.user?.email || ''}</div>
                                             {selectedOrder.user?.phone && (
-                                                <div className="admin-customers__phone">{selectedOrder.user.phone}</div>
+                                                <div className="admin-orders__customer-phone">{selectedOrder.user.phone}</div>
                                             )}
                                         </div>
 
                                         {/* Delivery Info */}
-                                        <div style={{ marginBottom: 24 }}>
-                                            <div className="admin-reports-label" style={{ marginBottom: 8 }}>Delivery Information</div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13 }}>
-                                                <div style={{ display: 'flex', gap: 8 }}>
-                                                    <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Method</span>
-                                                    <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{selectedOrder.orderType || 'delivery'}</span>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__section-label">{selectedOrder.orderType === 'pickup' ? 'Pickup' : 'Delivery'} Information</div>
+                                            <div className="admin-orders__info-grid">
+                                                <div className="admin-orders__info-row">
+                                                    <span className="admin-orders__info-label">Method</span>
+                                                    <span className="admin-orders__info-value">{selectedOrder.orderType || 'delivery'}</span>
                                                 </div>
                                                 {selectedOrder.orderType === 'delivery' && selectedOrder.address && (
                                                     <>
                                                         {selectedOrder.address.street && (
-                                                            <div style={{ display: 'flex', gap: 8 }}>
-                                                                <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Address</span>
-                                                                <span>{selectedOrder.address.street}{selectedOrder.address.area ? `, ${selectedOrder.address.area}` : ''}{selectedOrder.address.city ? `, ${selectedOrder.address.city}` : ''}</span>
+                                                            <div className="admin-orders__info-row">
+                                                                <span className="admin-orders__info-label">Address</span>
+                                                                <span className="admin-orders__info-value">{selectedOrder.address.street}{selectedOrder.address.area ? `, ${selectedOrder.address.area}` : ''}{selectedOrder.address.city ? `, ${selectedOrder.address.city}` : ''}</span>
                                                             </div>
                                                         )}
                                                         {selectedOrder.address.phone && (
-                                                            <div style={{ display: 'flex', gap: 8 }}>
-                                                                <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Phone</span>
-                                                                <span>{selectedOrder.address.phone}</span>
+                                                            <div className="admin-orders__info-row">
+                                                                <span className="admin-orders__info-label">Phone</span>
+                                                                <span className="admin-orders__info-value">{selectedOrder.address.phone}</span>
                                                             </div>
                                                         )}
                                                         {selectedOrder.address.instructions && (
-                                                            <div style={{ display: 'flex', gap: 8 }}>
-                                                                <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Notes</span>
-                                                                <span style={{ fontStyle: 'italic' }}>{selectedOrder.address.instructions}</span>
+                                                            <div className="admin-orders__info-row">
+                                                                <span className="admin-orders__info-label">Notes</span>
+                                                                <span className="admin-orders__info-value admin-orders__info-value--italic">{selectedOrder.address.instructions}</span>
                                                             </div>
                                                         )}
                                                     </>
                                                 )}
                                                 {selectedOrder.specialInstructions && (
-                                                    <div style={{ display: 'flex', gap: 8 }}>
-                                                        <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Instructions</span>
-                                                        <span style={{ fontStyle: 'italic' }}>{selectedOrder.specialInstructions}</span>
+                                                    <div className="admin-orders__info-row">
+                                                        <span className="admin-orders__info-label">Instructions</span>
+                                                        <span className="admin-orders__info-value admin-orders__info-value--italic">{selectedOrder.specialInstructions}</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -484,42 +552,34 @@ export default function Orders() {
 
                                         {/* Estimated Delivery */}
                                         {selectedOrder.estimatedDelivery && (
-                                            <div style={{ marginBottom: 24 }}>
-                                                <div className="admin-reports-label" style={{ marginBottom: 8 }}>Estimated {selectedOrder.orderType === 'pickup' ? 'Pickup' : 'Delivery'}</div>
-                                                <div style={{ fontSize: 14, fontWeight: 600 }}>
+                                            <div className="admin-orders__section">
+                                                <div className="admin-orders__section-label">Estimated {selectedOrder.orderType === 'pickup' ? 'Pickup' : 'Delivery'}</div>
+                                                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--admin-text)' }}>
                                                     {new Date(selectedOrder.estimatedDelivery).toLocaleString()}
                                                 </div>
                                             </div>
                                         )}
 
                                         {/* Items */}
-                                        <div style={{ marginBottom: 24 }}>
-                                            <div className="admin-reports-label" style={{ marginBottom: 8 }}>Items ({selectedOrder.items?.length || 0})</div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__section-label">Items ({selectedOrder.items?.length || 0})</div>
+                                            <div className="admin-orders__items-list">
                                                 {(selectedOrder.items || []).map((item, i) => {
                                                     const addOnsTotal = (item.addOns || []).reduce((sum, ao) => sum + (ao.price || 0), 0);
                                                     const itemTotal = item.quantity * (item.priceAtPurchase + addOnsTotal);
                                                     return (
-                                                        <div key={i} className="admin-customers__detail-recent-item" style={{ padding: 12, background: 'var(--admin-border-light)', borderRadius: 10 }}>
-                                                            <div style={{ flex: 1 }}>
-                                                                <div style={{ fontSize: 14, fontWeight: 600 }}>
-                                                                    {item.quantity}× {item.menuItem?.name || item.name || 'Item'}
-                                                                </div>
+                                                        <div key={i} className="admin-orders__item-card">
+                                                            <div className="admin-orders__item-info">
+                                                                <div className="admin-orders__item-name">{item.quantity}× {item.menuItem?.name || item.name || 'Item'}</div>
                                                                 {item.variant && (
-                                                                    <div style={{ fontSize: 12, color: 'var(--admin-text-secondary)', marginTop: 2 }}>
-                                                                        Size: {item.variant}
-                                                                    </div>
+                                                                    <div className="admin-orders__item-detail">Size: {item.variant}</div>
                                                                 )}
                                                                 {item.addOns?.length > 0 && (
-                                                                    <div style={{ fontSize: 12, color: 'var(--admin-text-secondary)', marginTop: 2 }}>
-                                                                        Add-ons: {item.addOns.map(a => `${a.name} (${formatCurrency(a.price || 0)})`).join(', ')}
-                                                                    </div>
+                                                                    <div className="admin-orders__item-detail">Add-ons: {item.addOns.map(a => `${a.name} (${formatCurrency(a.price || 0)})`).join(', ')}</div>
                                                                 )}
-                                                                <div style={{ fontSize: 12, color: 'var(--admin-text-muted)', marginTop: 2 }}>
-                                                                    {formatCurrency(item.priceAtPurchase)} each
-                                                                </div>
+                                                                <div className="admin-orders__item-price-each">{formatCurrency(item.priceAtPurchase)} each</div>
                                                             </div>
-                                                            <div className="fw-semibold" style={{ fontSize: 14, color: 'var(--admin-brand)' }}>{formatCurrency(itemTotal)}</div>
+                                                            <div className="admin-orders__item-total">{formatCurrency(itemTotal)}</div>
                                                         </div>
                                                     );
                                                 })}
@@ -527,55 +587,57 @@ export default function Orders() {
                                         </div>
 
                                         {/* Totals */}
-                                        <div style={{ marginBottom: 24, padding: 16, background: 'var(--admin-border-light)', borderRadius: 12 }}>
-                                            <div className="d-flex justify-content-between mb-2" style={{ fontSize: 13 }}>
-                                                <span className="text-muted">Subtotal</span>
-                                                <span>{formatCurrency(selectedOrder.subtotal)}</span>
-                                            </div>
-                                            {selectedOrder.tax > 0 && (
-                                                <div className="d-flex justify-content-between mb-2" style={{ fontSize: 13 }}>
-                                                    <span className="text-muted">Tax (15%)</span>
-                                                    <span>{formatCurrency(selectedOrder.tax)}</span>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__totals">
+                                                <div className="admin-orders__totals-row">
+                                                    <span className="admin-orders__totals-label">Subtotal</span>
+                                                    <span>{formatCurrency(selectedOrder.subtotal)}</span>
                                                 </div>
-                                            )}
-                                            {selectedOrder.deliveryFee > 0 && (
-                                                <div className="d-flex justify-content-between mb-2" style={{ fontSize: 13 }}>
-                                                    <span className="text-muted">Delivery Fee</span>
-                                                    <span>{formatCurrency(selectedOrder.deliveryFee)}</span>
+                                                {selectedOrder.tax > 0 && (
+                                                    <div className="admin-orders__totals-row">
+                                                        <span className="admin-orders__totals-label">Tax (15%)</span>
+                                                        <span>{formatCurrency(selectedOrder.tax)}</span>
+                                                    </div>
+                                                )}
+                                                {selectedOrder.deliveryFee > 0 && (
+                                                    <div className="admin-orders__totals-row">
+                                                        <span className="admin-orders__totals-label">Delivery Fee</span>
+                                                        <span>{formatCurrency(selectedOrder.deliveryFee)}</span>
+                                                    </div>
+                                                )}
+                                                {selectedOrder.discount > 0 && (
+                                                    <div className="admin-orders__totals-row admin-orders__totals-row--discount">
+                                                        <span>Discount</span>
+                                                        <span>-{formatCurrency(selectedOrder.discount)}</span>
+                                                    </div>
+                                                )}
+                                                <div className="admin-orders__totals-row admin-orders__totals-row--grand">
+                                                    <span>Total</span>
+                                                    <span className="admin-orders__totals-value">{formatCurrency(selectedOrder.total)}</span>
                                                 </div>
-                                            )}
-                                            {selectedOrder.discount > 0 && (
-                                                <div className="d-flex justify-content-between mb-2" style={{ fontSize: 13, color: 'var(--admin-success)' }}>
-                                                    <span>Discount</span>
-                                                    <span>-{formatCurrency(selectedOrder.discount)}</span>
-                                                </div>
-                                            )}
-                                            <div className="d-flex justify-content-between" style={{ fontSize: 17, fontWeight: 700, borderTop: '1px solid var(--admin-border)', paddingTop: 10, marginTop: 6 }}>
-                                                <span>Total</span>
-                                                <span style={{ color: 'var(--admin-brand)' }}>{formatCurrency(selectedOrder.total)}</span>
                                             </div>
                                         </div>
 
                                         {/* Payment */}
-                                        <div style={{ marginBottom: 24 }}>
-                                            <div className="admin-reports-label" style={{ marginBottom: 8 }}>Payment</div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13 }}>
-                                                <div style={{ display: 'flex', gap: 8 }}>
-                                                    <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Method</span>
+                                        <div className="admin-orders__section">
+                                            <div className="admin-orders__section-label">Payment</div>
+                                            <div className="admin-orders__info-grid">
+                                                <div className="admin-orders__info-row">
+                                                    <span className="admin-orders__info-label">Method</span>
                                                     <span className="admin-badge confirmed" style={{ fontSize: 11 }}>
                                                         {getPaymentMethodLabel(selectedOrder.paymentMethod || 'cash')}
                                                     </span>
                                                 </div>
                                                 {selectedOrder.paymentReference && (
-                                                    <div style={{ display: 'flex', gap: 8 }}>
-                                                        <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Reference</span>
-                                                        <span style={{ fontFamily: 'monospace', fontSize: 12 }}>{selectedOrder.paymentReference}</span>
+                                                    <div className="admin-orders__info-row">
+                                                        <span className="admin-orders__info-label">Reference</span>
+                                                        <span className="admin-orders__info-value admin-orders__info-value--mono">{selectedOrder.paymentReference}</span>
                                                     </div>
                                                 )}
                                                 {selectedOrder.paidAt && (
-                                                    <div style={{ display: 'flex', gap: 8 }}>
-                                                        <span style={{ color: 'var(--admin-text-muted)', minWidth: 100 }}>Paid At</span>
-                                                        <span>{new Date(selectedOrder.paidAt).toLocaleString()}</span>
+                                                    <div className="admin-orders__info-row">
+                                                        <span className="admin-orders__info-label">Paid At</span>
+                                                        <span className="admin-orders__info-value">{new Date(selectedOrder.paidAt).toLocaleString()}</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -583,38 +645,29 @@ export default function Orders() {
 
                                         {/* Timeline */}
                                         {selectedOrder.timeline && selectedOrder.timeline.length > 0 && (
-                                            <div style={{ marginBottom: 24 }}>
-                                                <div className="admin-reports-label" style={{ marginBottom: 12 }}>Timeline</div>
-                                                <div style={{ position: 'relative', paddingLeft: 28 }}>
-                                                    <div style={{ position: 'absolute', left: 7, top: 8, bottom: 8, width: 2, background: 'var(--admin-border)', borderRadius: 1 }} />
+                                            <div className="admin-orders__section">
+                                                <div className="admin-orders__section-label">Timeline</div>
+                                                <div className="admin-orders__timeline">
+                                                    <div className="admin-orders__timeline-line" />
                                                     {selectedOrder.timeline.slice().reverse().map((t, idx) => (
-                                                        <div key={idx} style={{ position: 'relative', paddingBottom: idx < selectedOrder.timeline.length - 1 ? 20 : 0 }}>
-                                                            <div style={{
-                                                                position: 'absolute', left: -28, top: 4, width: 16, height: 16, borderRadius: '50%',
-                                                                background: idx === 0 ? 'var(--admin-brand)' : 'var(--admin-border-strong)',
-                                                                border: idx === 0 ? '3px solid var(--admin-brand-light)' : '3px solid var(--admin-surface-solid)',
-                                                                zIndex: 1
-                                                            }} />
+                                                        <div key={idx} className="admin-orders__timeline-item">
+                                                            <div className={`admin-orders__timeline-dot ${idx === 0 ? 'admin-orders__timeline-dot--active' : 'admin-orders__timeline-dot--inactive'}`} />
                                                             <div>
-                                                                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+                                                                <div className="admin-orders__timeline-status">
                                                                     {getTimelineLabel(t.status)}
                                                                     {t.previousStatus && (
-                                                                        <span style={{ fontWeight: 400, color: 'var(--admin-text-muted)', fontSize: 12 }}>
+                                                                        <span className="admin-orders__timeline-previous">
                                                                             {' '}← {getTimelineLabel(t.previousStatus)}
                                                                         </span>
                                                                     )}
                                                                 </div>
                                                                 {t.adminName && (
-                                                                    <div style={{ fontSize: 11, color: 'var(--admin-info)', fontWeight: 500, marginBottom: 2 }}>
-                                                                        by {t.adminName}
-                                                                    </div>
+                                                                    <div className="admin-orders__timeline-admin">by {t.adminName}</div>
                                                                 )}
                                                                 {t.note && (
-                                                                    <div style={{ fontSize: 12, color: 'var(--admin-text-secondary)', marginBottom: 2, fontStyle: 'italic' }}>
-                                                                        "{t.note}"
-                                                                    </div>
+                                                                    <div className="admin-orders__timeline-note">"{t.note}"</div>
                                                                 )}
-                                                                <div style={{ fontSize: 11, color: 'var(--admin-text-muted)' }}>
+                                                                <div className="admin-orders__timeline-time">
                                                                     {new Date(t.timestamp).toLocaleString()}
                                                                 </div>
                                                             </div>
@@ -631,6 +684,7 @@ export default function Orders() {
                 )}
             </AnimatePresence>
 
+            {/* Confirm Modal */}
             <AnimatePresence>
                 {confirmAction && (
                     <ConfirmModal
@@ -641,6 +695,7 @@ export default function Orders() {
                 )}
             </AnimatePresence>
 
+            {/* Toast */}
             <AnimatePresence>
                 {toast && (
                     <motion.div
@@ -665,6 +720,6 @@ export default function Orders() {
                     50% { opacity: 0.5; }
                 }
             `}</style>
-        </div>
+        </motion.div>
     );
 }
