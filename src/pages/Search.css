@@ -83,6 +83,7 @@
   gap: 8px;
   overflow-x: auto;
   flex: 1;
+  min-width: 0;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
@@ -103,7 +104,7 @@
   cursor: pointer;
   transition: all 200ms;
   flex-shrink: 0;
-  min-height: 38px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .search-chip.active {
@@ -275,16 +276,25 @@
    MOBILE — 768px
    ============================================ */
 @media (max-width: 768px) {
+  .search-heading {
+    margin-bottom: 16px;
+  }
+
+  /* Sticky search bar */
   .search-bar-wrap {
-    flex-direction: column;
     position: sticky;
-    top: var(--navbar-height-mobile);
+    top: var(--navbar-height-mobile, 64px);
     z-index: 20;
     padding: 10px 0;
     background: var(--color-bg);
+    flex-direction: column;
+    margin-bottom: 0;
   }
 
-  .search-input { min-height: 48px; font-size: 16px; }
+  .search-input {
+    min-height: 48px;
+    font-size: 16px;
+  }
 
   .search-submit-btn {
     width: 100%;
@@ -294,14 +304,22 @@
     border-radius: var(--radius-xl);
   }
 
+  /* Filters below sticky bar */
   .search-filters {
+    position: sticky;
+    top: calc(var(--navbar-height-mobile, 64px) + 120px);
+    z-index: 19;
+    background: var(--color-bg);
+    padding: 8px 0;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
   }
 
+  /* Fix: no flex:1 in column — let overflow-x handle scroll */
   .search-chips-scroll {
-    flex-wrap: nowrap;
+    flex: none;
+    width: 100%;
     padding-bottom: 4px;
     gap: 6px;
   }
@@ -319,6 +337,7 @@
     padding: 10px 14px;
   }
 
+  /* Result cards */
   .search-result-card {
     gap: 12px;
     padding: 10px;
@@ -338,15 +357,25 @@
     padding: 10px 16px;
     font-size: 13px;
   }
+
+  .search-empty-state {
+    padding: 40px 16px;
+  }
 }
 
 /* ============================================
    SMALL MOBILE — 576px
    ============================================ */
 @media (max-width: 576px) {
-  .search-heading { font-size: 1.3rem; margin-bottom: 16px; }
+  .search-heading { font-size: 1.3rem; margin-bottom: 12px; }
 
-  .search-bar-wrap { margin-bottom: 16px; }
+  .search-bar-wrap { padding: 8px 0; }
+
+  .search-chip {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
 
   .search-result-img-wrap {
     width: 52px;
