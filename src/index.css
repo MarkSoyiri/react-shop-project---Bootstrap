@@ -1096,7 +1096,6 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: auto;
 }
 
 .zc-product-card__stars {
@@ -1115,7 +1114,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid var(--color-border-light);
 }
