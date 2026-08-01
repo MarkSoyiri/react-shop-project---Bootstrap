@@ -468,6 +468,8 @@ const styles = {
     },
     hamburger: {
         flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
         gap: 5,
         padding: '12px 10px',
         minWidth: 48,
