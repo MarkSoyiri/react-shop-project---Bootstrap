@@ -5146,10 +5146,18 @@
 @media (max-width: 768px) {
   .admin-content {
     padding: 16px;
+    overflow-x: hidden;
   }
   .admin-topbar {
     padding: 0 16px;
     min-height: 56px;
+  }
+  .admin-products__table-wrap,
+  .admin-customers__table-wrap,
+  .admin-coupons__table-wrap,
+  .admin-inventory__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .admin-topbar h1,
   .admin-topbar-title {
