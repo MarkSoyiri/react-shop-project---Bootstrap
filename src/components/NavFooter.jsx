@@ -444,7 +444,9 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         transition: 'all var(--transition)',
-        position: 'relative',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
     },
     navInner: {
         width: '100%',
