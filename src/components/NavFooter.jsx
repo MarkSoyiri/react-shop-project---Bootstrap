@@ -444,8 +444,10 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         transition: 'all var(--transition)',
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
+        left: 0,
+        right: 0,
         zIndex: 1000,
     },
     navInner: {
