@@ -1484,10 +1484,24 @@ h1, h2, h3, h4, h5, h6 {
 .auth-input-icon {
   position: absolute;
   left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-text-muted);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   pointer-events: none;
   transition: color var(--transition);
+}
+
+.auth-input-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transform: translateZ(0);
 }
 
 .auth-input-wrap input {
