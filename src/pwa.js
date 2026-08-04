@@ -1,6 +1,7 @@
 import { registerSW } from 'virtual:pwa-register';
 
 let refreshing = false;
+let applyUpdate = null;
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -10,10 +11,17 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-registerSW({
+const sw = registerSW({
   immediate: true,
+  onNeedRefresh() {
+    window.dispatchEvent(new CustomEvent('pwa:update-available'));
+  },
+  onOfflineReady() {
+    window.dispatchEvent(new CustomEvent('pwa:offline-ready'));
+  },
   onRegisteredSW(swUrl, registration) {
     if (!registration) return;
+    applyUpdate = () => sw.update();
 
     const checkForUpdates = async () => {
       if (navigator.onLine === false) return;
@@ -32,3 +40,7 @@ registerSW({
     window.addEventListener('online', checkForUpdates);
   },
 });
+
+export function applyPwaUpdate() {
+  if (applyUpdate) applyUpdate();
+}

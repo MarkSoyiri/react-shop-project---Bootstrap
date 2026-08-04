@@ -76,7 +76,7 @@ function Notifications() {
 
   if (!user) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+      <div style={{ textAlign: 'center', padding: '120px 24px' }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Please sign in to view notifications</h2>
         <button onClick={() => navigate('/login')} style={{ marginTop: 16, padding: '12px 32px', borderRadius: 12, border: 'none', background: 'var(--color-brand)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Sign In</button>
       </div>
@@ -84,7 +84,7 @@ function Notifications() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 24px' }}>
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '84px 24px 60px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Notifications</h1>

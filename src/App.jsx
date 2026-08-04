@@ -29,6 +29,7 @@ import { CartProvider, CartContext } from "./context/CartContext";
 
 import GlobalLoader from "./components/GlobalLoader";
 import { SkeletonPage } from "./components/ui/Skeleton";
+import UpdateAlert from "./components/UpdateAlert";
 
 function AdminLoader() {
   return (
@@ -165,6 +166,7 @@ function Layout() {
     <>
       {!hideNav && <HomeNav />}
       <CartToast />
+      <UpdateAlert />
 
       {!isAdmin && (
         <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
