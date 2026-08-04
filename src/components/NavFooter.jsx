@@ -306,6 +306,7 @@ export function Footer () {
                                 <li><Link to="/storelocation" style={styles.footerLink}>Store Locations</Link></li>
                                 <li><Link to="/contact" style={styles.footerLink}>Contact Us</Link></li>
                                 <li><Link to="/faq" style={styles.footerLink}>FAQ</Link></li>
+                                <li><Link to="/install" style={styles.footerLink}>Install the App</Link></li>
                             </ul>
                             <div style={{ marginTop: 20 }}>
                                 <p style={{ fontSize: 13, marginBottom: 8, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>Stay Updated</p>
