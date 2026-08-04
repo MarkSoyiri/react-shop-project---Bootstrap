@@ -903,12 +903,13 @@
 
 @media (max-width: 768px) {
   .hero-section {
+    margin-top: 0;
     height: clamp(460px, 95vw, 600px);
   }
   .hero-content {
     padding: 0 20px;
-    justify-content: center;
-    padding-top: 64px;
+    justify-content: flex-start;
+    padding-top: calc(var(--navbar-height-mobile, 64px) + 20px);
     padding-bottom: 24px;
   }
   .hero-tag {
@@ -1085,7 +1086,7 @@
   }
   .hero-content {
     padding: 0 16px;
-    padding-top: 56px;
+    padding-top: calc(var(--navbar-height-mobile, 64px) + 16px);
     padding-bottom: 20px;
   }
   .hero-tag {
