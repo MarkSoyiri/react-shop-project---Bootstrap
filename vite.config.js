@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: false,
       includeAssets: ['favicon.png', 'icons/zestylogo.png'],
       manifest: {
         name: 'Zesty Cave Restaurant',
